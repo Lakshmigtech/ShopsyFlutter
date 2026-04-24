@@ -1,0 +1,44 @@
+{
+  "/Users/techversant/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.24.3/darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/FrameInfoProxyAPIDelegate.swift" : {
+    "const-values" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/FrameInfoProxyAPIDelegate.swiftconstvalues",
+    "dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/FrameInfoProxyAPIDelegate.d",
+    "diagnostics" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/FrameInfoProxyAPIDelegate.dia",
+    "object" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/FrameInfoProxyAPIDelegate.o",
+    "swift-dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/FrameInfoProxyAPIDelegate.swiftdeps"
+  },
+  "/Users/techversant/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.24.3/darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/GetTrustResultResponse.swift" : {
+    "const-values" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponse.swiftconstvalues",
+    "dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponse.d",
+    "diagnostics" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponse.dia",
+    "object" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponse.o",
+    "swift-dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponse.swiftdeps"
+  },
+  "/Users/techversant/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.24.3/darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/GetTrustResultResponseProxyAPIDelegate.swift" : {
+    "const-values" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponseProxyAPIDelegate.swiftconstvalues",
+    "dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponseProxyAPIDelegate.d",
+    "diagnostics" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponseProxyAPIDelegate.dia",
+    "object" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponseProxyAPIDelegate.o",
+    "swift-dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/GetTrustResultResponseProxyAPIDelegate.swiftdeps"
+  },
+  "/Users/techversant/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.24.3/darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/HTTPCookieProxyAPIDelegate.swift" : {
+    "const-values" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieProxyAPIDelegate.swiftconstvalues",
+    "dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieProxyAPIDelegate.d",
+    "diagnostics" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieProxyAPIDelegate.dia",
+    "object" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieProxyAPIDelegate.o",
+    "swift-dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieProxyAPIDelegate.swiftdeps"
+  },
+  "/Users/techversant/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.24.3/darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/HTTPCookieStoreProxyAPIDelegate.swift" : {
+    "const-values" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieStoreProxyAPIDelegate.swiftconstvalues",
+    "dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieStoreProxyAPIDelegate.d",
+    "diagnostics" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieStoreProxyAPIDelegate.dia",
+    "object" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieStoreProxyAPIDelegate.o",
+    "swift-dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPCookieStoreProxyAPIDelegate.swiftdeps"
+  },
+  "/Users/techversant/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.24.3/darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/HTTPURLResponseProxyAPIDelegate.swift" : {
+    "const-values" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPURLResponseProxyAPIDelegate.swiftconstvalues",
+    "dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPURLResponseProxyAPIDelegate.d",
+    "diagnostics" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPURLResponseProxyAPIDelegate.dia",
+    "object" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPURLResponseProxyAPIDelegate.o",
+    "swift-dependencies" : "/Users/techversant/Downloads/untitled 2/ios/build/Pods.build/Debug-iphonesimulator/webview_flutter_wkwebview.build/Objects-normal/x86_64/HTTPURLResponseProxyAPIDelegate.swiftdeps"
+  }
+}
