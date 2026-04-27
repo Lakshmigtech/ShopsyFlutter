@@ -13,6 +13,16 @@ class Address {
     required this.isDefault,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'phone': phone,
+      'address': address,
+      'type': type,
+      'isDefault': isDefault,
+    };
+  }
+
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
       name: json['name'] ?? '',

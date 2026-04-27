@@ -1,0 +1,1 @@
+ /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/flutter_build/c69f79e19c77b5471f5f2cd9ec42f495/native_assets.json:  /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib

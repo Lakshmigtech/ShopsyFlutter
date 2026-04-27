@@ -325,7 +325,7 @@
   },
   {
     "clangModuleMapPath" : "\/Users\/techversant\/development\/flutter\/bin\/cache\/artifacts\/engine\/ios\/Flutter.xcframework\/ios-arm64_x86_64-simulator\/Flutter.framework\/Modules\/module.modulemap",
-    "clangModulePath" : "\/Users\/techversant\/Downloads\/untitled 2\/ios\/build\/SwiftExplicitPrecompiledModules\/Flutter-1E6QRRP6G2QI7GYM980ZMF52.pcm",
+    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/Flutter-1E6QRRP6G2QI7GYM980ZMF52.pcm",
     "isBridgingHeaderDependency" : false,
     "isFramework" : false,
     "moduleName" : "Flutter"
@@ -625,8 +625,8 @@
     "moduleName" : "sys_types"
   },
   {
-    "clangModuleMapPath" : "\/Users\/techversant\/Downloads\/untitled 2\/build\/ios\/Debug-iphonesimulator\/url_launcher_ios\/url_launcher_ios.framework\/Modules\/module.modulemap",
-    "clangModulePath" : "\/Users\/techversant\/Downloads\/untitled 2\/ios\/build\/SwiftExplicitPrecompiledModules\/url_launcher_ios-EJXXXS3I4DBRGLXI8J4XOGF8L.pcm",
+    "clangModuleMapPath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/build\/ios\/Debug-iphonesimulator\/url_launcher_ios\/url_launcher_ios.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/url_launcher_ios-A5X8289X1JFW162AR03VLRCWS.pcm",
     "isBridgingHeaderDependency" : false,
     "isFramework" : false,
     "moduleName" : "url_launcher_ios"

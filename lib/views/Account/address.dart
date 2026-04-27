@@ -1,3 +1,5 @@
+import 'package:Shopsy/Controller/address_controller.dart';
+import 'package:Shopsy/views/Account/add_address.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:Shopsy/models/addressmodel.dart';
@@ -7,23 +9,7 @@ class AddressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Simulated list of addresses using the Address model
-    final List<Address> addresses = [
-      Address(
-        name: "Lakshmi G",
-        phone: "9876543210",
-        address: "House No. 12, ABC Nagar, Kochi, Kerala - 682001",
-        type: "Home",
-        isDefault: true,
-      ),
-      Address(
-        name: "Sarath Kumar",
-        phone: "9123456780",
-        address: "Tech Park, 3rd Floor, Kakkanad, Kochi",
-        type: "Office",
-        isDefault: false,
-      ),
-    ];
+    final controller = Get.put(AddressController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -43,31 +29,34 @@ class AddressScreen extends StatelessWidget {
               backgroundColor: Colors.grey.shade200,
               child: IconButton(
                 icon: const Icon(Icons.add, color: Colors.black),
-                onPressed: () {
-                  // Logic to add new address
-                },
+                onPressed: () => Get.to(() => const AddAddressScreen()),
               ),
             ),
           ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: addresses.length,
-        separatorBuilder: (context, index) => const Divider(),
-        itemBuilder: (context, index) {
-          return AddressCard(addressData: addresses[index]);
-        },
-      ),
+      body: Obx(() => ListView.separated(
+            itemCount: controller.addresses.length,
+            separatorBuilder: (context, index) => const Divider(),
+            itemBuilder: (context, index) {
+              return AddressCard(
+                addressData: controller.addresses[index],
+                onDelete: () => controller.removeAddress(index),
+              );
+            },
+          )),
     );
   }
 }
 
 class AddressCard extends StatelessWidget {
   final Address addressData;
+  final VoidCallback onDelete;
 
   const AddressCard({
     super.key,
     required this.addressData,
+    required this.onDelete,
   });
 
   @override
@@ -77,7 +66,6 @@ class AddressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Name + Default Tag
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -100,32 +88,22 @@ class AddressCard extends StatelessWidget {
                   ),
                   child: const Text(
                     "Default",
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: Colors.green, fontSize: 12),
                   ),
                 ),
             ],
           ),
-
           const SizedBox(height: 6),
-
-          // Phone
           Text(
             addressData.phone,
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
-
           const SizedBox(height: 6),
-
-          // Address
-          Text(addressData.address, style: const TextStyle(fontSize: 16)),
-
+          Text(addressData.address, style: const TextStyle(fontSize: 14)),
           const SizedBox(height: 10),
-
-          // Bottom Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Tag (Home / Office)
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -135,15 +113,16 @@ class AddressCard extends StatelessWidget {
                   color: Colors.blue.shade100,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(addressData.type),
+                child: Text(addressData.type, style: const TextStyle(fontSize: 12)),
               ),
-
-              // Actions
               Row(
-                children: const [
-                  Text("Edit"),
-                  SizedBox(width: 10),
-                  Text("Delete", style: TextStyle(color: Colors.red)),
+                children: [
+                  const Text("Edit", style: TextStyle(color: Colors.blue)),
+                  const SizedBox(width: 15),
+                  GestureDetector(
+                    onTap: onDelete,
+                    child: const Text("Delete", style: TextStyle(color: Colors.red)),
+                  ),
                 ],
               ),
             ],

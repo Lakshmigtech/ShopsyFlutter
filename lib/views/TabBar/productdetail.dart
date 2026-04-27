@@ -393,7 +393,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         ),
       ),
     );
-  }flutter doctor
+  }
 
   // 🔘 Circle Icon
   Widget _circleIcon(IconData icon, VoidCallback onTap, {Color? color}) {

@@ -3,6 +3,7 @@ import 'package:Shopsy/views/Account/address.dart';
 import 'package:Shopsy/views/Account/notification.dart';
 import 'package:Shopsy/views/Account/payment.dart';
 import 'package:Shopsy/views/Account/wishlist.dart';
+import 'package:Shopsy/views/Order/my_orders.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -90,7 +91,11 @@ class ProfilePage extends GetView<AuthController> {
               ),
             ),
             const SizedBox(height: 10),
-            menuItem(Icons.shopping_bag, "My Orders"),
+            menuItem(
+              Icons.shopping_bag,
+              "My Orders",
+                  () => Get.to(() => MyOrdersScreen()),
+            ),
             menuItem(
               Icons.favorite,
               "Wishlist",

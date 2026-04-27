@@ -1,3 +1,4 @@
+import 'package:Shopsy/Controller/address_controller.dart';
 import 'package:Shopsy/Controller/auth_controller.dart';
 import 'package:Shopsy/Controller/cart_controller.dart';
 import 'package:Shopsy/Controller/navigation_controller.dart';
@@ -14,6 +15,7 @@ class AppBindings extends Bindings {
     Get.put(CartController(), permanent: true);
     Get.put(NavigationController(), permanent: true);
     Get.put(WishlistController(), permanent: true);
+    Get.put(AddressController(), permanent: true);
     Get.lazyPut(() => SplashController());
   }
 }
