@@ -1,0 +1,10 @@
+moduledependenciestarget: \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/XCFrameworkIntermediates/razorpay-core-pod/RazorpayCore.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/XCFrameworkIntermediates/razorpay-core-pod/RazorpayCore.framework/Headers/RazorpayCore-umbrella.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk/System/Library/Frameworks/UIKit.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk/System/Library/Frameworks/Foundation.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk/usr/include/DarwinFoundation2.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk/usr/include/ObjectiveC.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/XCFrameworkIntermediates/razorpay-core-pod/RazorpayCore.framework/Headers/RazorpayCore-Swift.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk/System/Library/Frameworks/WebKit.framework/Modules/module.modulemap

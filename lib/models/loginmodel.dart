@@ -1,35 +1,51 @@
 class LoginResponse {
-  final LoginDetail detail;
-
-  LoginResponse({required this.detail});
-
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(detail: LoginDetail.fromJson(json['detail']));
-  }
-}
-
-class LoginDetail {
-  final String status;
-  final String message;
-  final int userId;
   final String accessToken;
   final String refreshToken;
+  final int id;
+  final String username;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String gender;
+  final String image;
 
-  LoginDetail({
-    required this.status,
-    required this.message,
-    required this.userId,
+  LoginResponse({
     required this.accessToken,
     required this.refreshToken,
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.gender,
+    required this.image,
   });
 
-  factory LoginDetail.fromJson(Map<String, dynamic> json) {
-    return LoginDetail(
-      status: json['status'],
-      message: json['message'],
-      userId: json['user_id'],
-      accessToken: json['access_token'],
-      refreshToken: json['refresh_token'],
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
+      accessToken: json['accessToken'] ?? '',
+      refreshToken: json['refreshToken'] ?? '',
+      id: json['id'] ?? 0,
+      username: json['username'] ?? '',
+      email: json['email'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
+      gender: json['gender'] ?? '',
+      image: json['image'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'accessToken': accessToken,
+      'refreshToken': refreshToken,
+      'id': id,
+      'username': username,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'gender': gender,
+      'image': image,
+    };
   }
 }

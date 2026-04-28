@@ -24,9 +24,8 @@ class AuthController extends GetxController {
     final storedUsername = await LocalStorage.getUsername();
 
     token.value = storedToken;
-    username.value = (storedUsername?.trim().isNotEmpty ?? false)
-        ? storedUsername!.trim()
-        : 'Guest';
+    username.value =
+    (storedUsername?.trim().isNotEmpty ?? false) ? storedUsername!.trim() : 'Guest';
 
     if (storedUsername != null && storedUsername.trim().isNotEmpty) {
       usernameController.text = storedUsername.trim();
@@ -35,75 +34,75 @@ class AuthController extends GetxController {
     return storedToken != null && storedToken.isNotEmpty;
   }
 
+  // ✅ FIXED LOGIN
   Future<void> login() async {
     final enteredUsername = usernameController.text.trim();
     final enteredPassword = passwordController.text;
 
     if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please enter all fields',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Please enter all fields',
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
     try {
       isLoading.value = true;
+
       final result = await AuthService.login(
         username: enteredUsername,
         password: enteredPassword,
       );
 
-      if (result != null && result.detail.status == 'success') {
+      // ✅ FIX: check result directly (no "detail")
+      if (result != null && result.accessToken.isNotEmpty) {
         await LocalStorage.saveLogin(
-          token: result.detail.accessToken,
-          userId: result.detail.userId,
-          username: enteredUsername,
+          token: result.accessToken,
+          userId: result.id,
+          username: result.username, // use API username
         );
 
-        token.value = result.detail.accessToken;
-        username.value = enteredUsername;
+        token.value = result.accessToken;
+        username.value = result.username;
+
         passwordController.clear();
         isHidden.value = true;
+
         Get.find<NavigationController>().reset();
 
-        Get.snackbar(
-          'Success',
-          result.detail.message,
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Get.snackbar('Success', 'Login successful',
+            snackPosition: SnackPosition.BOTTOM);
+
         Get.offAll(() => const MainNavigation());
-        return;
       } else {
-        Get.snackbar(
-          'Error',
-          'Login failed. Please check your credentials.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Get.snackbar('Error', 'Invalid credentials',
+            snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'An error occurred: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Error', 'Login failed: $e',
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }
   }
+
+  // optional quick login
   Future<void> simplelogin() async {
     Get.offAll(() => const MainNavigation());
   }
 
-    Future<void> logout() async {
+  Future<void> logout() async {
     await LocalStorage.clear();
+
     token.value = null;
     username.value = 'Guest';
+
     usernameController.clear();
     passwordController.clear();
+
     isHidden.value = true;
+
     Get.find<NavigationController>().reset();
+
     Get.offAll(() => const LoginPage());
   }
 

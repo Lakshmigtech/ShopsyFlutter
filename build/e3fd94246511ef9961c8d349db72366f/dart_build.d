@@ -1,1 +1,0 @@
- /Users/techversant/StudioProjects/ShopsyFlutter/build/e3fd94246511ef9961c8d349db72366f/dart_build_result.json:  /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/package_config.json /Users/techversant/StudioProjects/ShopsyFlutter/pubspec.yaml /Users/techversant/development/flutter/bin/cache/dart-sdk/version

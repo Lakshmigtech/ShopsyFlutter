@@ -4,6 +4,7 @@ import 'package:Shopsy/Controller/order_controller.dart';
 import 'package:Shopsy/Controller/address_controller.dart';
 import 'package:Shopsy/models/ordermodel.dart';
 import 'package:Shopsy/views/Account/add_address.dart';
+import 'package:Shopsy/views/Account/payment.dart';
 import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -203,49 +204,14 @@ class OrderSummaryScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            onPressed: () async {
+            onPressed: () {
               if (selectedAddress.value.isEmpty) {
                 Get.snackbar("Error", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
                 return;
               }
-
-              // 1. Create Order object
-              final newOrder = OrderModel(
-                orderId: DateTime.now().millisecondsSinceEpoch.toString(),
-                items: cartController.cartItems
-                    .map((item) => OrderItem(
-                          productId: item.product.id,
-                          productName: item.product.name,
-                          productImage: item.product.image,
-                          quantity: item.quantity.value,
-                          price: item.subtotal,
-                        ))
-                    .toList(),
-                totalAmount: cartController.totalPrice,
-                address: selectedAddress.value,
-                dateTime: DateTime.now(),
-              );
-
-              // 2. Save to local storage via Controller
-              await orderController.placeOrder(newOrder);
-
-              // 3. Clear Cart
-              cartController.cartItems.clear();
-
-              // 4. Reset Navigation to Home (Index 0)
-              navigationController.changeIndex(0);
-
-              // 5. Navigate to Main Navigation (Home)
-              Get.offAll(() => const MainNavigation());
-
-              // 6. Show success
-              Get.snackbar(
-                "Order Placed",
-                "Your order has been placed successfully!",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
+              
+              // Navigate to Payment page with selected address
+              Get.to(() => PaymentMethodsPage(selectedAddress: selectedAddress.value));
             },
             child: const Text(
               "CONFIRM ORDER",

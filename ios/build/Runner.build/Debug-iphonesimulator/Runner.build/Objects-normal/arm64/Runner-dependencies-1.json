@@ -319,8 +319,8 @@
     "moduleName" : "FileProvider"
   },
   {
-    "clangModuleMapPath" : "\/Users\/techversant\/Downloads\/untitled 2\/build\/ios\/Debug-iphonesimulator\/Flutter.framework\/Modules\/module.modulemap",
-    "clangModulePath" : "\/Users\/techversant\/Downloads\/untitled 2\/ios\/build\/SwiftExplicitPrecompiledModules\/Flutter-9X9FLPDWHWBH96HQ1HQBX8DSV.pcm",
+    "clangModuleMapPath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/build\/ios\/Debug-iphonesimulator\/Flutter.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/Flutter-A3BAUAPWMBYUMSXX2MMCGNDB2.pcm",
     "isBridgingHeaderDependency" : true,
     "isFramework" : false,
     "moduleName" : "Flutter"

@@ -4,15 +4,15 @@ import 'package:http/http.dart' as http;
 import 'package:Shopsy/models/loginmodel.dart';
 
 class AuthService {
-  static const String baseUrl = "https://pension-distributor.demoserver.work";
+  static const String baseUrl = "https://dummyjson.com";
 
   static Future<LoginResponse?> login({
     required String username,
     required String password,
   }) async {
-    final url = Uri.parse("$baseUrl/api/v1/token");
+    final url = Uri.parse("$baseUrl/user/login");
     final body = jsonEncode({
-      "email_or_phone_number": username,
+      "username": username,
       "password": password,
     });
 

@@ -6,6 +6,7 @@ import 'package:Shopsy/views/Account/wishlist.dart';
 import 'package:Shopsy/views/Order/my_orders.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends GetView<AuthController> {
   const ProfilePage({super.key});
@@ -25,6 +26,13 @@ class ProfilePage extends GetView<AuthController> {
         onTap: onTap ?? () {},
       ),
     );
+  }
+
+  Future<void> _launchPrivacyPolicy() async {
+    final Uri url = Uri.parse('https://www.iubenda.com/en/blog/privacy-policy-ecommerce-stores/');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      Get.snackbar("Error", "Could not launch privacy policy", snackPosition: SnackPosition.BOTTOM);
+    }
   }
 
   @override
@@ -129,7 +137,11 @@ class ProfilePage extends GetView<AuthController> {
               "Notifications",
               () => Get.to(() => NotificationScreen()),
             ),
-            menuItem(Icons.privacy_tip, "Privacy Policy"),
+            menuItem(
+              Icons.privacy_tip,
+              "Privacy Policy",
+              _launchPrivacyPolicy,
+            ),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -1,2 +1,2 @@
 dependencies: \
-  /Users/techversant/Downloads/untitled\ 2/ios/build/Runner.build/Debug-iphonesimulator/Runner.build/DerivedSources/Runner_vers.c
+  /Users/techversant/StudioProjects/ShopsyFlutter/ios/build/Runner.build/Debug-iphonesimulator/Runner.build/DerivedSources/Runner_vers.c

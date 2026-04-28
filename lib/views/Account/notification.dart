@@ -1,68 +1,97 @@
+import 'package:Shopsy/Controller/notification_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-class NotificationScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> notifications = [
-    {
-      "title": "Order Shipped",
-      "message": "Your order #1234 has been shipped",
-      "time": "2 min ago",
-      "isRead": false,
-      "icon": Icons.local_shipping,
-    },
-    {
-      "title": "Big Sale!",
-      "message": "Flat 50% off on fashion items",
-      "time": "1 hour ago",
-      "isRead": true,
-      "icon": Icons.local_offer,
-    },
-    {
-      "title": "Order Delivered",
-      "message": "Your order #5678 has been delivered",
-      "time": "Yesterday",
-      "isRead": true,
-      "icon": Icons.check_circle,
-    },
-  ];
-
-  NotificationScreen({super.key});
+class NotificationScreen extends GetView<NotificationController> {
+  const NotificationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Notifications"), centerTitle: true),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final item = notifications[index];
-
-          return Container(
-            color: item['isRead'] ? Colors.white : Colors.blue.shade50,
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue.shade100,
-                child: Icon(item['icon'], color: Colors.blue),
-              ),
-              title: Text(
-                item['title'],
-                style: TextStyle(
-                  fontWeight: item['isRead']
-                      ? FontWeight.normal
-                      : FontWeight.bold,
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        title: const Text("Notifications"),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () => controller.clearAll(),
+            icon: const Icon(Icons.delete_sweep),
+            tooltip: "Clear All",
+          )
+        ],
+      ),
+      body: Obx(() {
+        if (controller.notifications.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.notifications_none, size: 80, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                const Text(
+                  "No notifications yet",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
                 ),
-              ),
-              subtitle: Text(item['message']),
-              trailing: Text(
-                item['time'],
-                style: const TextStyle(fontSize: 12),
-              ),
-              onTap: () {
-                // Navigate to details
-                debugPrint("Clicked ${item['title']}");
-              },
+              ],
             ),
           );
+        }
+
+        return ListView.separated(
+          itemCount: controller.notifications.length,
+          separatorBuilder: (context, index) => const Divider(height: 1),
+          itemBuilder: (context, index) {
+            final notification = controller.notifications[index];
+
+            return Container(
+              color: notification.isRead ? Colors.white : Colors.blue.withOpacity(0.05),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: notification.isRead 
+                      ? Colors.grey.shade200 
+                      : Colors.blue.shade100,
+                  child: Icon(
+                    notification.isRead ? Icons.notifications_none : Icons.notifications_active, 
+                    color: notification.isRead ? Colors.grey : Colors.blue
+                  ),
+                ),
+                title: Text(
+                  notification.title,
+                  style: TextStyle(
+                    fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    Text(notification.message, style: TextStyle(color: Colors.grey[700])),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('dd MMM, hh:mm a').format(notification.dateTime),
+                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
+                onTap: () => controller.markAsRead(index),
+              ),
+            );
+          },
+        );
+      }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.addNotification(
+            "Sample Notification", 
+            "This is a test notification generated locally."
+          );
         },
+        child: const Icon(Icons.add_alert),
       ),
     );
   }
