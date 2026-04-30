@@ -97,7 +97,7 @@ class LoginPage extends StatelessWidget {
                               ),
                               onPressed: controller.isLoading.value
                                   ? null
-                                  : controller.login,
+                                  : controller.simplelogin,
                               child: controller.isLoading.value
                                   ? const CircularProgressIndicator(
                                       color: Colors.blue,

@@ -3,18 +3,33 @@ import 'package:Shopsy/models/addressmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AddAddressScreen extends StatelessWidget {
+class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final AddressController controller = Get.find<AddressController>();
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final addressController = TextEditingController();
-    final type = "Home".obs;
-    final isDefault = false.obs;
+  State<AddAddressScreen> createState() => _AddAddressScreenState();
+}
 
+class _AddAddressScreenState extends State<AddAddressScreen> {
+  final AddressController controller = Get.find<AddressController>();
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final addressController = TextEditingController();
+  
+  // Rx variables moved outside the build method
+  final RxString type = "Home".obs;
+  final RxBool isDefault = false.obs;
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

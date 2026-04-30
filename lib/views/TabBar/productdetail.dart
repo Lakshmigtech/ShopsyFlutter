@@ -118,9 +118,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       _circleIcon(Icons.arrow_back, () => Get.back()),
                       const Spacer(),
                       Obx(() => _circleIcon(
-                        product.isFavorite.value ? Icons.favorite : Icons.favorite_border,
+                        wishlistController.isFavorite(product) ? Icons.favorite : Icons.favorite_border,
                         () => wishlistController.toggleFavorite(product),
-                        color: product.isFavorite.value ? Colors.red : Colors.black,
+                        color: wishlistController.isFavorite(product) ? Colors.red : Colors.black,
                       )),
                       const SizedBox(width: 10),
                       Obx(

@@ -3,14 +3,15 @@ import 'package:Shopsy/Controller/navigation_controller.dart';
 import 'package:Shopsy/Controller/notification_controller.dart';
 import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentController extends GetxController {
   late Razorpay _razorpay;
   
-  // IMPORTANT: Replace 'rzp_test_YOUR_KEY_HERE' with your actual Test Key from Razorpay Dashboard
-  static const String razorpayKey = "rzp_test_SipsQzbPDlXMlt";
+  // Use environment variable for security
+  final String razorpayKey = dotenv.env['RAZORPAY_KEY'] ?? "";
 
   @override
   void onInit() {
@@ -22,6 +23,11 @@ class PaymentController extends GetxController {
   }
 
   void openCheckout(double amount, String contact, String email) {
+    if (razorpayKey.isEmpty) {
+      Get.snackbar("Error", "Razorpay key not found in environment");
+      return;
+    }
+
     var options = {
       'key': razorpayKey,
       'amount': (amount * 100).toInt(), // amount in paise

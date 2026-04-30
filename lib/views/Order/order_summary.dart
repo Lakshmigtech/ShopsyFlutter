@@ -2,47 +2,59 @@ import 'package:Shopsy/Controller/cart_controller.dart';
 import 'package:Shopsy/Controller/navigation_controller.dart';
 import 'package:Shopsy/Controller/order_controller.dart';
 import 'package:Shopsy/Controller/address_controller.dart';
-import 'package:Shopsy/models/ordermodel.dart';
 import 'package:Shopsy/views/Account/add_address.dart';
 import 'package:Shopsy/views/Account/payment.dart';
-import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../TabBar/cart.dart';
 
-class OrderSummaryScreen extends StatelessWidget {
-  OrderSummaryScreen({super.key});
+class OrderSummaryScreen extends StatefulWidget {
+  const OrderSummaryScreen({super.key});
 
+  @override
+  State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();
+}
+
+class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   final CartController cartController = Get.find<CartController>();
-  final OrderController orderController = Get.put(OrderController());
+  final OrderController orderController = Get.find<OrderController>();
   final NavigationController navigationController = Get.find<NavigationController>();
   final AddressController addressController = Get.find<AddressController>();
 
-  @override
-  Widget build(BuildContext context) {
-    // Current selected address - Initialize with default or first saved address
-    final RxString selectedAddress = "".obs;
-    
-    // Use an effect or a worker if you want to react to address changes while this screen is open
-    ever(addressController.addresses, (_) {
-      if (selectedAddress.value.isEmpty && addressController.addresses.isNotEmpty) {
-        final defaultAddr = addressController.addresses.firstWhere(
-          (element) => element.isDefault,
-          orElse: () => addressController.addresses.first,
-        );
-        selectedAddress.value = "${defaultAddr.name}, ${defaultAddr.address}";
-      }
-    });
+  final RxString selectedAddress = "".obs;
+  late Worker _worker;
 
+  @override
+  void initState() {
+    super.initState();
+    
     // Initial value setup
-    if (addressController.addresses.isNotEmpty) {
+    _updateDefaultAddress();
+
+    // Register ever() worker
+    _worker = ever(addressController.addresses, (_) {
+      _updateDefaultAddress();
+    });
+  }
+
+  void _updateDefaultAddress() {
+    if (selectedAddress.value.isEmpty && addressController.addresses.isNotEmpty) {
       final defaultAddr = addressController.addresses.firstWhere(
         (element) => element.isDefault,
         orElse: () => addressController.addresses.first,
       );
       selectedAddress.value = "${defaultAddr.name}, ${defaultAddr.address}";
     }
+  }
 
+  @override
+  void dispose() {
+    _worker.dispose(); // Cancel the worker
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
       appBar: AppBar(
@@ -85,8 +97,8 @@ class OrderSummaryScreen extends StatelessWidget {
                     ],
                   ),
                   Obx(() => Text(
-                        selectedAddress.value.isEmpty 
-                            ? "No address selected. Please add an address." 
+                        selectedAddress.value.isEmpty
+                            ? "No address selected. Please add an address."
                             : selectedAddress.value,
                         style: const TextStyle(fontSize: 14, color: Colors.grey),
                       )),
@@ -143,7 +155,7 @@ class OrderSummaryScreen extends StatelessWidget {
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500),
                                   ),
-                                  Text("Qty: ${item.quantity.value}"),
+                                  Text("Qty: ${item.quantity}"),
                                 ],
                               ),
                             ),
@@ -206,12 +218,14 @@ class OrderSummaryScreen extends StatelessWidget {
             ),
             onPressed: () {
               if (selectedAddress.value.isEmpty) {
-                Get.snackbar("Error", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
+                Get.snackbar("Error", "Please select a delivery address",
+                    backgroundColor: Colors.red, colorText: Colors.white);
                 return;
               }
-              
+
               // Navigate to Payment page with selected address
-              Get.to(() => PaymentMethodsPage(selectedAddress: selectedAddress.value));
+              Get.to(() =>
+                  PaymentMethodsPage(selectedAddress: selectedAddress.value));
             },
             child: const Text(
               "CONFIRM ORDER",
@@ -260,35 +274,35 @@ class OrderSummaryScreen extends StatelessWidget {
                 maxHeight: MediaQuery.of(context).size.height * 0.4,
               ),
               child: Obx(() => ListView.separated(
-                shrinkWrap: true,
-                itemCount: addressController.addresses.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final addr = addressController.addresses[index];
-                  final fullAddrString = "${addr.name}, ${addr.address}";
-                  return Obx(() {
-                    final isSelected = currentAddress.value == fullAddrString;
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(
-                        isSelected
-                            ? Icons.radio_button_checked
-                            : Icons.radio_button_off,
-                        color: isSelected ? Colors.orange : Colors.grey,
-                      ),
-                      title: Text(
-                        addr.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(addr.address),
-                      onTap: () {
-                        currentAddress.value = fullAddrString;
-                        Get.back();
-                      },
-                    );
-                  });
-                },
-              )),
+                    shrinkWrap: true,
+                    itemCount: addressController.addresses.length,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      final addr = addressController.addresses[index];
+                      final fullAddrString = "${addr.name}, ${addr.address}";
+                      return Obx(() {
+                        final isSelected = currentAddress.value == fullAddrString;
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(
+                            isSelected
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_off,
+                            color: isSelected ? Colors.orange : Colors.grey,
+                          ),
+                          title: Text(
+                            addr.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(addr.address),
+                          onTap: () {
+                            currentAddress.value = fullAddrString;
+                            Get.back();
+                          },
+                        );
+                      });
+                    },
+                  )),
             ),
             const SizedBox(height: 20),
             SizedBox(

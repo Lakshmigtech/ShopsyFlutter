@@ -25,6 +25,9 @@ class LocalStorage {
 
   static Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    // Only remove user session related data, keeping other settings (like addresses/orders)
+    await prefs.remove('token');
+    await prefs.remove('userId');
+    await prefs.remove('username');
   }
 }

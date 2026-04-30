@@ -142,7 +142,7 @@ class PaymentMethodsPage extends StatelessWidget {
                             productId: item.product.id,
                             productName: item.product.name,
                             productImage: item.product.image,
-                            quantity: item.quantity.value,
+                            quantity: item.quantity,
                             price: item.subtotal,
                           )).toList(),
                           totalAmount: cartController.totalPrice,

@@ -223,7 +223,7 @@ class ProductScreen extends StatelessWidget {
                                 Obx(() => IconButton(
                                   onPressed: () => wishlistController.toggleFavorite(product),
                                   icon: Icon(
-                                    product.isFavorite.value ? Icons.favorite : Icons.favorite_border,
+                                    wishlistController.isFavorite(product) ? Icons.favorite : Icons.favorite_border,
                                     color: Colors.red,
                                   ),
                                 )),

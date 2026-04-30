@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-
 class Product {
   final String id;
   final String image;
@@ -10,9 +8,6 @@ class Product {
   final String subCategory;
   final List<String> keywords;
   final String description;
-
-  // Adding a reactive property for wishlist/favorite status
-  final RxBool isFavorite = false.obs;
 
   Product({
     required this.id,
@@ -40,8 +35,21 @@ class Product {
     );
   }
 
-  void toggleFavorite() {
-    isFavorite.value = !isFavorite.value;
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'image': image,
+      'name': name,
+      'rating': {
+        'stars': rating.stars,
+        'count': rating.count,
+      },
+      'priceCents': priceCents,
+      'category': category,
+      'subCategory': subCategory,
+      'keywords': keywords,
+      'description': description,
+    };
   }
 }
 
@@ -61,11 +69,23 @@ class Rating {
 
 class CartItem {
   final Product product;
-  final RxInt quantity;
+  int quantity;
 
-  CartItem({required this.product, int initialQuantity = 1})
-    : quantity = initialQuantity.obs;
+  CartItem({required this.product, this.quantity = 1});
 
-  // Helper method to get total price for this item
-  double get subtotal => (product.priceCents * quantity.value) / 100.0;
+  double get subtotal => (product.priceCents * quantity) / 100.0;
+
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      product: Product.fromJson(json['product']),
+      quantity: json['quantity'] ?? 1,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'product': product.toJson(),
+      'quantity': quantity,
+    };
+  }
 }

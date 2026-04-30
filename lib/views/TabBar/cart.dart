@@ -127,7 +127,7 @@ class CartScreen extends GetView<CartController> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: () => Get.to(() => OrderSummaryScreen()),
+          onPressed: () => Get.to(() => const OrderSummaryScreen()),
           child: const Text(
             "PLACE ORDER",
             style: TextStyle(
@@ -212,10 +212,10 @@ class _CartItemTile extends StatelessWidget {
       children: [
         _qtyBtn(Icons.remove, () => controller.decreaseQuantity(index)),
         const SizedBox(width: 15),
-        Obx(() => Text(
-          "${cartItem.quantity.value}",
+        Text(
+          "${cartItem.quantity}",
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        )),
+        ),
         const SizedBox(width: 15),
         _qtyBtn(Icons.add, () => controller.increaseQuantity(index)),
         const Spacer(),
