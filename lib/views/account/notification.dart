@@ -1,4 +1,4 @@
-import 'package:Shopsy/Controller/notification_controller.dart';
+import 'package:Shopsy/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';

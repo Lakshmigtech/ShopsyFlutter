@@ -1,7 +1,6 @@
 dependencies: \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/razorpay_flutter/razorpay_flutter.framework/Modules/module.modulemap \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/shared_preferences_foundation/shared_preferences_foundation.framework/Modules/module.modulemap \
-  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/url_launcher_ios/url_launcher_ios.framework/Modules/module.modulemap \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/webview_flutter_wkwebview/webview_flutter_wkwebview.framework/Modules/module.modulemap \
   /Users/techversant/StudioProjects/ShopsyFlutter/ios/Runner/GeneratedPluginRegistrant.m \
   /Users/techversant/StudioProjects/ShopsyFlutter/ios/Runner/GeneratedPluginRegistrant.h \

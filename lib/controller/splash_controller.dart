@@ -1,9 +1,8 @@
 import 'dart:async';
-
-import 'package:Shopsy/Controller/auth_controller.dart';
-import 'package:Shopsy/Controller/navigation_controller.dart';
-import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
-import 'package:Shopsy/views/Authentication/login.dart';
+import 'package:Shopsy/controller/auth_controller.dart';
+import 'package:Shopsy/controller/navigation_controller.dart';
+import 'package:Shopsy/views/bottom_navigation/bottom_navigation.dart';
+import 'package:Shopsy/views/authentication/login.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController {
@@ -35,7 +34,7 @@ class SplashController extends GetxController {
         return;
       }
 
-      Get.offAll(() => const LoginPage());
+      Get.offAll(() => LoginScreen());
     });
   }
 

@@ -1,59 +1,56 @@
 Running `(cd /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/; ANDROID_HOME=/Users/techversant/Library/Android/sdk TMPDIR=/var/folders/kb/jf66tbtj6hb_k8kpg6bzrk5m0000gn/T/ PATH=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Users/techversant/.antigravity/antigravity/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin:/Library/Apple/usr/bin:/Users/techversant/development/flutter/bin HOME=/Users/techversant /Users/techversant/development/flutter/bin/cache/dart-sdk/bin/dart --packages=/Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/package_config.json /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/objective_c/84fd4fa0ea/hook.dill --config=/Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/objective_c/84fd4fa0ea/input.json )`.
-INFO: 2026-05-06 14:42:18.490470: Running `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version`.
+INFO: 2026-05-11 12:36:06.753802: Running `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version`.
 
-INFO: 2026-05-06 14:42:18.508858: Running `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version`.
+INFO: 2026-05-11 12:36:06.918673: Running `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version`.
 
-INFO: 2026-05-06 14:42:18.524860: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/include/dart_api_dl.c -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o
+INFO: 2026-05-11 12:36:06.941557: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/include/dart_api_dl.c -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o
 
-INFO: 2026-05-06 14:42:18.525251: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.c -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o
+INFO: 2026-05-11 12:36:06.942154: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.c -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o
 
-INFO: 2026-05-06 14:42:18.525500: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/input_stream_adapter.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o
+INFO: 2026-05-11 12:36:06.942532: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o
 
-INFO: 2026-05-06 14:42:18.525654: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o
-INFO: 2026-05-06 14:42:18.525793: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/observer.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o
+ream_adapter.m.o
 
-INFO: 2026-05-06 14:42:18.526120: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/protocol.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o
+INFO: 2026-05-11 12:36:06.942650: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/observer.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o
+INFO: 2026-05-11 12:36:06.942756: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/ns_number.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o
+INFO: 2026-05-11 12:36:06.942865: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/protocol.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o
+INFO: 2026-05-11 12:36:06.942967: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c_bindings_generated.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o
 
+INFO: 2026-05-11 12:36:07.150041: 
+INFO: 2026-05-11 12:36:07.150287: 
+INFO: 2026-05-11 12:36:07.150413: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o
+INFO: 2026-05-11 12:36:07.151021: 
+INFO: 2026-05-11 12:36:07.151089: 
+INFO: 2026-05-11 12:36:07.151121: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o
 
+INFO: 2026-05-11 12:36:07.162284: 
+INFO: 2026-05-11 12:36:07.162409: 
+INFO: 2026-05-11 12:36:07.162440: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o
 
-INFO: 2026-05-06 14:42:18.526246: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/techversant/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c_bindings_generated.m -fpic -I src -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o
+INFO: 2026-05-11 12:36:07.169046: 
+INFO: 2026-05-11 12:36:07.169182: 
+INFO: 2026-05-11 12:36:07.169225: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o
 
-INFO: 2026-05-06 14:42:18.599032: 
-INFO: 2026-05-06 14:42:18.599228: 
-INFO: 2026-05-06 14:42:18.599321: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o
+INFO: 2026-05-11 12:36:07.348687: 
+INFO: 2026-05-11 12:36:07.348806: 
+INFO: 2026-05-11 12:36:07.348838: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o
 
-INFO: 2026-05-06 14:42:18.599871: 
-INFO: 2026-05-06 14:42:18.599902: 
-INFO: 2026-05-06 14:42:18.599913: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o
+INFO: 2026-05-11 12:36:07.368536: 
+INFO: 2026-05-11 12:36:07.368714: 
+INFO: 2026-05-11 12:36:07.368741: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o
 
-INFO: 2026-05-06 14:42:18.617750: 
-INFO: 2026-05-06 14:42:18.617803: 
-INFO: 2026-05-06 14:42:18.617814: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o
+INFO: 2026-05-11 12:36:07.373720: 
+INFO: 2026-05-11 12:36:07.373780: 
+INFO: 2026-05-11 12:36:07.373794: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o
 
-INFO: 2026-05-06 14:42:18.621390: 
-INFO: 2026-05-06 14:42:18.621430: 
-INFO: 2026-05-06 14:42:18.621442: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o
+INFO: 2026-05-11 12:36:07.403580: 
+INFO: 2026-05-11 12:36:07.403619: 
+INFO: 2026-05-11 12:36:07.403630: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o
 
-INFO: 2026-05-06 14:42:18.801104: 
-INFO: 2026-05-06 14:42:18.801148: 
-INFO: 2026-05-06 14:42:18.801158: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o
+INFO: 2026-05-11 12:36:07.403964: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -shared -Wl,-encryptable -undefined dynamic_lookup -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib
 
-INFO: 2026-05-06 14:42:18.810400: 
-INFO: 2026-05-06 14:42:18.810451: 
-INFO: 2026-05-06 14:42:18.810462: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o
+INFO: 2026-05-11 12:36:07.527274: 
+INFO: 2026-05-11 12:36:07.527395: ld: warning: -undefined dynamic_lookup is deprecated on iOS-simulator
 
-INFO: 2026-05-06 14:42:18.813292: 
-INFO: 2026-05-06 14:42:18.813329: 
-INFO: 2026-05-06 14:42:18.813340: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o
-
-INFO: 2026-05-06 14:42:18.830905: 
-INFO: 2026-05-06 14:42:18.830943: 
-INFO: 2026-05-06 14:42:18.830954: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o
-
-INFO: 2026-05-06 14:42:18.831285: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -shared -Wl,-encryptable -undefined dynamic_lookup -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o -o /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib
-
-INFO: 2026-05-06 14:42:18.969647: 
-INFO: 2026-05-06 14:42:18.969716: ld: warning: -undefined dynamic_lookup is deprecated on iOS-simulator
-
-INFO: 2026-05-06 14:42:18.969745: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib
+INFO: 2026-05-11 12:36:07.527416: Generated /Users/techversant/StudioProjects/ShopsyFlutter/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib
 

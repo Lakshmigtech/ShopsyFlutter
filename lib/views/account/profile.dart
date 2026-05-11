@@ -9,7 +9,6 @@ import 'package:Shopsy/views/order/my_orders.dart';
 import 'package:Shopsy/views/account/privacy_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends GetView<AuthController> {
   const ProfilePage({super.key});
@@ -31,13 +30,6 @@ class ProfilePage extends GetView<AuthController> {
     );
   }
 
-  Future<void> _launchPrivacyPolicy() async {
-    final Uri url = Uri.parse('https://www.iubenda.com/en/blog/privacy-policy-ecommerce-stores/');
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      Get.snackbar("Error", "Could not launch privacy policy", snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +40,12 @@ class ProfilePage extends GetView<AuthController> {
         elevation: 0,
       ),
       body: Obx(() {
-        final displayName = "${controller.firstName.value} ${controller.lastName.value}";
-        final username = controller.username.value;
+        final firstName = controller.firstName.value;
+        final lastName = controller.lastName.value;
         final email = controller.email.value;
+        final username = controller.username.value;
+        
+        final displayName = "${firstName} ${lastName}".trim();
 
         return ListView(
           children: [
@@ -76,7 +71,7 @@ class ProfilePage extends GetView<AuthController> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      displayName.trim().isEmpty ? username : displayName,
+                      displayName.isEmpty ? username : displayName,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -85,7 +80,7 @@ class ProfilePage extends GetView<AuthController> {
                     const SizedBox(height: 5),
                     Text(
                       email.isEmpty ? "@$username" : email,
-                      style: const TextStyle(color: AppColors.grey),
+                      style: TextStyle(color: AppColors.grey),
                     ),
                     const SizedBox(height: 10),
                     OutlinedButton(
@@ -150,7 +145,7 @@ class ProfilePage extends GetView<AuthController> {
             menuItem(
               Icons.privacy_tip,
               "Privacy Policy",
-                  () => Get.to(() => const PrivacyPolicyScreen()), // Use GetX navigation
+                  () => Get.to(() => const PrivacyPolicyScreen()),
             ),
 
             const SizedBox(height: 20),

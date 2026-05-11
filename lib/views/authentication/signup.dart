@@ -99,7 +99,7 @@ class SignUpScreen extends StatelessWidget {
 
                   /// PASSWORD
                   Obx(
-                    () => TextField(
+                        () => TextField(
                       controller: controller.passwordController,
                       obscureText: controller.isPasswordHidden.value,
                       style: const TextStyle(color: Colors.white),
@@ -129,7 +129,7 @@ class SignUpScreen extends StatelessWidget {
 
                   /// CONFIRM PASSWORD
                   Obx(
-                    () => TextField(
+                        () => TextField(
                       controller: controller.confirmPasswordController,
                       obscureText: controller.isPasswordHidden.value,
                       style: const TextStyle(color: Colors.white),
@@ -162,7 +162,7 @@ class SignUpScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 55,
                     child: Obx(
-                      () => ElevatedButton(
+                          () => ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
@@ -174,16 +174,16 @@ class SignUpScreen extends StatelessWidget {
                             : controller.signup,
                         child: controller.isLoading.value
                             ? const CircularProgressIndicator(
-                                color: Colors.blue,
-                              )
+                          color: Colors.blue,
+                        )
                             : const Text(
-                                "Sign Up",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                          "Sign Up",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -64,16 +64,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>url_launcher_ios-url_launcher_ios_privacy.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>url_launcher_ios.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>webview_flutter_wkwebview-webview_flutter_wkwebview_privacy.xcscheme</key>
 		<dict>
 			<key>isShown</key>

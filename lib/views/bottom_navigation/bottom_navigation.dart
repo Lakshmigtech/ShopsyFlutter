@@ -1,8 +1,8 @@
-import 'package:Shopsy/Controller/navigation_controller.dart';
-import 'package:Shopsy/views/TabBar/productlist.dart';
-import 'package:Shopsy/views/TabBar/cart.dart';
-import 'package:Shopsy/views/TabBar/home.dart';
-import 'package:Shopsy/views/Account/profile.dart';
+import 'package:Shopsy/controller/navigation_controller.dart';
+import 'package:Shopsy/views/tabbar/productlist.dart';
+import 'package:Shopsy/views/tabbar/cart.dart';
+import 'package:Shopsy/views/tabbar/home.dart';
+import 'package:Shopsy/views/account/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

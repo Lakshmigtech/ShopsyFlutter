@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'package:Shopsy/Controller/navigation_controller.dart';
-import 'package:Shopsy/Respositories/loginapi.dart';
-import 'package:Shopsy/Utils/local_storage.dart';
-import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
-import 'package:Shopsy/views/Authentication/login.dart';
+import 'package:Shopsy/controller/navigation_controller.dart';
+import 'package:Shopsy/controller/cart_controller.dart';
+import 'package:Shopsy/respositories/loginapi.dart';
+import 'package:Shopsy/utils/local_storage.dart';
+import 'package:Shopsy/views/bottom_navigation/bottom_navigation.dart';
+import 'package:Shopsy/views/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -57,18 +58,24 @@ class AuthController extends GetxController {
   }
 
   Future<bool> restoreSession() async {
-    final storedToken = await LocalStorage.getToken();
-    final storedUsername = await LocalStorage.getUsername();
+    final details = await LocalStorage.getUserDetails();
+    
+    token.value = details['token'];
+    username.value = details['username'] ?? 'Guest';
+    firstName.value = details['firstName'] ?? '';
+    lastName.value = details['lastName'] ?? '';
+    email.value = details['email'] ?? '';
 
-    token.value = storedToken;
-    username.value =
-    (storedUsername?.trim().isNotEmpty ?? false) ? storedUsername!.trim() : 'Guest';
-
-    if (storedUsername != null && storedUsername.trim().isNotEmpty) {
-      usernameController.text = storedUsername.trim();
+    if (username.value != 'Guest') {
+      usernameController.text = username.value;
     }
+    
+    // Populate edit controllers if data exists
+    if (firstName.value.isNotEmpty) editFirstNameController.text = firstName.value;
+    if (lastName.value.isNotEmpty) editLastNameController.text = lastName.value;
+    if (email.value.isNotEmpty) editEmailController.text = email.value;
 
-    return storedToken != null && storedToken.isNotEmpty;
+    return token.value != null && token.value!.isNotEmpty;
   }
 
   Future<void> login() async {
@@ -77,13 +84,14 @@ class AuthController extends GetxController {
 
     if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
       Get.snackbar('Error', 'Please enter all fields',
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
       return;
     }
 
     try {
       isLoading.value = true;
-
       final result = await AuthService.login(
         username: enteredUsername,
         password: enteredPassword,
@@ -94,6 +102,10 @@ class AuthController extends GetxController {
           token: result.accessToken,
           userId: result.id,
           username: result.username,
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          imageUrl: result.image,
         );
 
         token.value = result.accessToken;
@@ -109,20 +121,24 @@ class AuthController extends GetxController {
 
         passwordController.clear();
         isHidden.value = true;
-
         Get.find<NavigationController>().reset();
 
         Get.snackbar('Success', 'Login successful',
-            snackPosition: SnackPosition.BOTTOM);
-
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white);
         Get.offAll(() => const MainNavigation());
       } else {
-        Get.snackbar('Error', 'Invalid credentials',
-            snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar('Error', 'Login failed. Please check your credentials.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
       }
     } catch (e) {
-      Get.snackbar('Error', 'Login failed: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', 'An error occurred: $e',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
@@ -135,12 +151,25 @@ class AuthController extends GetxController {
     }
 
     isLoading.value = true;
-    // Simulate API call
+    // Simulate API call or update locally
     await Future.delayed(const Duration(seconds: 1));
     
     firstName.value = editFirstNameController.text;
     lastName.value = editLastNameController.text;
     email.value = editEmailController.text;
+    
+    // Update local storage
+    final currentToken = await LocalStorage.getToken();
+    if (currentToken != null) {
+      await LocalStorage.saveLogin(
+        token: currentToken,
+        userId: 0, 
+        username: username.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+      );
+    }
     
     isLoading.value = false;
     Get.back();
@@ -153,6 +182,10 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     await LocalStorage.clear();
+    
+    if (Get.isRegistered<CartController>()) {
+      Get.find<CartController>().clearCart();
+    }
 
     token.value = null;
     username.value = 'Guest';
@@ -163,12 +196,10 @@ class AuthController extends GetxController {
 
     usernameController.clear();
     passwordController.clear();
-
     isHidden.value = true;
-
+    
     Get.find<NavigationController>().reset();
-
-    Get.offAll(() => const LoginPage());
+    Get.offAll(() => LoginScreen());
   }
 
   @override
