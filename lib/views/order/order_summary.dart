@@ -1,6 +1,8 @@
 import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/controller/address_controller.dart';
+import 'package:Shopsy/models/addressmodel.dart';
+import 'package:Shopsy/models/productmodel.dart';
 import 'package:Shopsy/views/account/add_address.dart';
 import 'package:Shopsy/views/account/payment.dart';
 import 'package:flutter/material.dart';
@@ -16,545 +18,362 @@ class OrderSummaryPage extends StatelessWidget {
     final addressController = Get.find<AddressController>();
 
     return Scaffold(
-      backgroundColor: const Color(0xfff5f5f5),
-
+      backgroundColor: const Color(0xfff1f2f6),
       appBar: AppBar(
         title: const Text(
           "Order Summary",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => Get.back(),
+        ),
       ),
+      body: Obx(() {
+        final List<Address> addresses = addressController.addresses;
 
-      body: SingleChildScrollView(
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 1. DELIVERY ADDRESS SECTION
+              _buildAddressSection(addresses, addressController, orderController),
+
+              /// 2. ORDER ITEMS LIST
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cartController.cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartController.cartItems[index];
+                  return _buildOrderItem(item);
+                },
+              ),
+
+              /// 3. PRICE DETAILS SECTION
+              _buildPriceDetails(cartController),
+              
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      }),
+      bottomNavigationBar: _buildBottomBar(cartController, orderController),
+    );
+  }
+
+  Widget _buildAddressSection(List<Address> addresses, AddressController addressController, OrderController orderController) {
+    if (addresses.isEmpty) {
+      return Container(
+        width: double.infinity,
+        margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(16),
-
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
-
-            /// DELIVERY ADDRESS
-            const Text(
-              "Delivery Address",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            const Text("No delivery address selected", style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => Get.to(() => const AddAddressScreen()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff2874f0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
+              child: const Text("ADD ADDRESS", style: TextStyle(color: Colors.white)),
             ),
+          ],
+        ),
+      );
+    }
 
-            const SizedBox(height: 10),
+    final selectedAddress = addresses.firstWhere(
+      (e) => e.isDefault,
+      orElse: () => addresses.first,
+    );
 
-            Obx(() {
+    // Save for controller
+    final fullAddressText = "${selectedAddress.name}, ${selectedAddress.address}, ${selectedAddress.phone}";
+    orderController.selectedAddress.value = fullAddressText;
 
-              final addresses = addressController.addresses;
+    // Safety check for phone number length
+    String displayPhone = selectedAddress.phone;
+    if (displayPhone.length > 5) {
+      displayPhone = "${displayPhone.substring(0, 5)}...";
+    }
 
-              // NO ADDRESS
-              if (addresses.isEmpty) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                    ),
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-                      const Text(
-                        "No address added",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey,
-                        ),
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 45,
-
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            Get.to(() => const AddAddressScreen());
-                          },
-
-                          icon: const Icon(Icons.add_location_alt),
-
-                          label: const Text(
-                            "Add Address",
-                          ),
-
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              // SELECTED / DEFAULT ADDRESS
-              final selectedAddress = addresses.firstWhere(
-                    (e) => e.isDefault,
-                orElse: () => addresses.first,
-              );
-
-              final fullAddress =
-                  "${selectedAddress.name}\n"
-                  "${selectedAddress.address}\n"
-                  "${selectedAddress.phone}";
-
-              // SAVE SELECTED ADDRESS
-              orderController.selectedAddress.value = fullAddress;
-
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.deepPurple.shade100,
-                  ),
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  "Deliver to: ${selectedAddress.name}, $displayPhone",
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  overflow: TextOverflow.ellipsis,
                 ),
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-
-                    Row(
-                      children: [
-
-                        const Icon(
-                          Icons.location_on,
-                          color: Colors.deepPurple,
-                        ),
-
-                        const SizedBox(width: 8),
-
-                        Expanded(
-                          child: Text(
-                            selectedAddress.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-
-                          decoration: BoxDecoration(
-                            color: Colors.deepPurple.shade50,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-
-                          child: Text(
-                            selectedAddress.type.toUpperCase(),
-
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple.shade700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Text(
-                      selectedAddress.address,
-
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    Row(
-                      children: [
-
-                        const Icon(
-                          Icons.phone,
-                          size: 18,
-                          color: Colors.grey,
-                        ),
-
-                        const SizedBox(width: 6),
-
-                        Text(
-                          selectedAddress.phone,
-
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 15),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 42,
-
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-
-                          Get.bottomSheet(
-                            Container(
-                              padding: const EdgeInsets.all(16),
-
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-
-                                children: [
-
-                                  const Text(
-                                    "Select Address",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 15),
-
-                                  ListView.builder(
-                                    shrinkWrap: true,
-
-                                    itemCount: addresses.length,
-
-                                    itemBuilder: (context, index) {
-
-                                      final addr = addresses[index];
-
-                                      return Card(
-                                        elevation: 1,
-
-                                        child: ListTile(
-
-                                          leading: Icon(
-                                            addr.isDefault
-                                                ? Icons.radio_button_checked
-                                                : Icons.radio_button_off,
-                                            color: Colors.deepPurple,
-                                          ),
-
-                                          title: Text(addr.name),
-
-                                          subtitle: Text(
-                                            "${addr.address}\n${addr.phone}",
-                                          ),
-
-                                          isThreeLine: true,
-
-                                          trailing: Text(
-                                            addr.type.toUpperCase(),
-                                            style: const TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-
-                                          onTap: () {
-
-                                            addressController
-                                                .setDefaultAddress(index);
-
-                                            final updatedAddress =
-                                                "${addr.name}\n"
-                                                "${addr.address}\n"
-                                                "${addr.phone}";
-
-                                            orderController
-                                                .selectedAddress
-                                                .value = updatedAddress;
-
-                                            Get.back();
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  const SizedBox(height: 10),
-
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 45,
-
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-
-                                        Get.back();
-
-                                        Get.to(
-                                              () => const AddAddressScreen(),
-                                        );
-                                      },
-
-                                      icon: const Icon(Icons.add),
-
-                                      label: const Text("Add New Address"),
-
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.deepPurple,
-                                        foregroundColor: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-
-                        icon: const Icon(Icons.edit_location_alt),
-
-                        label: const Text(
-                          "Change Address",
-                        ),
-
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.deepPurple,
-                          side: const BorderSide(
-                            color: Colors.deepPurple,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                height: 36,
+                child: OutlinedButton(
+                  onPressed: () => _showAddressPicker(addresses, addressController, orderController),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xff2874f0)),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                  child: const Text("Change", style: TextStyle(color: Color(0xff2874f0), fontSize: 12)),
                 ),
-              );
-            }),
-
-            const SizedBox(height: 25),
-
-            /// ORDER ITEMS
-            const Text(
-              "Order Items",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
               ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            selectedAddress.address,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.black87, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderItem(CartItem item) {
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
             ),
-
-            const SizedBox(height: 10),
-
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-
-              itemCount: cartController.cartItems.length,
-
-              itemBuilder: (context, index) {
-
-                final item = cartController.cartItems[index];
-
-                return Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.only(bottom: 10),
-
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-
-                    child: Row(
-                      children: [
-
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-
-                          child: Image.network(
-                            item.product.image,
-                            width: 70,
-                            height: 70,
-                            fit: BoxFit.cover,
-
-                            errorBuilder:
-                                (context, error, stackTrace) {
-                              return Container(
-                                width: 70,
-                                height: 70,
-                                color: Colors.grey.shade200,
-                                child: const Icon(Icons.image),
-                              );
-                            },
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-
-                            children: [
-
-                              Text(
-                                item.product.name,
-
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Text(
-                                "Quantity: ${item.quantity}",
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Text(
-                                "₹${item.subtotal.toStringAsFixed(2)}",
-
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+            child: Image.network(
+              item.product.image,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
             ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 15),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "₹${(item.subtotal).toStringAsFixed(0)}",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  "Free Delivery",
+                  style: TextStyle(color: Color(0xff388e3c), fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Qty: ${item.quantity}",
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            const SizedBox(height: 10),
+  Widget _buildPriceDetails(CartController cartController) {
+    String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
 
-            /// TOTAL
-            Container(
-              padding: const EdgeInsets.all(16),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Price Details",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
+          ),
+          const Divider(height: 32),
+          _priceRow("Price (${cartController.itemCount} items)", "₹$formattedPrice"),
+          const SizedBox(height: 16),
+          _priceRow("Delivery Charges", "FREE", isGreen: true),
+          const Divider(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Total Amount",
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
+              Text(
+                "₹$formattedPrice",
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-              child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+  Widget _priceRow(String label, String value, {bool isGreen = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 15, color: Colors.black87)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 15,
+            color: isGreen ? const Color(0xff388e3c) : Colors.black,
+            fontWeight: isGreen ? FontWeight.bold : FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
 
+  Widget _buildBottomBar(CartController cartController, OrderController orderController) {
+    return Obx(() {
+      String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: const Offset(0, -2))],
+        ),
+        child: SafeArea(
+          child: Row(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  const Text(
-                    "Total Amount",
-
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
                   Text(
-                    "₹${cartController.totalPrice.toStringAsFixed(2)}",
-
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
+                    "₹$formattedPrice",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const Text(
+                    "View price details",
+                    style: TextStyle(color: Color(0xff2874f0), fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-            ),
-
-            const SizedBox(height: 30),
-
-            /// PAYMENT BUTTON
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-
-              child: ElevatedButton(
+              const Spacer(),
+              ElevatedButton(
                 onPressed: () {
-
-                  if (orderController
-                      .selectedAddress.value
-                      .isEmpty) {
-
-                    Get.snackbar(
-                      "Address Required",
-                      "Please add/select delivery address",
-
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-
+                  if (orderController.selectedAddress.value.isEmpty) {
+                    Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
                     return;
                   }
-
-                  Get.to(
-                        () => PaymentMethodsPage(
-                      selectedAddress:
-                      orderController.selectedAddress.value,
-                    ),
-                  );
+                  Get.to(() => PaymentMethodsPage(selectedAddress: orderController.selectedAddress.value));
                 },
-
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  backgroundColor: const Color(0xffff8c31),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  elevation: 0,
                 ),
-
                 child: const Text(
-                  "Proceed to Payment",
-
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  "CONTINUE",
+                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
 
-            const SizedBox(height: 20),
+  void _showAddressPicker(List<Address> addresses, AddressController addressController, OrderController orderController) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Select Delivery Address", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: addresses.length,
+                itemBuilder: (context, index) {
+                  final addr = addresses[index];
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Radio<int>(
+                      value: index,
+                      groupValue: addresses.indexWhere((e) => e.isDefault),
+                      onChanged: (val) {
+                        addressController.setDefaultAddress(index);
+                        Get.back();
+                      },
+                      activeColor: const Color(0xff2874f0),
+                    ),
+                    title: Text(addr.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(addr.address),
+                    onTap: () {
+                      addressController.setDefaultAddress(index);
+                      Get.back();
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton.icon(
+                onPressed: () {
+                  Get.back();
+                  Get.to(() => const AddAddressScreen());
+                },
+                icon: const Icon(Icons.add, color: Color(0xff2874f0)),
+                label: const Text("Add New Address", style: TextStyle(color: Color(0xff2874f0))),
+              ),
+            ),
           ],
         ),
       ),

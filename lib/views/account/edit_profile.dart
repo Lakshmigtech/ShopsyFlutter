@@ -1,4 +1,4 @@
-import 'package:Shopsy/Controller/auth_controller.dart';
+import 'package:Shopsy/controller/auth_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

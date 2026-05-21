@@ -16,6 +16,7 @@ class AuthController extends GetxController {
   final email = ''.obs;
   final firstName = ''.obs;
   final lastName = ''.obs;
+  final profileImageUrl = ''.obs;
   final profileImage = Rxn<File>();
   final token = RxnString();
 
@@ -43,6 +44,11 @@ class AuthController extends GetxController {
     if (imagePath != null && imagePath.isNotEmpty) {
       profileImage.value = File(imagePath);
     }
+    
+    final imageUrl = await LocalStorage.getImageUrl();
+    if (imageUrl != null) {
+      profileImageUrl.value = imageUrl;
+    }
   }
 
   Future<void> pickImage() async {
@@ -59,12 +65,14 @@ class AuthController extends GetxController {
 
   Future<bool> restoreSession() async {
     final details = await LocalStorage.getUserDetails();
+    final imageUrl = await LocalStorage.getImageUrl();
     
     token.value = details['token'];
     username.value = details['username'] ?? 'Guest';
     firstName.value = details['firstName'] ?? '';
     lastName.value = details['lastName'] ?? '';
     email.value = details['email'] ?? '';
+    profileImageUrl.value = imageUrl ?? '';
 
     if (username.value != 'Guest') {
       usernameController.text = username.value;
@@ -92,6 +100,7 @@ class AuthController extends GetxController {
 
     try {
       isLoading.value = true;
+
       final result = await AuthService.login(
         username: enteredUsername,
         password: enteredPassword,
@@ -113,6 +122,7 @@ class AuthController extends GetxController {
         firstName.value = result.firstName;
         lastName.value = result.lastName;
         email.value = result.email;
+        profileImageUrl.value = result.image;
 
         // Populate edit controllers
         editFirstNameController.text = result.firstName;
@@ -127,21 +137,26 @@ class AuthController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.green,
             colorText: Colors.white);
+
         Get.offAll(() => const MainNavigation());
       } else {
-        Get.snackbar('Error', 'Login failed. Please check your credentials.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white);
+        Get.snackbar('Error', 'Invalid credentials',
+            snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
-      Get.snackbar('Error', 'An error occurred: $e',
+      Get.snackbar('Error', 'Login failed: $e',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void prepareEditProfile() {
+    editFirstNameController.text = firstName.value;
+    editLastNameController.text = lastName.value;
+    editEmailController.text = email.value;
   }
 
   Future<void> updateProfile() async {
@@ -168,6 +183,7 @@ class AuthController extends GetxController {
         firstName: firstName.value,
         lastName: lastName.value,
         email: email.value,
+        imageUrl: profileImageUrl.value,
       );
     }
     
@@ -192,13 +208,16 @@ class AuthController extends GetxController {
     firstName.value = '';
     lastName.value = '';
     email.value = '';
+    profileImageUrl.value = '';
     profileImage.value = null;
 
     usernameController.clear();
     passwordController.clear();
+
     isHidden.value = true;
-    
+
     Get.find<NavigationController>().reset();
+
     Get.offAll(() => LoginScreen());
   }
 
