@@ -4,7 +4,7 @@ import 'package:Shopsy/controller/notification_controller.dart';
 import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/models/ordermodel.dart';
 import 'package:Shopsy/constants/app_colors.dart';
-import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
+import 'package:Shopsy/views/bottom_navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -13,8 +13,8 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 class PaymentController extends GetxController {
   late Razorpay _razorpay;
   
-  // Use environment variable for security
-  final String razorpayKey = dotenv.env['RAZORPAY_KEY'] ?? "";
+  // Use environment variable for security, trimmed to avoid "Invalid Token" issues
+  String get razorpayKey => (dotenv.env['RAZORPAY_KEY'] ?? "").trim();
 
   @override
   void onInit() {
@@ -27,7 +27,12 @@ class PaymentController extends GetxController {
 
   void openCheckout(double amount, String contact, String email) {
     if (razorpayKey.isEmpty) {
-      Get.snackbar("Error", "Razorpay key not found in environment");
+      Get.snackbar("Configuration Error", "Razorpay Key ID not found in .env file. Please add RAZORPAY_KEY=rzp_test_...");
+      return;
+    }
+
+    if (!razorpayKey.startsWith("rzp_")) {
+      Get.snackbar("Configuration Error", "The Razorpay Key ID in your .env file appears to be invalid. It should start with 'rzp_'.");
       return;
     }
 
@@ -35,7 +40,8 @@ class PaymentController extends GetxController {
       'key': razorpayKey,
       'amount': (amount * 100).toInt(), // amount in paise
       'name': 'Shopsy Flutter',
-      'description': 'Test Payment',
+      'description': 'Purchase Payment',
+      'currency': 'INR',
       'timeout': 300,
       'prefill': {
         'contact': contact,
@@ -43,14 +49,16 @@ class PaymentController extends GetxController {
       },
       'external': {
         'wallets': ['paytm']
-      }
+      },
+      'send_sms_hash': true,
     };
 
     try {
+      debugPrint('Opening Razorpay with options: $options');
       _razorpay.open(options);
     } catch (e) {
-      debugPrint('Error: $e');
-      Get.snackbar("Error", "Could not open Razorpay checkout");
+      debugPrint('Error opening Razorpay: $e');
+      Get.snackbar("Error", "Could not open Razorpay checkout: $e");
     }
   }
 
@@ -68,9 +76,17 @@ class PaymentController extends GetxController {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
+    // response.code: 0 = Cancelled, 1 = Error, 2 = SDK error
     String message = response.message ?? "Payment Cancelled or Failed";
-    Get.snackbar("Payment Info", message,
-        backgroundColor: Colors.blueGrey, colorText: AppColors.white);
+    debugPrint("Razorpay Error: ${response.code} - $message");
+    
+    if (message.contains("Invalid Token") || message.contains("Unauthorized")) {
+      Get.snackbar("Payment Error", "Razorpay key is invalid. Please check your Key ID in the .env file.",
+          backgroundColor: Colors.red, colorText: Colors.white, duration: const Duration(seconds: 5));
+    } else {
+      Get.snackbar("Payment Info", message,
+          backgroundColor: Colors.blueGrey, colorText: AppColors.white);
+    }
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {

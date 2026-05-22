@@ -22,14 +22,14 @@ class OrderSummaryPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Order Summary",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.5,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
         ),
       ),
@@ -43,6 +43,8 @@ class OrderSummaryPage extends StatelessWidget {
               /// 1. DELIVERY ADDRESS SECTION
               _buildAddressSection(addresses, addressController, orderController),
 
+              const SizedBox(height: 8),
+
               /// 2. ORDER ITEMS LIST
               ListView.builder(
                 shrinkWrap: true,
@@ -53,6 +55,8 @@ class OrderSummaryPage extends StatelessWidget {
                   return _buildOrderItem(item);
                 },
               ),
+
+              const SizedBox(height: 8),
 
               /// 3. PRICE DETAILS SECTION
               _buildPriceDetails(cartController),
@@ -70,12 +74,8 @@ class OrderSummaryPage extends StatelessWidget {
     if (addresses.isEmpty) {
       return Container(
         width: double.infinity,
-        margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-        ),
+        color: Colors.white,
         child: Column(
           children: [
             const Text("No delivery address selected", style: TextStyle(color: Colors.grey)),
@@ -95,14 +95,17 @@ class OrderSummaryPage extends StatelessWidget {
 
     final selectedAddress = addresses.firstWhere(
       (e) => e.isDefault,
-      orElse: () => addresses.first,
+      orElse: () => addresses[0],
     );
 
     // Save for controller
-    final fullAddressText = "${selectedAddress.name}, ${selectedAddress.address}, ${selectedAddress.phone}";
-    orderController.selectedAddress.value = fullAddressText;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final fullAddressText = "${selectedAddress.name}, ${selectedAddress.address}, ${selectedAddress.phone}";
+      if (orderController.selectedAddress.value != fullAddressText) {
+        orderController.selectedAddress.value = fullAddressText;
+      }
+    });
 
-    // Safety check for phone number length
     String displayPhone = selectedAddress.phone;
     if (displayPhone.length > 5) {
       displayPhone = "${displayPhone.substring(0, 5)}...";
@@ -110,11 +113,8 @@ class OrderSummaryPage extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -135,20 +135,18 @@ class OrderSummaryPage extends StatelessWidget {
                   onPressed: () => _showAddressPicker(addresses, addressController, orderController),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Color(0xff2874f0)),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
-                  child: const Text("Change", style: TextStyle(color: Color(0xff2874f0), fontSize: 12)),
+                  child: const Text("Change", style: TextStyle(color: Color(0xff2874f0), fontSize: 13)),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Text(
             selectedAddress.address,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.black87, fontSize: 13),
+            style: const TextStyle(color: Colors.black87, fontSize: 13, height: 1.4),
           ),
         ],
       ),
@@ -157,17 +155,15 @@ class OrderSummaryPage extends StatelessWidget {
 
   Widget _buildOrderItem(CartItem item) {
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(bottom: 1),
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      color: Colors.white,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 70,
+            height: 70,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -187,21 +183,22 @@ class OrderSummaryPage extends StatelessWidget {
                   item.product.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "₹${(item.subtotal).toStringAsFixed(0)}",
+                  "₹${(item.product.priceCents / 100 * item.quantity).toStringAsFixed(0)}",
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 const Text(
                   "Free Delivery",
-                  style: TextStyle(color: Color(0xff388e3c), fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Color(0xff388e3c), fontSize: 12, fontWeight: FontWeight.w500),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   "Qty: ${item.quantity}",
-                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
             ),
@@ -215,11 +212,9 @@ class OrderSummaryPage extends StatelessWidget {
     String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
 
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -227,21 +222,21 @@ class OrderSummaryPage extends StatelessWidget {
             "Price Details",
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          const Divider(height: 32),
+          const Divider(height: 24),
           _priceRow("Price (${cartController.itemCount} items)", "₹$formattedPrice"),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _priceRow("Delivery Charges", "FREE", isGreen: true),
-          const Divider(height: 32),
+          const Divider(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 "Total Amount",
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Text(
                 "₹$formattedPrice",
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -254,11 +249,11 @@ class OrderSummaryPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 15, color: Colors.black87)),
+        Text(label, style: const TextStyle(fontSize: 14, color: Colors.black87)),
         Text(
           value,
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 14,
             color: isGreen ? const Color(0xff388e3c) : Colors.black,
             fontWeight: isGreen ? FontWeight.bold : FontWeight.w400,
           ),
@@ -272,49 +267,62 @@ class OrderSummaryPage extends StatelessWidget {
       String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
 
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: const Offset(0, -2))],
+          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, -2),
+            ),
+          ],
         ),
         child: SafeArea(
-          child: Row(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "₹$formattedPrice",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    "View price details",
-                    style: TextStyle(color: Color(0xff2874f0), fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: () {
-                  if (orderController.selectedAddress.value.isEmpty) {
-                    Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
-                    return;
-                  }
-                  Get.to(() => PaymentMethodsPage(selectedAddress: orderController.selectedAddress.value));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffff8c31),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                  elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "₹$formattedPrice",
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      "View price details",
+                      style: TextStyle(color: Color(0xff2874f0), fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  "CONTINUE",
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                const Spacer(),
+                SizedBox(
+                  height: 48,
+                  width: 160,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (orderController.selectedAddress.value.isEmpty) {
+                        Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
+                        return;
+                      }
+                      Get.to(() => PaymentMethodsPage(selectedAddress: orderController.selectedAddress.value));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffff8c31),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "CONTINUE",
+                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
