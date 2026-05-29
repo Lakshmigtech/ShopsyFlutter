@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import '../models/productmodel.dart';
+import '../models/product_model.dart';
 
 class ApiService {
   static const String url =

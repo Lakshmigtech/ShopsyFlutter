@@ -1,9 +1,9 @@
 import 'package:Shopsy/controller/cart_controller.dart';
-import 'package:Shopsy/controller/productcontroller.dart';
+import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
-import 'package:Shopsy/views/tabbar/cart.dart';
-import 'package:Shopsy/views/tabbar/productdetail.dart';
+import 'package:Shopsy/views/tab_bar/cart.dart';
+import 'package:Shopsy/views/tab_bar/productdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
