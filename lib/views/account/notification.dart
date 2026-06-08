@@ -1,3 +1,4 @@
+import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,8 +14,8 @@ class NotificationScreen extends GetView<NotificationController> {
       appBar: AppBar(
         title: const Text("Notifications"),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.textWhite,
+        foregroundColor: AppColors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -30,11 +31,11 @@ class NotificationScreen extends GetView<NotificationController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.notifications_none, size: 80, color: Colors.grey[400]),
+                Icon(Icons.notifications_none, size: 80, color: AppColors.grey),
                 const SizedBox(height: 16),
                 const Text(
                   "No notifications yet",
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                  style: TextStyle(fontSize: 18, color: AppColors.grey),
                 ),
               ],
             ),
@@ -48,15 +49,15 @@ class NotificationScreen extends GetView<NotificationController> {
             final notification = controller.notifications[index];
 
             return Container(
-              color: notification.isRead ? Colors.white : Colors.blue.withOpacity(0.05),
+              color: notification.isRead ?AppColors.textWhite : Colors.blue.withOpacity(0.05),
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: notification.isRead 
-                      ? Colors.grey.shade200 
-                      : Colors.blue.shade100,
+                      ? AppColors.borderGrey
+                      : AppColors.borderGrey ,
                   child: Icon(
                     notification.isRead ? Icons.notifications_none : Icons.notifications_active, 
-                    color: notification.isRead ? Colors.grey : Colors.blue
+                    color: notification.isRead ? AppColors.textGrey  : AppColors.primary
                   ),
                 ),
                 title: Text(
@@ -70,11 +71,11 @@ class NotificationScreen extends GetView<NotificationController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 4),
-                    Text(notification.message, style: TextStyle(color: Colors.grey[700])),
+                    Text(notification.message, style: TextStyle(color: AppColors.textGrey)),
                     const SizedBox(height: 4),
                     Text(
                       DateFormat('dd MMM, hh:mm a').format(notification.dateTime),
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      style: TextStyle(fontSize: 11, color: AppColors.textGrey),
                     ),
                   ],
                 ),

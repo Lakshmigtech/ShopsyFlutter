@@ -1,6 +1,7 @@
 import 'package:Shopsy/Controller/signup_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -38,7 +39,7 @@ class SignUpScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.textWhite,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -64,7 +65,7 @@ class SignUpScreen extends StatelessWidget {
                   /// EMAIL
                   TextField(
                     controller: controller.emailController,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: AppColors.textWhite),
                     decoration: InputDecoration(
                       hintText: "Email Address",
                       hintStyle: const TextStyle(color: Colors.white70),
@@ -82,7 +83,7 @@ class SignUpScreen extends StatelessWidget {
                   /// PHONE NUMBER
                   TextField(
                     controller: controller.phoneController,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: AppColors.textWhite),
                     decoration: InputDecoration(
                       hintText: "Phone Number",
                       hintStyle: const TextStyle(color: Colors.white70),
@@ -102,7 +103,7 @@ class SignUpScreen extends StatelessWidget {
                         () => TextField(
                       controller: controller.passwordController,
                       obscureText: controller.isPasswordHidden.value,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: AppColors.textWhite),
                       decoration: InputDecoration(
                         hintText: "Password",
                         hintStyle: const TextStyle(color: Colors.white70),
@@ -132,7 +133,7 @@ class SignUpScreen extends StatelessWidget {
                         () => TextField(
                       controller: controller.confirmPasswordController,
                       obscureText: controller.isPasswordHidden.value,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: AppColors.textWhite),
                       decoration: InputDecoration(
                         hintText: "Confirm Password",
                         hintStyle: const TextStyle(color: Colors.white70),
@@ -164,7 +165,7 @@ class SignUpScreen extends StatelessWidget {
                     child: Obx(
                           () => ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
+                          backgroundColor:AppColors.textWhite,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
                           ),
@@ -174,12 +175,12 @@ class SignUpScreen extends StatelessWidget {
                             : controller.signup,
                         child: controller.isLoading.value
                             ? const CircularProgressIndicator(
-                          color: Colors.blue,
+                          color: AppColors.primary,
                         )
                             : const Text(
                           "Sign Up",
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: AppColors.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -205,7 +206,7 @@ class SignUpScreen extends StatelessWidget {
                         child: const Text(
                           "Login",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textWhite,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

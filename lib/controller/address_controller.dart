@@ -1,12 +1,19 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Shopsy/models/addressmodel.dart';
+import 'package:Shopsy/models/address_model.dart';
 
 class AddressController extends GetxController {
-  // Reactive list of addresses using GetX .obs
   final addresses = <Address>[].obs;
   static const String _storageKey = 'saved_addresses';
+
+  // Form Controllers
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final detailAddressController = TextEditingController();
+  final addressType = "Home".obs;
+  final isDefault = false.obs;
 
   @override
   void onInit() {
@@ -14,9 +21,22 @@ class AddressController extends GetxController {
     loadAddresses();
   }
 
-  // --- Persistence Methods ---
+  void clearFields() {
+    nameController.clear();
+    phoneController.clear();
+    detailAddressController.clear();
+    addressType.value = "Home";
+    isDefault.value = false;
+  }
 
-  /// Load addresses from SharedPreferences and populate the reactive list
+  void initForEditing(Address address) {
+    nameController.text = address.name;
+    phoneController.text = address.phone;
+    detailAddressController.text = address.address;
+    addressType.value = address.type;
+    isDefault.value = address.isDefault;
+  }
+
   Future<void> loadAddresses() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -26,7 +46,6 @@ class AddressController extends GetxController {
         final List<dynamic> decoded = jsonDecode(addressesJson);
         addresses.assignAll(decoded.map((item) => Address.fromJson(item)).toList());
       } else {
-        // Initial setup with dummy data if storage is empty for first-time user experience
         _loadDefaultSeedData();
       }
     } catch (e) {
@@ -34,7 +53,6 @@ class AddressController extends GetxController {
     }
   }
 
-  /// Initial data for first-time users to showcase the UI
   void _loadDefaultSeedData() {
     addresses.assignAll([
       Address(
@@ -48,7 +66,6 @@ class AddressController extends GetxController {
     saveAddresses();
   }
 
-  /// Persist current address list to SharedPreferences
   Future<void> saveAddresses() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -59,9 +76,6 @@ class AddressController extends GetxController {
     }
   }
 
-  // --- CRUD Actions ---
-
-  /// Add a new address and optionally set it as default
   Future<void> addAddress(Address address) async {
     if (address.isDefault) {
       _makeAllNonDefault();
@@ -70,7 +84,6 @@ class AddressController extends GetxController {
     await saveAddresses();
   }
 
-  /// Update an existing address at the given index
   Future<void> updateAddress(int index, Address updatedAddress) async {
     if (index >= 0 && index < addresses.length) {
       if (updatedAddress.isDefault) {
@@ -81,13 +94,11 @@ class AddressController extends GetxController {
     }
   }
 
-  /// Remove an address by index and handle default logic
   Future<void> removeAddress(int index) async {
     if (index >= 0 && index < addresses.length) {
       bool wasDefault = addresses[index].isDefault;
       addresses.removeAt(index);
       
-      // If we removed the default address and others exist, nominate a new default
       if (wasDefault && addresses.isNotEmpty) {
         await setDefaultAddress(0);
       } else {
@@ -96,7 +107,6 @@ class AddressController extends GetxController {
     }
   }
 
-  /// Toggle an address as the default shipping address
   Future<void> setDefaultAddress(int index) async {
     if (index >= 0 && index < addresses.length) {
       _makeAllNonDefault();
@@ -113,10 +123,6 @@ class AddressController extends GetxController {
     }
   }
 
-  // --- Helpers ---
-
-  /// Internal helper to clear isDefault status from all addresses
-  /// to ensure only one address is marked as default at a time
   void _makeAllNonDefault() {
     for (int i = 0; i < addresses.length; i++) {
       if (addresses[i].isDefault) {
@@ -129,5 +135,13 @@ class AddressController extends GetxController {
         );
       }
     }
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    phoneController.dispose();
+    detailAddressController.dispose();
+    super.onClose();
   }
 }

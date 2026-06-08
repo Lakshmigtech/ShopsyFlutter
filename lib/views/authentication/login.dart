@@ -1,7 +1,8 @@
 import 'package:Shopsy/controller/auth_controller.dart';
-import 'package:Shopsy/views/authentication/signup.dart';
+import 'package:Shopsy/views/authentication/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -36,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                         const Text(
                           "Welcome Shopsy",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textWhite,
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
                           ),
@@ -44,10 +45,10 @@ class LoginScreen extends StatelessWidget {
                         const SizedBox(height: 40),
                         TextField(
                           controller: controller.usernameController,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: AppColors.textWhite),
                           decoration: InputDecoration(
                             hintText: "Username",
-                            hintStyle: const TextStyle(color: Colors.white70),
+                            hintStyle: const TextStyle(color: AppColors.textWhite),
                             filled: true,
                             fillColor: Colors.white.withOpacity(0.15),
                             border: OutlineInputBorder(
@@ -61,10 +62,10 @@ class LoginScreen extends StatelessWidget {
                           () => TextField(
                             controller: controller.passwordController,
                             obscureText: controller.isHidden.value,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color:AppColors.textWhite),
                             decoration: InputDecoration(
                               hintText: "Password",
-                              hintStyle: const TextStyle(color: Colors.white70),
+                              hintStyle: const TextStyle(color:AppColors.textWhite),
                               filled: true,
                               fillColor: Colors.white.withOpacity(0.15),
                               border: OutlineInputBorder(
@@ -76,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                                   controller.isHidden.value
                                       ? Icons.visibility_off
                                       : Icons.visibility,
-                                  color: Colors.white70,
+                                  color: AppColors.textWhite,
                                 ),
                                 onPressed: controller.togglePasswordVisibility,
                               ),
@@ -90,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                           child: Obx(
                             () => ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
+                                backgroundColor: AppColors.textWhite,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -100,12 +101,12 @@ class LoginScreen extends StatelessWidget {
                                   : () => controller.login(),
                               child: controller.isLoading.value
                                   ? const CircularProgressIndicator(
-                                      color: Colors.blue,
+                                      color: AppColors.loader,
                                     )
                                   : const Text(
                                       "Login",
                                       style: TextStyle(
-                                        color: Colors.blue,
+                                        color: AppColors.primary,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -119,7 +120,7 @@ class LoginScreen extends StatelessWidget {
                           children: [
                             const Text(
                               "Don't have an account? ",
-                              style: TextStyle(color: Colors.white70),
+                              style: TextStyle(color: AppColors.textWhite),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -128,7 +129,7 @@ class LoginScreen extends StatelessWidget {
                               child: const Text(
                                 "Sign Up",
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.textWhite,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

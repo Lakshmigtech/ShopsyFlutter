@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/ordermodel.dart';
+import '../models/order_model.dart';
+import '../models/address_model.dart';
 import 'address_controller.dart';
 
 class OrderController extends GetxController {
@@ -10,6 +11,7 @@ class OrderController extends GetxController {
 
   // Observable for selected address
   final selectedAddress = "".obs;
+  final selectedAddressObject = Rxn<Address>();
 
   @override
   void onInit() {
@@ -26,13 +28,21 @@ class OrderController extends GetxController {
 
   void _updateDefaultAddress() {
     final addressController = Get.find<AddressController>();
-    if (selectedAddress.value.isEmpty && addressController.addresses.isNotEmpty) {
+    if (addressController.addresses.isNotEmpty) {
       final defaultAddr = addressController.addresses.firstWhere(
         (element) => element.isDefault,
         orElse: () => addressController.addresses.first,
       );
-      selectedAddress.value = "${defaultAddr.name}, ${defaultAddr.address}";
+      setOrderAddress(defaultAddr);
+    } else {
+      selectedAddress.value = "";
+      selectedAddressObject.value = null;
     }
+  }
+
+  void setOrderAddress(Address addr) {
+    selectedAddressObject.value = addr;
+    selectedAddress.value = "${addr.name}, ${addr.address}, ${addr.phone}";
   }
 
   Future<void> loadOrders() async {

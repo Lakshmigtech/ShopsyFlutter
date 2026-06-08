@@ -4,6 +4,7 @@ import 'package:Shopsy/models/product_model.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});

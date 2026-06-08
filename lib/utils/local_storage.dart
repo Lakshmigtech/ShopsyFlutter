@@ -1,6 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
+  static late SharedPreferences _prefs;
+
+  static Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
   static Future<void> saveLogin({
     required String token,
     required int userId,
@@ -10,64 +16,55 @@ class LocalStorage {
     String? email,
     String? imageUrl,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString('token', token);
-    await prefs.setInt('userId', userId);
-    await prefs.setString('username', username);
-    if (firstName != null) await prefs.setString('firstName', firstName);
-    if (lastName != null) await prefs.setString('lastName', lastName);
-    if (email != null) await prefs.setString('email', email);
+    await _prefs.setString('token', token);
+    await _prefs.setInt('userId', userId);
+    await _prefs.setString('username', username);
+    if (firstName != null) await _prefs.setString('firstName', firstName);
+    if (lastName != null) await _prefs.setString('lastName', lastName);
+    if (email != null) await _prefs.setString('email', email);
     if (imageUrl != null) {
-      await prefs.setString('imageUrl', imageUrl);
+      await _prefs.setString('imageUrl', imageUrl);
     }
   }
 
   static Future<void> saveProfileImage(String path) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profile_image', path);
+    await _prefs.setString('profile_image', path);
   }
 
-  static Future<String?> getProfileImage() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('profile_image');
+  static String? getProfileImage() {
+    return _prefs.getString('profile_image');
   }
 
-  static Future<Map<String, String?>> getUserDetails() async {
-    final prefs = await SharedPreferences.getInstance();
+  static Map<String, String?> getUserDetails() {
     return {
-      'username': prefs.getString('username'),
-      'firstName': prefs.getString('firstName'),
-      'lastName': prefs.getString('lastName'),
-      'email': prefs.getString('email'),
-      'token': prefs.getString('token'),
+      'username': _prefs.getString('username'),
+      'firstName': _prefs.getString('firstName'),
+      'lastName': _prefs.getString('lastName'),
+      'email': _prefs.getString('email'),
+      'token': _prefs.getString('token'),
     };
   }
 
-  static Future<String?> getImageUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('imageUrl');
+  static String? getImageUrl() {
+    return _prefs.getString('imageUrl');
   }
 
-  static Future<String?> getUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('username');
+  static String? getUsername() {
+    return _prefs.getString('username');
   }
 
-  static Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+  static String? getToken() {
+    return _prefs.getString('token');
   }
 
   static Future<void> clear() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
-    await prefs.remove('userId');
-    await prefs.remove('username');
-    await prefs.remove('firstName');
-    await prefs.remove('lastName');
-    await prefs.remove('email');
-    await prefs.remove('profile_image');
-    await prefs.remove('imageUrl');
+    await _prefs.remove('token');
+    await _prefs.remove('userId');
+    await _prefs.remove('username');
+    await _prefs.remove('firstName');
+    await _prefs.remove('lastName');
+    await _prefs.remove('email');
+    await _prefs.remove('profile_image');
+    await _prefs.remove('imageUrl');
   }
 }

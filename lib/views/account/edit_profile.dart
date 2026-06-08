@@ -8,33 +8,52 @@ class EditProfileScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: AppColors.textWhite,
       appBar: AppBar(
-        title: const Text("Edit Profile", style: TextStyle(color: AppColors.black)),
+        title: Text(
+          "Edit Profile",
+          style: TextStyle(
+            color: AppColors.textBlack,
+            fontSize: screenWidth * 0.05,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: AppColors.scaffoldBackground,
+        backgroundColor: AppColors.textWhite,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.textBlack,
+            size: screenWidth * 0.06,
+          ),
           onPressed: () => Get.back(),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(screenWidth * 0.06),
         child: Column(
           children: [
             Center(
               child: Stack(
                 children: [
                   Obx(() => CircleAvatar(
-                        radius: 60,
-                        backgroundColor: AppColors.blue100,
+                        radius: screenWidth * 0.15,
+                        backgroundColor: AppColors.primary,
                         backgroundImage: controller.profileImage.value != null
                             ? FileImage(controller.profileImage.value!)
                             : null,
                         child: controller.profileImage.value == null
-                            ? const Icon(Icons.person, size: 60, color: AppColors.primary)
+                            ? Icon(
+                                Icons.person,
+                                size: screenWidth * 0.15,
+                                color: AppColors.primary,
+                              )
                             : null,
                       )),
                   Positioned(
@@ -43,15 +62,15 @@ class EditProfileScreen extends GetView<AuthController> {
                     child: GestureDetector(
                       onTap: () => controller.pickImage(),
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(screenWidth * 0.02),
                         decoration: const BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.camera_alt,
-                          color: AppColors.white,
-                          size: 20,
+                          color: AppColors.textWhite,
+                          size: screenWidth * 0.05,
                         ),
                       ),
                     ),
@@ -59,46 +78,49 @@ class EditProfileScreen extends GetView<AuthController> {
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: screenHeight * 0.05),
             _buildTextField(
               controller: controller.editFirstNameController,
               label: "First Name",
               icon: Icons.person_outline,
+              screenWidth: screenWidth,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.025),
             _buildTextField(
               controller: controller.editLastNameController,
               label: "Last Name",
               icon: Icons.person_outline,
+              screenWidth: screenWidth,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.025),
             _buildTextField(
               controller: controller.editEmailController,
               label: "Email Address",
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
+              screenWidth: screenWidth,
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: screenHeight * 0.05),
             SizedBox(
               width: double.infinity,
-              height: 55,
+              height: screenHeight * 0.07,
               child: Obx(() => ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
                       ),
                     ),
                     onPressed: controller.isLoading.value
                         ? null
                         : () => controller.updateProfile(),
                     child: controller.isLoading.value
-                        ? const CircularProgressIndicator(color: AppColors.white)
-                        : const Text(
+                        ? const CircularProgressIndicator(color: AppColors.textWhite)
+                        : Text(
                             "SAVE CHANGES",
                             style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 16,
+                              color: AppColors.textWhite,
+                              fontSize: screenWidth * 0.04,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -114,23 +136,26 @@ class EditProfileScreen extends GetView<AuthController> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required double screenWidth,
     TextInputType keyboardType = TextInputType.text,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      style: TextStyle(fontSize: screenWidth * 0.04),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon),
+        labelStyle: TextStyle(fontSize: screenWidth * 0.035),
+        prefixIcon: Icon(icon, size: screenWidth * 0.06),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.grey300),
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          borderSide: BorderSide(color: AppColors.borderGrey),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
       ),

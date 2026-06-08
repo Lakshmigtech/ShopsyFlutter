@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 
-class ApiService {
+class ProductApi {
   static const String url =
       "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/products.json";
 

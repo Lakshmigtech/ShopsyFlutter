@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:Shopsy/models/productmodel.dart';
+import 'package:Shopsy/models/product_model.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

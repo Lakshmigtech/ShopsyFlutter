@@ -30,10 +30,90 @@ class ProfilePage extends GetView<AuthController> {
     );
   }
 
+  void _showLogoutConfirmation() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: AppColors.textWhite,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Logout",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              "Are you sure you want to logout from this app?",
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textBlack,
+              ),
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Get.back(),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      side: const BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "CANCEL",
+                      style: TextStyle(color: AppColors.textBlack, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                      controller.logout();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffff8c00), // Flipkart Orange
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      "LOGOUT",
+                      style: TextStyle(color: AppColors.textWhite, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.grey100,
+      backgroundColor: AppColors.borderGrey,
       appBar: AppBar(
         title: const Text("Profile"),
         centerTitle: true,
@@ -80,7 +160,7 @@ class ProfilePage extends GetView<AuthController> {
                     const SizedBox(height: 5),
                     Text(
                       email.isEmpty ? "@$username" : email,
-                      style: TextStyle(color: AppColors.grey),
+                      style: TextStyle(color: AppColors.textBlack),
                     ),
                     const SizedBox(height: 10),
                     OutlinedButton(
@@ -99,7 +179,7 @@ class ProfilePage extends GetView<AuthController> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.grey,
+                  color: AppColors.textGrey,
                 ),
               ),
             ),
@@ -132,7 +212,7 @@ class ProfilePage extends GetView<AuthController> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.grey,
+                  color: AppColors.textGrey,
                 ),
               ),
             ),
@@ -159,7 +239,7 @@ class ProfilePage extends GetView<AuthController> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: controller.logout,
+                onPressed: _showLogoutConfirmation,
                 child: const Text("Logout"),
               ),
             ),

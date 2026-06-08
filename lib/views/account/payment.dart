@@ -1,8 +1,9 @@
+import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/navigation_controller.dart';
 import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/controller/payment_controller.dart';
-import 'package:Shopsy/models/ordermodel.dart';
+import 'package:Shopsy/models/order_model.dart';
 import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,7 @@ class PaymentMethodsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blue, size: 28),
+            Icon(icon, color:AppColors.primary, size: 28),
             const SizedBox(width: 15),
 
             /// TEXT
@@ -40,7 +41,7 @@ class PaymentMethodsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: Colors.grey)),
+                  Text(subtitle, style: const TextStyle(color: AppColors.textGrey)),
                 ],
               ),
             ),
@@ -50,12 +51,12 @@ class PaymentMethodsPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: AppColors.textWhite,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
                   "Default",
-                  style: TextStyle(color: Colors.green, fontSize: 12),
+                  style: TextStyle(color: AppColors.textGreen, fontSize: 12),
                 ),
               ),
           ],
@@ -72,15 +73,15 @@ class PaymentMethodsPage extends StatelessWidget {
     final navigationController = Get.find<NavigationController>();
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: AppColors.borderGrey,
 
       /// APPBAR
       appBar: AppBar(
         title: const Text("Payment Methods"),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.grey.shade100,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.borderGrey,
+        foregroundColor: AppColors.textBlack,
       ),
 
       body: Column(
@@ -92,7 +93,7 @@ class PaymentMethodsPage extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -133,7 +134,7 @@ class PaymentMethodsPage extends StatelessWidget {
                       title: "Confirm Order",
                       middleText: "Place order with Cash on Delivery?",
                       textConfirm: "Confirm",
-                      confirmTextColor: Colors.white,
+                      confirmTextColor: AppColors.textWhite,
                       onConfirm: () async {
                         // 1. Create Order object
                         final newOrder = OrderModel(
@@ -163,7 +164,7 @@ class PaymentMethodsPage extends StatelessWidget {
 
                         // 5. Show Success
                         Get.snackbar("Success", "Order placed successfully with COD!",
-                            backgroundColor: Colors.green, colorText: Colors.white);
+                            backgroundColor:AppColors.textGreen, colorText: AppColors.textWhite);
                       },
                     );
                   },
@@ -188,14 +189,14 @@ class PaymentMethodsPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.textWhite,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 children: [
                   const CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Icon(Icons.add, color: Colors.white),
+                    backgroundColor: AppColors.primary,
+                    child: Icon(Icons.add, color: AppColors.textWhite),
                   ),
                   const SizedBox(width: 15),
                   const Expanded(
@@ -203,7 +204,7 @@ class PaymentMethodsPage extends StatelessWidget {
                       "Add Payment Method (Razorpay Test)",
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.blue,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:Shopsy/models/productmodel.dart';
+import 'package:Shopsy/models/product_model.dart';
 
 class OrderModel {
   final String orderId;

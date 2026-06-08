@@ -1,10 +1,11 @@
 import 'package:Shopsy/controller/navigation_controller.dart';
-import 'package:Shopsy/views/tabbar/productlist.dart';
-import 'package:Shopsy/views/tabbar/cart.dart';
-import 'package:Shopsy/views/tabbar/home.dart';
+import 'package:Shopsy/views/tab_bar/product_list.dart';
+import 'package:Shopsy/views/tab_bar/cart.dart';
+import 'package:Shopsy/views/tab_bar/home.dart';
 import 'package:Shopsy/views/account/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class MainNavigation extends StatelessWidget {
   const MainNavigation({super.key});
@@ -28,8 +29,8 @@ class MainNavigation extends StatelessWidget {
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: controller.currentIndex.value,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: AppColors.textGrey,
           type: BottomNavigationBarType.fixed,
           onTap: controller.changeIndex,
           items: const [

@@ -1,5 +1,6 @@
+import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/controller/address_controller.dart';
-import 'package:Shopsy/models/addressmodel.dart';
+import 'package:Shopsy/models/address_model.dart';
 import 'package:Shopsy/views/account/add_address.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,23 +11,26 @@ class AddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AddressController>();
+    final size = MediaQuery.of(context).size;
+    final double screenWidth = size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xfff1f2f6),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "My Addresses",
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.textBlack,
             fontWeight: FontWeight.bold,
+            fontSize: screenWidth * 0.045,
           ),
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.textWhite,
+        foregroundColor: AppColors.textBlack,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new, size: screenWidth * 0.05),
           onPressed: () => Get.back(),
         ),
       ),
@@ -38,15 +42,15 @@ class AddressScreen extends StatelessWidget {
               children: [
                 Icon(
                   Icons.location_off_outlined,
-                  size: 70,
-                  color: Colors.grey[400],
+                  size: screenWidth * 0.18,
+                  color: AppColors.borderGrey,
                 ),
-                const SizedBox(height: 16),
-                const Text(
+                SizedBox(height: screenWidth * 0.04),
+                Text(
                   "No addresses saved yet",
                   style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey,
+                    fontSize: screenWidth * 0.045,
+                    color: AppColors.borderGrey,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -56,32 +60,34 @@ class AddressScreen extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
           itemCount: controller.addresses.length,
           itemBuilder: (context, index) {
             final addr = controller.addresses[index];
-            return _buildAddressItem(addr, controller, index);
+            return _buildAddressItem(context, addr, controller, screenWidth, index);
           },
         );
       }),
-      bottomNavigationBar: _buildBottomBar(),
+      bottomNavigationBar: _buildBottomBar(context, screenWidth),
     );
   }
 
   Widget _buildAddressItem(
+    BuildContext context,
     Address addr,
     AddressController controller,
+    double screenWidth,
     int index,
   ) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
+      margin: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.04,
+        vertical: screenWidth * 0.02,
       ),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(screenWidth * 0.04),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.textWhite,
+        borderRadius: BorderRadius.circular(screenWidth * 0.03),
         border: addr.isDefault
             ? Border.all(
                 color: const Color(0xff2874f0),
@@ -105,23 +111,23 @@ class AddressScreen extends StatelessWidget {
               children: [
                 Icon(
                   addr.isDefault ? Icons.radio_button_checked : Icons.radio_button_off,
-                  color: addr.isDefault ? const Color(0xff2874f0) : Colors.grey,
-                  size: 22,
+                  color: addr.isDefault ? const Color(0xff2874f0) :AppColors.borderGrey,
+                  size: screenWidth * 0.055,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: screenWidth * 0.03),
                 Expanded(
                   child: Text(
                     addr.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: 18,
+                      fontSize: screenWidth * 0.045,
                     ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.025,
+                    vertical: screenWidth * 0.01,
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xfff5f5f5),
@@ -130,13 +136,13 @@ class AddressScreen extends StatelessWidget {
                   child: Text(
                     addr.type.toUpperCase(),
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: screenWidth * 0.025,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey[600],
+                      color: AppColors.borderGrey,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: screenWidth * 0.03),
                 // Edit Icon
                 GestureDetector(
                   onTap: () {
@@ -145,46 +151,46 @@ class AddressScreen extends StatelessWidget {
                           editIndex: index,
                         ));
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.edit_outlined,
-                    color: Color(0xff2874f0),
-                    size: 20,
+                    color: const Color(0xff2874f0),
+                    size: screenWidth * 0.05,
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: screenWidth * 0.04),
                 // Delete Icon
                 GestureDetector(
                   onTap: () {
-                    _showDeleteDialog(addr, index, controller);
+                    _showDeleteDialog(context, addr, index, controller, screenWidth);
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.delete_outline,
-                    color: Colors.redAccent,
-                    size: 20,
+                    color:AppColors.redAccent,
+                    size: screenWidth * 0.05,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: screenWidth * 0.03),
             Padding(
-              padding: const EdgeInsets.only(left: 34),
+              padding: EdgeInsets.only(left: screenWidth * 0.085),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     addr.address,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.035,
+                      color: AppColors.textBlack,
                       height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: screenWidth * 0.015),
                   Text(
                     addr.phone,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontSize: screenWidth * 0.035,
                     ),
                   ),
                 ],
@@ -196,55 +202,56 @@ class AddressScreen extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(Address addr, int index, AddressController controller) {
+  void _showDeleteDialog(BuildContext context, Address addr, int index, AddressController controller, double screenWidth) {
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(screenWidth * 0.05)),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(screenWidth * 0.06),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Are you sure you want to delete this address?",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: screenWidth * 0.045,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color:AppColors.textBlack,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: screenWidth * 0.04),
               Text(
                 addr.address,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
+                  fontSize: screenWidth * 0.035,
+                  color:AppColors.borderGrey,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: screenWidth * 0.06),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Get.back(),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
                         side: const BorderSide(color: Color(0xff2874f0)),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         "No",
                         style: TextStyle(
-                          color: Color(0xff2874f0),
+                          color: const Color(0xff2874f0),
                           fontWeight: FontWeight.bold,
+                          fontSize: screenWidth * 0.035,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: screenWidth * 0.03),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -252,18 +259,19 @@ class AddressScreen extends StatelessWidget {
                         Get.back();
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
                         backgroundColor: const Color(0xff2874f0),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Yes, delete",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textWhite,
                           fontWeight: FontWeight.bold,
+                          fontSize: screenWidth * 0.035,
                         ),
                       ),
                     ),
@@ -277,14 +285,17 @@ class AddressScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(BuildContext context, double screenWidth) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.04,
+        vertical: screenWidth * 0.03,
+      ),
       child: SafeArea(
         child: SizedBox(
           width: double.infinity,
-          height: 54,
+          height: screenWidth * 0.135,
           child: ElevatedButton(
             onPressed: () {
               Get.to(() => const AddAddressScreen());
@@ -293,19 +304,19 @@ class AddressScreen extends StatelessWidget {
               backgroundColor: const Color(0xffff8c31),
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(screenWidth * 0.025),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.add_location_alt_outlined, color: Colors.white, size: 20),
-                SizedBox(width: 8),
+              children: [
+                Icon(Icons.add_location_alt_outlined, color:AppColors.textWhite, size: screenWidth * 0.05),
+                SizedBox(width: screenWidth * 0.02),
                 Text(
                   "Add Address",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                    color: AppColors.textWhite,
+                    fontSize: screenWidth * 0.04,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

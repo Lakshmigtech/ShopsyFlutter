@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:Shopsy/models/loginmodel.dart';
+import 'package:Shopsy/models/login_model.dart';
 
-class AuthService {
+class LoginApi {
   static const String baseUrl = "https://dummyjson.com";
 
   static Future<LoginResponse?> login({
@@ -48,6 +48,38 @@ class AuthService {
     }
   }
 
+  /// Sends a request to the server to invalidate the user session token.
+  static Future<void> logout(String? token) async {
+    if (token == null || token.isEmpty) return;
+
+    log("🔌 Server-side token invalidation requested for: ${token.substring(0, 5)}...");
+    
+    // Note: DummyJSON is a static API and doesn't actually have a logout endpoint.
+    // In a real application, you would uncomment the code below:
+    /*
+    final url = Uri.parse("$baseUrl/user/logout");
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+      ).timeout(const Duration(seconds: 10));
+      
+      if (response.statusCode != 200) {
+        log("⚠️ Server logout failed with status: ${response.statusCode}");
+      }
+    } catch (e) {
+      log("🚨 Error during server-side logout: $e");
+    }
+    */
+    
+    // For now, we simulate a successful server invalidation
+    await Future.delayed(const Duration(milliseconds: 500));
+    log("✅ Token invalidated successfully");
+  }
+
   static String _handleError(int statusCode, String body) {
     try {
       final data = jsonDecode(body);
@@ -55,7 +87,6 @@ class AuthService {
         return data['message'];
       }
     } catch (_) {}
-
     switch (statusCode) {
       case 400: return "Bad Request. Please check your inputs.";
       case 401: return "Invalid username or password.";

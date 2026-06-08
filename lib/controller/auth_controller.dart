@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/controller/navigation_controller.dart';
 import 'package:Shopsy/controller/cart_controller.dart';
-import 'package:Shopsy/respositories/loginapi.dart';
+import 'package:Shopsy/repositories/login_api.dart';
 import 'package:Shopsy/utils/local_storage.dart';
 import 'package:Shopsy/views/bottom_navigation/bottom_navigation.dart';
 import 'package:Shopsy/views/authentication/login.dart';
@@ -93,15 +94,15 @@ class AuthController extends GetxController {
     if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
       Get.snackbar('Error', 'Please enter all fields',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white);
+          backgroundColor: AppColors.backgroundAlert,
+          colorText: AppColors.textWhite);
       return;
     }
 
     try {
       isLoading.value = true;
 
-      final result = await AuthService.login(
+      final result = await LoginApi.login(
         username: enteredUsername,
         password: enteredPassword,
       );
@@ -135,8 +136,8 @@ class AuthController extends GetxController {
 
         Get.snackbar('Success', 'Login successful',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white);
+            backgroundColor: AppColors.backgroundSuccess,
+            colorText: AppColors.textWhite);
 
         Get.offAll(() => const MainNavigation());
       } else {
@@ -146,8 +147,8 @@ class AuthController extends GetxController {
     } catch (e) {
       Get.snackbar('Error', 'Login failed: $e',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white);
+          backgroundColor: AppColors.backgroundAlert,
+          colorText:AppColors.textWhite);
     } finally {
       isLoading.value = false;
     }
@@ -197,6 +198,10 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
+    // 1. Invalidate token on server first
+    await LoginApi.logout(token.value);
+    
+    // 2. Clear local session data
     await LocalStorage.clear();
     
     if (Get.isRegistered<CartController>()) {

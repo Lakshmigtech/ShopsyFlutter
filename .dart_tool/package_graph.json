@@ -9,7 +9,6 @@
       "dependencies": [
         "cupertino_icons",
         "flutter",
-        "flutter_bloc",
         "flutter_dotenv",
         "flutter_local_notifications",
         "get",
@@ -150,15 +149,6 @@
       "dependencies": [
         "flutter",
         "web"
-      ]
-    },
-    {
-      "name": "flutter_bloc",
-      "version": "8.1.6",
-      "dependencies": [
-        "bloc",
-        "flutter",
-        "provider"
       ]
     },
     {
@@ -509,22 +499,6 @@
       ]
     },
     {
-      "name": "provider",
-      "version": "6.1.5+1",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "nested"
-      ]
-    },
-    {
-      "name": "bloc",
-      "version": "8.1.4",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "sky_engine",
       "version": "0.0.0",
       "dependencies": []
@@ -756,13 +730,6 @@
       "dependencies": [
         "meta",
         "path"
-      ]
-    },
-    {
-      "name": "nested",
-      "version": "1.0.0",
-      "dependencies": [
-        "flutter"
       ]
     },
     {

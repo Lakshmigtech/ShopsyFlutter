@@ -1,6 +1,7 @@
-import 'package:Shopsy/models/productmodel.dart';
+import 'package:flutter/material.dart';
+import 'package:Shopsy/models/product_model.dart';
+import 'package:Shopsy/repositories/product_api.dart';
 import 'package:get/get.dart';
-import '../Respositories/product_repository.dart';
 
 enum SortOption { popularity, priceLowToHigh, priceHighToLow }
 
@@ -19,6 +20,8 @@ class ProductController extends GetxController {
   final maxPrice = 5000.0.obs; 
   final maxPriceLimit = 5000.0.obs; // Absolute limit for UI
   final selectedRating = 0.obs; // 0 means any rating
+
+  final TextEditingController searchController = TextEditingController();
 
   List<String> get categories => const [
     'All',
@@ -42,7 +45,7 @@ class ProductController extends GetxController {
     try {
       isLoading.value = true;
       errorMessage.value = null;
-      final products = await ApiService.fetchProducts();
+      final products = await ProductApi.fetchProducts();
       productList.assignAll(products);
       
       _updatePriceLimits(products);
@@ -79,6 +82,9 @@ class ProductController extends GetxController {
 
   void updateSearchQuery(String value) {
     searchQuery.value = value;
+    if (searchController.text != value) {
+      searchController.text = value;
+    }
   }
 
   void updateSortOption(SortOption option) {
@@ -100,6 +106,7 @@ class ProductController extends GetxController {
     maxPrice.value = maxPriceLimit.value;
     selectedRating.value = 0;
     searchQuery.value = '';
+    searchController.clear();
   }
 
   List<Product> get filteredAndSortedProducts {
@@ -142,5 +149,11 @@ class ProductController extends GetxController {
     }
 
     return filtered;
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 }

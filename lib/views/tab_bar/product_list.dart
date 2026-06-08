@@ -3,7 +3,7 @@ import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
-import 'package:Shopsy/views/tab_bar/productdetail.dart';
+import 'package:Shopsy/views/tab_bar/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -127,7 +127,7 @@ class ProductScreen extends StatelessWidget {
                                 child: Image.network(
                                   product.image,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) => 
+                                  errorBuilder: (context, error, stackTrace) =>
                                       const Icon(Icons.broken_image, color: AppColors.grey),
                                 ),
                               ),

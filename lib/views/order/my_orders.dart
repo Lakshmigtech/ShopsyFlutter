@@ -2,6 +2,7 @@ import 'package:Shopsy/controller/order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   MyOrdersScreen({super.key});
@@ -16,8 +17,8 @@ class MyOrdersScreen extends StatelessWidget {
         title: const Text("My Orders"),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.textWhite,
+        foregroundColor: AppColors.textBlack,
       ),
       body: Obx(() {
         if (orderController.orders.isEmpty) {
@@ -29,7 +30,7 @@ class MyOrdersScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 const Text(
                   "No orders placed yet",
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                  style: TextStyle(fontSize: 18, color: AppColors.textGrey),
                 ),
               ],
             ),
@@ -44,11 +45,11 @@ class MyOrdersScreen extends StatelessWidget {
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.textWhite,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: AppColors.textBlack.withOpacity(0.05),
                     blurRadius: 5,
                     offset: const Offset(0, 2),
                   ),
@@ -83,20 +84,20 @@ class MyOrdersScreen extends StatelessWidget {
                       Text(
                         "Amount: ₹${order.totalAmount.toStringAsFixed(2)}",
                         style: const TextStyle(
-                          color: Colors.deepPurple,
+                          color:AppColors.loader,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: AppColors.green.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           order.status,
                           style: const TextStyle(
-                            color: Colors.green,
+                            color: AppColors.green,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),

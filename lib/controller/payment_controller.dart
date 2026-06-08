@@ -2,7 +2,7 @@ import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/navigation_controller.dart';
 import 'package:Shopsy/controller/notification_controller.dart';
 import 'package:Shopsy/controller/order_controller.dart';
-import 'package:Shopsy/models/ordermodel.dart';
+import 'package:Shopsy/models/order_model.dart';
 import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/views/bottom_navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ class PaymentController extends GetxController {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     Get.snackbar("Success", "Payment Successful: ${response.paymentId}",
-        backgroundColor: AppColors.green, colorText: AppColors.white);
+        backgroundColor: AppColors.backgroundSuccess, colorText: AppColors.textWhite);
     
     // Add local notification
     Get.find<NotificationController>().addNotification(
@@ -82,16 +82,16 @@ class PaymentController extends GetxController {
     
     if (message.contains("Invalid Token") || message.contains("Unauthorized")) {
       Get.snackbar("Payment Error", "Razorpay key is invalid. Please check your Key ID in the .env file.",
-          backgroundColor: Colors.red, colorText: Colors.white, duration: const Duration(seconds: 5));
+          backgroundColor: AppColors.backgroundAlert, colorText:AppColors.textWhite, duration: const Duration(seconds: 5));
     } else {
       Get.snackbar("Payment Info", message,
-          backgroundColor: Colors.blueGrey, colorText: AppColors.white);
+          backgroundColor: AppColors.backgroundAlert, colorText: AppColors.textWhite);
     }
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     Get.snackbar("External Wallet", "Selected: ${response.walletName}",
-        backgroundColor: AppColors.blue, colorText: AppColors.white);
+        backgroundColor: AppColors.primary, colorText: AppColors.textWhite);
   }
 
   void _finalizeOrder(String paymentId) async {

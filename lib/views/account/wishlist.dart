@@ -1,5 +1,6 @@
+import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
-import 'package:Shopsy/views/tabbar/productdetail.dart';
+import 'package:Shopsy/views/tab_bar/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,13 +12,13 @@ class WishlistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.textWhite,
       appBar: AppBar(
         title: const Text("My Favorites"),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.textWhite,
+        foregroundColor: AppColors.textBlack,
       ),
       body: Obx(() {
         if (controller.wishlistItems.isEmpty) {
@@ -28,7 +29,7 @@ class WishlistScreen extends StatelessWidget {
                 Icon(
                   Icons.favorite_border,
                   size: 80,
-                  color: Colors.grey,
+                  color: AppColors.textGrey,
                 ),
                 SizedBox(height: 16),
                 Text(
@@ -61,7 +62,7 @@ class WishlistScreen extends StatelessWidget {
                       width: 80,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.shade100,
+                        color: AppColors.borderGrey,
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
@@ -94,7 +95,7 @@ class WishlistScreen extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green,
+                                  color: AppColors.green,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Row(
@@ -102,13 +103,13 @@ class WishlistScreen extends StatelessWidget {
                                     const Icon(
                                       Icons.star,
                                       size: 14,
-                                      color: Colors.white,
+                                      color: AppColors.white,
                                     ),
                                     const SizedBox(width: 2),
                                     Text(
                                       product.rating.stars.toString(),
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.white,
                                         fontSize: 12,
                                       ),
                                     ),
@@ -119,7 +120,7 @@ class WishlistScreen extends StatelessWidget {
                               Text(
                                 "(${product.rating.count} reviews)",
                                 style: const TextStyle(
-                                  color: Colors.grey,
+                                  color: AppColors.textGrey,
                                 ),
                               ),
                             ],
@@ -139,20 +140,20 @@ class WishlistScreen extends StatelessWidget {
                                 '₹${((product.priceCents / 100) * 1.2).toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   decoration: TextDecoration.lineThrough,
-                                  color: Colors.grey,
+                                  color: AppColors.textGrey,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               const Text(
                                 '20% off',
-                                style: TextStyle(color: Colors.green),
+                                style: TextStyle(color: AppColors.green),
                               ),
                             ],
                           ),
                           const SizedBox(height: 6),
                           const Text(
                             'Free Delivery',
-                            style: TextStyle(color: Colors.grey),
+                            style: TextStyle(color: AppColors.textGrey),
                           ),
                         ],
                       ),
@@ -161,10 +162,10 @@ class WishlistScreen extends StatelessWidget {
                       children: [
                         IconButton(
                           onPressed: () => controller.toggleFavorite(product),
-                          icon: const Icon(Icons.favorite, color: Colors.red),
+                          icon: const Icon(Icons.favorite, color: AppColors.redAccent),
                         ),
                         const SizedBox(height: 20),
-                        const Icon(Icons.chevron_right, color: Colors.grey),
+                        const Icon(Icons.chevron_right, color: AppColors.textGrey),
                       ],
                     ),
                   ],

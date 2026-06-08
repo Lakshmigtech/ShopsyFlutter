@@ -1,6 +1,6 @@
-import 'package:Shopsy/controller/address_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
-import 'package:Shopsy/models/addressmodel.dart';
+import 'package:Shopsy/controller/address_controller.dart';
+import 'package:Shopsy/models/address_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,49 +16,40 @@ class AddAddressScreen extends StatefulWidget {
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
   final AddressController controller = Get.find<AddressController>();
-  final nameController = TextEditingController();
-  final phoneController = TextEditingController();
-  final addressController = TextEditingController();
-  
-  final RxString type = "Home".obs;
-  final RxBool isDefault = false.obs;
 
   @override
   void initState() {
     super.initState();
     if (widget.editAddress != null) {
-      nameController.text = widget.editAddress!.name;
-      phoneController.text = widget.editAddress!.phone;
-      addressController.text = widget.editAddress!.address;
-      type.value = widget.editAddress!.type;
-      isDefault.value = widget.editAddress!.isDefault;
+      controller.initForEditing(widget.editAddress!);
+    } else {
+      controller.clearFields();
     }
   }
 
   @override
-  void dispose() {
-    nameController.dispose();
-    phoneController.dispose();
-    addressController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    bool isEditing = widget.editAddress != null;
+    final bool isEditing = widget.editAddress != null;
+    final size = MediaQuery.sizeOf(context);
+    final double screenWidth = size.width;
+    final double screenHeight = size.height;
 
     return Scaffold(
       backgroundColor: const Color(0xfff1f2f6),
       appBar: AppBar(
         title: Text(
           isEditing ? "Edit Address" : "Add New Address",
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: screenWidth * 0.045,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.black, size: screenWidth * 0.06),
           onPressed: () => Get.back(),
         ),
       ),
@@ -66,84 +57,106 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(screenWidth * 0.04),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle("Contact Details"),
-                  _buildFormCard([
-                    _buildTextField(
-                      controller: nameController,
-                      label: "Full Name",
-                      hint: "Enter your name",
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: phoneController,
-                      label: "Phone Number",
-                      hint: "10-digit mobile number",
-                      keyboardType: TextInputType.phone,
-                    ),
-                  ]),
-                  const SizedBox(height: 24),
-                  _buildSectionTitle("Address Details"),
-                  _buildFormCard([
-                    _buildTextField(
-                      controller: addressController,
-                      label: "Address Detail",
-                      hint: "House No, Building, Street, Area",
-                      maxLines: 3,
-                    ),
-                  ]),
-                  const SizedBox(height: 24),
-                  _buildSectionTitle("Address Type"),
-                  _buildFormCard([
-                    Obx(() => Row(
-                      children: [
-                        _typeChip("Home"),
-                        const SizedBox(width: 12),
-                        _typeChip("Office"),
-                      ],
-                    )),
-                  ]),
-                  const SizedBox(height: 24),
-                  _buildFormCard([
-                    Obx(() => CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text("Set as default address", style: TextStyle(fontSize: 14)),
-                      value: isDefault.value,
-                      onChanged: (val) => isDefault.value = val ?? false,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: const Color(0xff2874f0),
-                    )),
-                  ]),
-                  const SizedBox(height: 20),
+                  _buildSectionTitle("Contact Details", screenWidth),
+                  _buildFormCard(
+                    [
+                      _buildTextField(
+                        controller: controller.nameController,
+                        label: "Full Name",
+                        hint: "Enter your name",
+                        screenWidth: screenWidth,
+                      ),
+                      SizedBox(height: screenHeight * 0.02),
+                      _buildTextField(
+                        controller: controller.phoneController,
+                        label: "Phone Number",
+                        hint: "10-digit mobile number",
+                        keyboardType: TextInputType.phone,
+                        screenWidth: screenWidth,
+                      ),
+                    ],
+                    screenWidth,
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  _buildSectionTitle("Address Details", screenWidth),
+                  _buildFormCard(
+                    [
+                      _buildTextField(
+                        controller: controller.detailAddressController,
+                        label: "Address Detail",
+                        hint: "House No, Building, Street, Area",
+                        maxLines: 3,
+                        screenWidth: screenWidth,
+                      ),
+                    ],
+                    screenWidth,
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  _buildSectionTitle("Address Type", screenWidth),
+                  _buildFormCard(
+                    [
+                      Obx(() => Row(
+                            children: [
+                              _typeChip("Home", screenWidth),
+                              SizedBox(width: screenWidth * 0.03),
+                              _typeChip("Office", screenWidth),
+                            ],
+                          )),
+                    ],
+                    screenWidth,
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  _buildFormCard(
+                    [
+                      Obx(() => CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              "Set as default address",
+                              style: TextStyle(fontSize: screenWidth * 0.035),
+                            ),
+                            value: controller.isDefault.value,
+                            onChanged: (val) => controller.isDefault.value = val ?? false,
+                            controlAffinity: ListTileControlAffinity.leading,
+                            activeColor: const Color(0xff2874f0),
+                          )),
+                    ],
+                    screenWidth,
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
                 ],
               ),
             ),
           ),
-          _buildBottomBar(isEditing),
+          _buildBottomBar(isEditing, screenWidth, screenHeight),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      padding: EdgeInsets.only(left: screenWidth * 0.01, bottom: screenWidth * 0.03),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
+        style: TextStyle(
+          fontSize: screenWidth * 0.035,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+        ),
       ),
     );
   }
 
-  Widget _buildFormCard(List<Widget> children) {
+  Widget _buildFormCard(List<Widget> children, double screenWidth) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(screenWidth * 0.04),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(screenWidth * 0.02),
       ),
       child: Column(children: children),
     );
@@ -153,73 +166,99 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     required TextEditingController controller,
     required String label,
     required String hint,
+    required double screenWidth,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+        Text(
+          label,
+          style: TextStyle(fontSize: screenWidth * 0.032, color: Colors.black54),
+        ),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: screenWidth * 0.038,
+            fontWeight: FontWeight.w500,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[200]!)),
-            focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Color(0xff2874f0))),
-            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            hintStyle: TextStyle(color: Colors.grey[400], fontSize: screenWidth * 0.035),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff2874f0)),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
           ),
         ),
       ],
     );
   }
 
-  Widget _typeChip(String label) {
-    bool isSelected = type.value == label;
+  Widget _typeChip(String label, double screenWidth) {
+    bool isSelected = controller.addressType.value == label;
     return GestureDetector(
-      onTap: () => type.value = label,
+      onTap: () => controller.addressType.value = label,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.05,
+          vertical: screenWidth * 0.02,
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xff2874f0).withOpacity(0.1) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? const Color(0xff2874f0) : Colors.grey[300]!),
+          color: isSelected ? const Color(0xff2874f0).withValues(alpha: 0.1) :AppColors.textWhite,
+          borderRadius: BorderRadius.circular(screenWidth * 0.05),
+          border: Border.all(color: isSelected ? const Color(0xff2874f0) : AppColors.borderGrey),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xff2874f0) : Colors.black87,
+            color: isSelected ? const Color(0xff2874f0) : AppColors.textBlack,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14,
+            fontSize: screenWidth * 0.035,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBottomBar(bool isEditing) {
+  Widget _buildBottomBar(bool isEditing, double screenWidth, double screenHeight) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        border: Border(top: BorderSide(color: AppColors.borderGrey)),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton(
-          onPressed: _saveAddress,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xffff8c31),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            elevation: 0,
-          ),
-          child: Text(
-            isEditing ? "UPDATE ADDRESS" : "SAVE ADDRESS",
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.04),
+          child: SizedBox(
+            width: double.infinity,
+            height: screenHeight * 0.065,
+            child: ElevatedButton(
+              onPressed: _saveAddress,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xffff8c31),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.01),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                isEditing ? "UPDATE ADDRESS" : "SAVE ADDRESS",
+                style: TextStyle(
+                  color: AppColors.textWhite,
+                  fontSize: screenWidth * 0.04,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -227,24 +266,20 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   }
 
   void _saveAddress() async {
-    if (nameController.text.isNotEmpty &&
-        phoneController.text.isNotEmpty &&
-        addressController.text.isNotEmpty) {
-      
+    if (controller.nameController.text.isNotEmpty &&
+        controller.phoneController.text.isNotEmpty &&
+        controller.detailAddressController.text.isNotEmpty) {
       final newAddress = Address(
-        name: nameController.text.trim(),
-        phone: phoneController.text.trim(),
-        address: addressController.text.trim(),
-        type: type.value,
-        isDefault: isDefault.value,
+        name: controller.nameController.text.trim(),
+        phone: controller.phoneController.text.trim(),
+        address: controller.detailAddressController.text.trim(),
+        type: controller.addressType.value,
+        isDefault: controller.isDefault.value,
       );
 
       if (widget.editAddress != null && widget.editIndex != null) {
-        // Update logic: Remove old and add at same index or add new and remove old
-        // For simplicity, let's add update to controller
         controller.addresses[widget.editIndex!] = newAddress;
         if (newAddress.isDefault) {
-          // If we set this one to default, we need to handle others
           await controller.setDefaultAddress(widget.editIndex!);
         } else {
           await controller.saveAddresses();
@@ -254,15 +289,21 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       }
 
       Get.back();
-      Get.snackbar("Success", widget.editAddress != null ? "Address updated" : "Address added",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white);
+      Get.snackbar(
+        "Success",
+        widget.editAddress != null ? "Address updated" : "Address added",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor:AppColors.backgroundSuccess,
+        colorText: AppColors.textWhite,
+      );
     } else {
-      Get.snackbar("Error", "Please fill all mandatory fields",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "Please fill all mandatory fields",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.backgroundAlert,
+        colorText: AppColors.textWhite,
+      );
     }
   }
 }

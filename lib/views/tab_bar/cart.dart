@@ -1,7 +1,9 @@
 import 'package:Shopsy/controller/cart_controller.dart';
+import 'package:Shopsy/utils/currency_utils.dart';
 import 'package:Shopsy/views/order/order_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -19,8 +21,8 @@ class CartScreen extends StatelessWidget {
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor:AppColors.textWhite,
+        foregroundColor: AppColors.textBlack,
       ),
       body: Obx(() {
         if (cartController.cartItems.isEmpty) {
@@ -28,9 +30,9 @@ class CartScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
+                Icon(Icons.shopping_cart_outlined, size: 64, color: AppColors.textGrey),
                 SizedBox(height: 16),
-                Text("Your cart is empty", style: TextStyle(fontSize: 18, color: Colors.grey)),
+                Text("Your cart is empty", style: TextStyle(fontSize: 18, color: AppColors.textGrey)),
               ],
             ),
           );
@@ -69,13 +71,13 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildCartItem(dynamic item, CartController cartController, int index) {
-    String formattedPrice = (item.product.priceCents / 100).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    String formattedPrice = CurrencyUtils.formatPrice(item.product.priceCents / 100);
     
     return Container(
       margin: const EdgeInsets.only(left: 12, right: 12, top: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:AppColors.textWhite,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -88,14 +90,14 @@ class CartScreen extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color:AppColors.textWhite,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Image.network(
                   item.product.image,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image, color: Colors.grey),
+                      const Icon(Icons.broken_image, color: AppColors.textGrey),
                 ),
               ),
               const SizedBox(width: 16),
@@ -166,7 +168,7 @@ class CartScreen extends StatelessWidget {
                 child: const Text(
                   "Remove",
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: AppColors.textGrey,
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
@@ -186,7 +188,7 @@ class CartScreen extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: AppColors.borderGrey),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Icon(icon, size: 18, color: const Color(0xff2874f0)),
@@ -195,13 +197,13 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildPriceDetails(CartController cartController) {
-    String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    String formattedPrice = CurrencyUtils.formatPrice(cartController.totalPrice);
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
@@ -209,7 +211,7 @@ class CartScreen extends StatelessWidget {
         children: [
           const Text(
             "Price Details",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textBlack),
           ),
           const Divider(height: 32),
           _priceRow("Price", "₹$formattedPrice"),
@@ -243,7 +245,7 @@ class CartScreen extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: 15,
-            color: isGreen ? const Color(0xff388e3c) : Colors.black,
+            color: isGreen ? const Color(0xff388e3c) : AppColors.textBlack,
             fontWeight: isGreen ? FontWeight.bold : FontWeight.w400,
           ),
         ),
@@ -252,12 +254,12 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildBottomBar(CartController cartController) {
-    String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    String formattedPrice = CurrencyUtils.formatPrice(cartController.totalPrice);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.textWhite,
         border: Border(top: BorderSide(color: Colors.grey.shade200)),
       ),
       child: Row(
@@ -290,7 +292,7 @@ class CartScreen extends StatelessWidget {
             child: const Text(
               "Place Order",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.textWhite,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

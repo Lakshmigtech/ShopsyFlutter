@@ -1,12 +1,13 @@
 import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/controller/address_controller.dart';
-import 'package:Shopsy/models/addressmodel.dart';
-import 'package:Shopsy/models/productmodel.dart';
+import 'package:Shopsy/models/address_model.dart';
+import 'package:Shopsy/models/product_model.dart';
 import 'package:Shopsy/views/account/add_address.dart';
 import 'package:Shopsy/views/account/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
 
 class OrderSummaryPage extends StatelessWidget {
   const OrderSummaryPage({super.key});
@@ -22,12 +23,12 @@ class OrderSummaryPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Order Summary",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(color:AppColors.textBlack, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
         elevation: 0.5,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor:AppColors.textWhite,
+        foregroundColor: AppColors.textBlack,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
@@ -75,10 +76,10 @@ class OrderSummaryPage extends StatelessWidget {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
-        color: Colors.white,
+        color:AppColors.textWhite,
         child: Column(
           children: [
-            const Text("No delivery address selected", style: TextStyle(color: Colors.grey)),
+            const Text("No delivery address selected", style: TextStyle(color:AppColors.textGrey)),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => Get.to(() => const AddAddressScreen()),
@@ -114,7 +115,7 @@ class OrderSummaryPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      color:AppColors.textWhite,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,7 +147,7 @@ class OrderSummaryPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             selectedAddress.address,
-            style: const TextStyle(color: Colors.black87, fontSize: 13, height: 1.4),
+            style: const TextStyle(color: AppColors.textBlack, fontSize: 13, height: 1.4),
           ),
         ],
       ),
@@ -157,7 +158,7 @@ class OrderSummaryPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 1),
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      color: AppColors.textWhite,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -165,13 +166,13 @@ class OrderSummaryPage extends StatelessWidget {
             width: 70,
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.textWhite,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Image.network(
               item.product.image,
               fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 40, color:AppColors.textGrey),
             ),
           ),
           const SizedBox(width: 16),
@@ -198,7 +199,7 @@ class OrderSummaryPage extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   "Qty: ${item.quantity}",
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  style: const TextStyle(color:AppColors.textGrey, fontSize: 12),
                 ),
               ],
             ),
@@ -214,13 +215,13 @@ class OrderSummaryPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      color: AppColors.textWhite,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "Price Details",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textGrey),
           ),
           const Divider(height: 24),
           _priceRow("Price (${cartController.itemCount} items)", "₹$formattedPrice"),
@@ -254,7 +255,7 @@ class OrderSummaryPage extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: 14,
-            color: isGreen ? const Color(0xff388e3c) : Colors.black,
+            color: isGreen ? const Color(0xff388e3c) : AppColors.textBlack,
             fontWeight: isGreen ? FontWeight.bold : FontWeight.w400,
           ),
         ),
@@ -268,11 +269,11 @@ class OrderSummaryPage extends StatelessWidget {
 
       return Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.textWhite,
           border: Border(top: BorderSide(color: Colors.grey.shade200)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: AppColors.textBlack.withOpacity(0.05),
               blurRadius: 4,
               offset: const Offset(0, -2),
             ),
@@ -305,7 +306,7 @@ class OrderSummaryPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       if (orderController.selectedAddress.value.isEmpty) {
-                        Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
+                        Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: AppColors.redAccent, colorText: AppColors.textWhite);
                         return;
                       }
                       Get.to(() => PaymentMethodsPage(selectedAddress: orderController.selectedAddress.value));
@@ -317,7 +318,7 @@ class OrderSummaryPage extends StatelessWidget {
                     ),
                     child: const Text(
                       "CONTINUE",
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: AppColors.textWhite, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -334,7 +335,7 @@ class OrderSummaryPage extends StatelessWidget {
       Container(
         padding: const EdgeInsets.all(16),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.textWhite,
           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: Column(

@@ -3,7 +3,7 @@ import 'package:Shopsy/controller/auth_controller.dart';
 import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/navigation_controller.dart';
 import 'package:Shopsy/controller/order_controller.dart';
-import 'package:Shopsy/controller/productcontroller.dart';
+import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/controller/splash_controller.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
 import 'package:Shopsy/controller/payment_controller.dart';
