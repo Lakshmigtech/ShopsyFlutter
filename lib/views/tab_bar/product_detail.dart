@@ -4,7 +4,6 @@ import 'package:Shopsy/models/product_model.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:Shopsy/constants/app_colors.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
@@ -30,6 +29,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   Offset _startOffset = Offset.zero;
   Offset _endOffset = Offset.zero;
 
+  String? _selectedSize;
+  final List<String> _sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+
+  // Robust check to identify if size selection is required (Women's or Men's Clothing)
+  bool get _requiresSizeSelection {
+    final subCat = product.subCategory.toLowerCase();
+    final cat = product.category.toLowerCase();
+    final name = product.name.toLowerCase();
+    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
+
+    // Check if it's fashion/clothing related
+    bool isFashion = cat.contains('fashion') ||
+        cat.contains('clothing') ||
+        subCat.contains('fashion') ||
+        subCat.contains('clothing');
+
+    if (!isFashion) return false;
+
+    // Use regex to match whole words for 'men' and 'women' terms
+    final menRegex = RegExp(r'\bmen\b|\bmale\b');
+    final womenRegex = RegExp(r'\bwomen\b|\bfemale\b|\blady\b|\bladies\b');
+
+    bool hasWomensTerm = womenRegex.hasMatch(name) ||
+        womenRegex.hasMatch(subCat) ||
+        keywords.any((k) => womenRegex.hasMatch(k));
+
+    bool hasMensTerm = menRegex.hasMatch(name) ||
+        menRegex.hasMatch(subCat) ||
+        keywords.any((k) => menRegex.hasMatch(k));
+
+    return hasWomensTerm || hasMensTerm;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,17 +86,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         setState(() {
           _isAnimating = false;
         });
-        cartController.addToCart(product);
+        cartController.addToCart(product, size: _selectedSize);
         _animationController.reset();
       }
     });
   }
 
   void _runAddToCartAnimation() {
+    // Require size selection if the product is identified as requiring it
+    if (_requiresSizeSelection && _selectedSize == null) {
+      Get.snackbar(
+        'Selection Required',
+        'Please select a size before adding to cart',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     final RenderBox? imageBox =
-        _imageKey.currentContext?.findRenderObject() as RenderBox?;
+    _imageKey.currentContext?.findRenderObject() as RenderBox?;
     final RenderBox? cartBox =
-        _cartKey.currentContext?.findRenderObject() as RenderBox?;
+    _cartKey.currentContext?.findRenderObject() as RenderBox?;
 
     if (imageBox != null && cartBox != null) {
       final imagePosition = imageBox.localToGlobal(Offset.zero);
@@ -84,15 +128,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
       _moveAnimation = Tween<Offset>(begin: _startOffset, end: _endOffset)
           .animate(
-            CurvedAnimation(
-              parent: _animationController,
-              curve: Curves.easeInCirc,
-            ),
-          );
+        CurvedAnimation(
+          parent: _animationController,
+          curve: Curves.easeInCirc,
+        ),
+      );
 
       _animationController.forward();
     } else {
-      cartController.addToCart(product);
+      cartController.addToCart(product, size: _selectedSize);
     }
   }
 
@@ -120,12 +164,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       const Spacer(),
                       Obx(() => _circleIcon(
                         wishlistController.isFavorite(product) ? Icons.favorite : Icons.favorite_border,
-                        () => wishlistController.toggleFavorite(product),
+                            () => wishlistController.toggleFavorite(product),
                         color: wishlistController.isFavorite(product) ? Colors.red : Colors.black,
                       )),
                       const SizedBox(width: 10),
                       Obx(
-                        () => Stack(
+                            () => Stack(
                           key: _cartKey,
                           children: [
                             _circleIcon(Icons.shopping_cart_outlined, () {
@@ -178,6 +222,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // 🏷️ Category & Subcategory Breadcrumb
+                              Row(
+                                children: [
+                                  Text(
+                                    product.category,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.blue.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (product.subCategory.isNotEmpty) ...[
+                                    const Icon(Icons.chevron_right, size: 14, color: Colors.grey),
+                                    Text(
+                                      product.subCategory,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+
                               // 📝 Title
                               Text(
                                 product.name,
@@ -266,6 +335,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               ),
 
                               const SizedBox(height: 20),
+
+                              // 📏 Size Selection (Visible for Clothing)
+                              if (_requiresSizeSelection) ...[
+                                const Text(
+                                  "Select Size",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                  height: 50,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _sizes.length,
+                                    itemBuilder: (context, index) {
+                                      final size = _sizes[index];
+                                      final isSelected = _selectedSize == size;
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedSize = size;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 50,
+                                          margin: const EdgeInsets.only(right: 10),
+                                          decoration: BoxDecoration(
+                                            color: isSelected ? Colors.orange : Colors.white,
+                                            border: Border.all(
+                                              color: isSelected ? Colors.orange : Colors.grey.shade300,
+                                            ),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              size,
+                                              style: TextStyle(
+                                                color: isSelected ? Colors.white : Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                              ],
 
                               const Divider(),
 

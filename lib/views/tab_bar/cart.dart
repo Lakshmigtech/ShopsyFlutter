@@ -72,7 +72,7 @@ class CartScreen extends StatelessWidget {
 
   Widget _buildCartItem(dynamic item, CartController cartController, int index) {
     String formattedPrice = CurrencyUtils.formatPrice(item.product.priceCents / 100);
-    
+
     return Container(
       margin: const EdgeInsets.only(left: 12, right: 12, top: 12),
       padding: const EdgeInsets.all(16),
@@ -97,7 +97,7 @@ class CartScreen extends StatelessWidget {
                   item.product.image,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image, color: AppColors.textGrey),
+                  const Icon(Icons.broken_image, color: AppColors.textGrey),
                 ),
               ),
               const SizedBox(width: 16),
@@ -116,6 +116,17 @@ class CartScreen extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
+                    if (item.size != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        "Size: ${item.size}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     Text(
                       "₹$formattedPrice",
@@ -198,7 +209,7 @@ class CartScreen extends StatelessWidget {
 
   Widget _buildPriceDetails(CartController cartController) {
     String formattedPrice = CurrencyUtils.formatPrice(cartController.totalPrice);
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       padding: const EdgeInsets.all(16),

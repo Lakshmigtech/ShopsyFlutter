@@ -28,16 +28,16 @@ class CartController extends GetxController {
     await prefs.setString(_storageKey, encoded);
   }
 
-  void addToCart(Product product) async {
-    final index = cartItems.indexWhere((item) => item.product.id == product.id);
+  void addToCart(Product product, {String? size}) async {
+    final index = cartItems.indexWhere((item) => item.product.id == product.id && item.size == size);
 
     if (index != -1) {
       cartItems[index].quantity++;
       cartItems.refresh();
     } else {
-      cartItems.add(CartItem(product: product));
+      cartItems.add(CartItem(product: product, size: size));
     }
-    
+
     await saveCart();
 
     Get.snackbar(

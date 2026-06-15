@@ -61,7 +61,7 @@ class OrderSummaryPage extends StatelessWidget {
 
               /// 3. PRICE DETAILS SECTION
               _buildPriceDetails(cartController),
-              
+
               const SizedBox(height: 20),
             ],
           ),
@@ -95,7 +95,7 @@ class OrderSummaryPage extends StatelessWidget {
     }
 
     final selectedAddress = addresses.firstWhere(
-      (e) => e.isDefault,
+          (e) => e.isDefault,
       orElse: () => addresses[0],
     );
 
@@ -186,6 +186,17 @@ class OrderSummaryPage extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 14, color: Colors.black87),
                 ),
+                if (item.size != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    "Size: ${item.size}",
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 Text(
                   "₹${(item.product.priceCents / 100 * item.quantity).toStringAsFixed(0)}",
@@ -353,8 +364,7 @@ class OrderSummaryPage extends StatelessWidget {
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: Radio<int>(
-                      value: index,
-                      groupValue: addresses.indexWhere((e) => e.isDefault),
+                      value: index, groupValue: addresses.indexWhere((e) => e.isDefault),
                       onChanged: (val) {
                         addressController.setDefaultAddress(index);
                         Get.back();

@@ -70,8 +70,9 @@ class Rating {
 class CartItem {
   final Product product;
   int quantity;
+  String? size;
 
-  CartItem({required this.product, this.quantity = 1});
+  CartItem({required this.product, this.quantity = 1, this.size});
 
   double get subtotal => (product.priceCents * quantity) / 100.0;
 
@@ -79,6 +80,7 @@ class CartItem {
     return CartItem(
       product: Product.fromJson(json['product']),
       quantity: json['quantity'] ?? 1,
+      size: json['size'],
     );
   }
 
@@ -86,6 +88,7 @@ class CartItem {
     return {
       'product': product.toJson(),
       'quantity': quantity,
+      'size': size,
     };
   }
 }
