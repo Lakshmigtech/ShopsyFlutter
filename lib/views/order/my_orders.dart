@@ -19,6 +19,10 @@ class MyOrdersScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: AppColors.textWhite,
         foregroundColor: AppColors.textBlack,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Obx(() {
         if (orderController.orders.isEmpty) {
@@ -84,7 +88,7 @@ class MyOrdersScreen extends StatelessWidget {
                       Text(
                         "Amount: ₹${order.totalAmount.toStringAsFixed(2)}",
                         style: const TextStyle(
-                          color:AppColors.loader,
+                          color: AppColors.loader,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -121,6 +125,7 @@ class MyOrdersScreen extends StatelessWidget {
                         ...order.items.map((item) => Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
@@ -135,9 +140,22 @@ class MyOrdersScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: Text(
-                                  "${item.productName} x ${item.quantity}",
-                                  style: const TextStyle(fontSize: 13),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${item.productName} x ${item.quantity}",
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                    if (item.size != null && item.size!.isNotEmpty)
+                                      Text(
+                                        "Size: ${item.size}",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                               Text(

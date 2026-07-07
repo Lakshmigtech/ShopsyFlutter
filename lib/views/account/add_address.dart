@@ -3,6 +3,9 @@ import 'package:Shopsy/controller/address_controller.dart';
 import 'package:Shopsy/models/address_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class AddAddressScreen extends StatefulWidget {
   final Address? editAddress;
@@ -16,15 +19,94 @@ class AddAddressScreen extends StatefulWidget {
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
   final AddressController controller = Get.find<AddressController>();
+  GoogleMapController? _mapController;
+  
+  static const LatLng _kDefaultLocation = LatLng(10.0159, 76.3419); // Kochi
+  
+  final Rx<LatLng> _currentLatLng = _kDefaultLocation.obs;
+  final RxSet<Marker> _markers = <Marker>{}.obs;
+  bool _isMapReady = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.editAddress != null) {
       controller.initForEditing(widget.editAddress!);
+      _geocodeAddress(widget.editAddress!.address);
     } else {
       controller.clearFields();
+      _getCurrentLocation();
     }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Get.snackbar("Location Error", "Location services are disabled.");
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+
+    if (permission == LocationPermission.deniedForever) return;
+
+    try {
+      Position position = await Geolocator.getCurrentPosition();
+      _updateLocation(LatLng(position.latitude, position.longitude));
+    } catch (e) {
+      debugPrint("Error getting current location: $e");
+    }
+  }
+
+  Future<void> _geocodeAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        _updateLocation(LatLng(locations[0].latitude, locations[0].longitude));
+      }
+    } catch (e) {
+      debugPrint("Geocoding error: $e");
+    }
+  }
+
+  void _updateLocation(LatLng latLng) async {
+    _currentLatLng.value = latLng;
+    
+    _markers.assign(
+      Marker(
+        markerId: const MarkerId("picked_location"),
+        position: latLng,
+        draggable: true,
+        onDragEnd: (newPosition) => _onMapTap(newPosition),
+      )
+    );
+    
+    if (_isMapReady) {
+      _mapController?.animateCamera(CameraUpdate.newLatLng(latLng));
+    }
+
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String address = "${place.name ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.postalCode ?? ''}";
+        address = address.replaceAll(RegExp(r'^, +'), '').replaceAll(RegExp(r', ,'), ',');
+        controller.detailAddressController.text = address;
+      }
+    } catch (e) {
+      debugPrint("Reverse geocoding error: $e");
+    }
+  }
+
+  void _onMapTap(LatLng latLng) {
+    _updateLocation(latLng);
   }
 
   @override
@@ -47,7 +129,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 0.5,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black, size: screenWidth * 0.06),
           onPressed: () => Get.back(),
@@ -61,6 +143,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildSectionTitle("Locate on Map", screenWidth),
+                  _buildMapCard(screenWidth, screenHeight),
+                  SizedBox(height: screenHeight * 0.03),
                   _buildSectionTitle("Contact Details", screenWidth),
                   _buildFormCard(
                     [
@@ -137,6 +222,58 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     );
   }
 
+  Widget _buildMapCard(double screenWidth, double screenHeight) {
+    return Container(
+      height: screenHeight * 0.3,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(screenWidth * 0.02),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          )
+        ]
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(screenWidth * 0.02),
+        child: Stack(
+          children: [
+            Obx(() => GoogleMap(
+              // REMOVED UniqueKey() - this was causing the blank screen/crash
+              initialCameraPosition: CameraPosition(
+                target: _currentLatLng.value,
+                zoom: 15,
+              ),
+              onMapCreated: (mapController) {
+                _mapController = mapController;
+                _isMapReady = true;
+                _mapController?.animateCamera(CameraUpdate.newLatLng(_currentLatLng.value));
+              },
+              markers: _markers,
+              onTap: _onMapTap,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+            )),
+            Positioned(
+              right: 12,
+              bottom: 12,
+              child: FloatingActionButton.small(
+                onPressed: _getCurrentLocation,
+                backgroundColor: Colors.white,
+                child: const Icon(Icons.my_location, color: Color(0xff2874f0)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSectionTitle(String title, double screenWidth) {
     return Padding(
       padding: EdgeInsets.only(left: screenWidth * 0.01, bottom: screenWidth * 0.03),
@@ -145,7 +282,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         style: TextStyle(
           fontSize: screenWidth * 0.035,
           fontWeight: FontWeight.bold,
-          color: Colors.grey,
+          color: Colors.grey[700],
         ),
       ),
     );
@@ -211,7 +348,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
           vertical: screenWidth * 0.02,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xff2874f0).withValues(alpha: 0.1) :AppColors.textWhite,
+          color: isSelected ? const Color(0xff2874f0).withOpacity(0.1) : AppColors.textWhite,
           borderRadius: BorderRadius.circular(screenWidth * 0.05),
           border: Border.all(color: isSelected ? const Color(0xff2874f0) : AppColors.borderGrey),
         ),
@@ -293,7 +430,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         "Success",
         widget.editAddress != null ? "Address updated" : "Address added",
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor:AppColors.backgroundSuccess,
+        backgroundColor: AppColors.backgroundSuccess,
         colorText: AppColors.textWhite,
       );
     } else {

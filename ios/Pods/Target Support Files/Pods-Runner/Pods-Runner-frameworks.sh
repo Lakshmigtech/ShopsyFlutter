@@ -177,33 +177,39 @@ code_sign_if_enabled() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/geocoding_ios/geocoding_ios.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/razorpay_flutter/razorpay_flutter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/Razorpay.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/RazorpayCore.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/RazorpayStandard.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/RazorpayCore.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/Razorpay.framework"
 fi
 if [[ "$CONFIGURATION" == "Profile" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/geocoding_ios/geocoding_ios.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/razorpay_flutter/razorpay_flutter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/Razorpay.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/RazorpayCore.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/RazorpayStandard.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/RazorpayCore.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/Razorpay.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/geocoding_ios/geocoding_ios.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/razorpay_flutter/razorpay_flutter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/Razorpay.framework"
-  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/RazorpayCore.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/RazorpayStandard.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/RazorpayCore.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-pod/Razorpay.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

@@ -15,7 +15,7 @@ class NotificationScreen extends GetView<NotificationController> {
         title: const Text("Notifications"),
         centerTitle: true,
         backgroundColor: AppColors.textWhite,
-        foregroundColor: AppColors.white,
+        foregroundColor: AppColors.textBlack,
         elevation: 0,
         actions: [
           IconButton(

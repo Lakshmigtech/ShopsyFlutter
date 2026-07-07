@@ -5,7 +5,7 @@ import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/models/order_model.dart';
 import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/views/bottom_navigation/bottom_navigation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -54,10 +54,14 @@ class PaymentController extends GetxController {
     };
 
     try {
-      debugPrint('Opening Razorpay with options: $options');
+      if (kDebugMode) {
+        debugPrint('Opening Razorpay checkout...');
+      }
       _razorpay.open(options);
     } catch (e) {
-      debugPrint('Error opening Razorpay: $e');
+      if (kDebugMode) {
+        debugPrint('Error opening Razorpay: $e');
+      }
       Get.snackbar("Error", "Could not open Razorpay checkout: $e");
     }
   }
@@ -69,7 +73,7 @@ class PaymentController extends GetxController {
     // Add local notification
     Get.find<NotificationController>().addNotification(
       "Payment Successful", 
-      "Your payment of ID ${response.paymentId} was successful. Order is confirmed!"
+      "Your payment was successful. Order is confirmed!"
     );
     
     _finalizeOrder(response.paymentId ?? DateTime.now().millisecondsSinceEpoch.toString());
@@ -78,10 +82,12 @@ class PaymentController extends GetxController {
   void _handlePaymentError(PaymentFailureResponse response) {
     // response.code: 0 = Cancelled, 1 = Error, 2 = SDK error
     String message = response.message ?? "Payment Cancelled or Failed";
-    debugPrint("Razorpay Error: ${response.code} - $message");
+    if (kDebugMode) {
+      debugPrint("Razorpay Error: ${response.code}");
+    }
     
     if (message.contains("Invalid Token") || message.contains("Unauthorized")) {
-      Get.snackbar("Payment Error", "Razorpay key is invalid. Please check your Key ID in the .env file.",
+      Get.snackbar("Payment Error", "Razorpay key is invalid. Please check your configuration.",
           backgroundColor: AppColors.backgroundAlert, colorText:AppColors.textWhite, duration: const Duration(seconds: 5));
     } else {
       Get.snackbar("Payment Info", message,
@@ -108,6 +114,7 @@ class PaymentController extends GetxController {
           productImage: cartItem.product.image,
           quantity: cartItem.quantity,
           price: cartItem.product.priceCents / 100.0,
+          size: cartItem.size,
         );
       }).toList();
 

@@ -7,6 +7,12 @@ dependencies: \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/Flutter.framework/Modules/module.modulemap \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/flutter_local_notifications/flutter_local_notifications.framework/Modules/module.modulemap \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/flutter_local_notifications/flutter_local_notifications.framework/Headers/FlutterLocalNotificationsPlugin.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/geocoding_ios/geocoding_ios.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/geocoding_ios/geocoding_ios.framework/Headers/GeocodingPlugin.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/geolocator_apple/geolocator_apple.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/geolocator_apple/geolocator_apple.framework/Headers/GeolocatorPlugin.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMGoogleMapsPlugin.h \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/image_picker_ios/image_picker_ios.framework/Modules/module.modulemap \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/image_picker_ios/image_picker_ios.framework/Headers/FLTImagePickerPlugin.h \
   /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/razorpay_flutter/razorpay_flutter.framework/Headers/RazorpayFlutterPlugin.h

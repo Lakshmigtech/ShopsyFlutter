@@ -30,37 +30,58 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   Offset _endOffset = Offset.zero;
 
   String? _selectedSize;
-  final List<String> _sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
-  // Robust check to identify if size selection is required (Women's or Men's Clothing)
-  bool get _requiresSizeSelection {
+  final List<String> _clothingSizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  final List<String> _footwearSizes = ['6', '7', '8', '9', '10', '11'];
+
+  // Identify if it is footwear
+  bool get _isFootwear {
     final subCat = product.subCategory.toLowerCase();
     final cat = product.category.toLowerCase();
     final name = product.name.toLowerCase();
     final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
 
-    // Check if it's fashion/clothing related
+    return cat.contains('footwear') ||
+        cat.contains('shoes') ||
+        subCat.contains('footwear') ||
+        subCat.contains('shoes') ||
+        name.contains('shoe') ||
+        name.contains('sneaker') ||
+        name.contains('sandal') ||
+        name.contains('boot') ||
+        keywords.any((k) => k.contains('shoe') || k.contains('footwear'));
+  }
+
+  // Identify if it is clothing
+  bool get _isClothing {
+    final subCat = product.subCategory.toLowerCase();
+    final cat = product.category.toLowerCase();
+    final name = product.name.toLowerCase();
+    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
+
     bool isFashion = cat.contains('fashion') ||
         cat.contains('clothing') ||
         subCat.contains('fashion') ||
-        subCat.contains('clothing');
+        subCat.contains('clothing') ||
+        cat.contains('apparel') ||
+        subCat.contains('apparel');
 
-    if (!isFashion) return false;
+    if (!isFashion || _isFootwear) return false;
 
-    // Use regex to match whole words for 'men' and 'women' terms
     final menRegex = RegExp(r'\bmen\b|\bmale\b');
     final womenRegex = RegExp(r'\bwomen\b|\bfemale\b|\blady\b|\bladies\b');
 
-    bool hasWomensTerm = womenRegex.hasMatch(name) ||
+    return womenRegex.hasMatch(name) ||
         womenRegex.hasMatch(subCat) ||
-        keywords.any((k) => womenRegex.hasMatch(k));
-
-    bool hasMensTerm = menRegex.hasMatch(name) ||
+        keywords.any((k) => womenRegex.hasMatch(k)) ||
+        menRegex.hasMatch(name) ||
         menRegex.hasMatch(subCat) ||
         keywords.any((k) => menRegex.hasMatch(k));
-
-    return hasWomensTerm || hasMensTerm;
   }
+
+  bool get _requiresSizeSelection => _isClothing || _isFootwear;
+
+  List<String> get _availableSizes => _isFootwear ? _footwearSizes : _clothingSizes;
 
   @override
   void initState() {
@@ -93,7 +114,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   void _runAddToCartAnimation() {
-    // Require size selection if the product is identified as requiring it
     if (_requiresSizeSelection && _selectedSize == null) {
       Get.snackbar(
         'Selection Required',
@@ -106,9 +126,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     }
 
     final RenderBox? imageBox =
-    _imageKey.currentContext?.findRenderObject() as RenderBox?;
+        _imageKey.currentContext?.findRenderObject() as RenderBox?;
     final RenderBox? cartBox =
-    _cartKey.currentContext?.findRenderObject() as RenderBox?;
+        _cartKey.currentContext?.findRenderObject() as RenderBox?;
 
     if (imageBox != null && cartBox != null) {
       final imagePosition = imageBox.localToGlobal(Offset.zero);
@@ -140,6 +160,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     }
   }
 
+  void _handleBuyNow() {
+    if (_requiresSizeSelection && _selectedSize == null) {
+      Get.snackbar(
+        'Selection Required',
+        'Please select a size before proceeding',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    cartController.addToCart(product, size: _selectedSize);
+    Get.to(() => const CartScreen());
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -148,6 +184,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double screenWidth = size.width;
+    final double screenHeight = size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -157,24 +197,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               children: [
                 // 🔝 Header
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(screenWidth * 0.03),
                   child: Row(
                     children: [
-                      _circleIcon(Icons.arrow_back, () => Get.back()),
+                      _circleIcon(Icons.arrow_back, () => Get.back(), screenWidth),
                       const Spacer(),
                       Obx(() => _circleIcon(
                         wishlistController.isFavorite(product) ? Icons.favorite : Icons.favorite_border,
                             () => wishlistController.toggleFavorite(product),
+                        screenWidth,
                         color: wishlistController.isFavorite(product) ? Colors.red : Colors.black,
                       )),
-                      const SizedBox(width: 10),
+                      SizedBox(width: screenWidth * 0.025),
                       Obx(
                             () => Stack(
                           key: _cartKey,
                           children: [
                             _circleIcon(Icons.shopping_cart_outlined, () {
                               Get.to(() => const CartScreen());
-                            }),
+                            }, screenWidth),
                             if (cartController.itemCount > 0)
                               Positioned(
                                 right: 6,
@@ -211,14 +252,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         Center(
                           child: Container(
                             key: _imageKey,
-                            child: Image.network(product.image, height: 250),
+                            child: Image.network(product.image, height: screenHeight * 0.35),
                           ),
                         ),
 
-                        const SizedBox(height: 20),
+                        SizedBox(height: screenHeight * 0.025),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -228,43 +269,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                   Text(
                                     product.category,
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: screenWidth * 0.032,
                                       color: Colors.blue.shade700,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   if (product.subCategory.isNotEmpty) ...[
-                                    const Icon(Icons.chevron_right, size: 14, color: Colors.grey),
+                                    Icon(Icons.chevron_right, size: screenWidth * 0.035, color: Colors.grey),
                                     Text(
                                       product.subCategory,
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: screenWidth * 0.032,
                                         color: Colors.grey.shade600,
                                       ),
                                     ),
                                   ],
                                 ],
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: screenHeight * 0.01),
 
                               // 📝 Title
                               Text(
                                 product.name,
-                                style: const TextStyle(
-                                  fontSize: 20,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.05,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              const SizedBox(height: 10),
+                              SizedBox(height: screenHeight * 0.012),
 
                               // ⭐ Rating
                               Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: screenWidth * 0.02,
+                                      vertical: screenHeight * 0.005,
                                     ),
                                     decoration: BoxDecoration(
                                       color: Colors.green,
@@ -272,12 +313,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     ),
                                     child: Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.star,
-                                          size: 14,
+                                          size: screenWidth * 0.035,
                                           color: Colors.white,
                                         ),
-                                        const SizedBox(width: 4),
+                                        SizedBox(width: screenWidth * 0.01),
                                         Text(
                                           product.rating.stars.toString(),
                                           style: const TextStyle(
@@ -287,72 +328,85 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: screenWidth * 0.02),
                                   Text(
                                     "(${product.rating.count} reviews)",
-                                    style: const TextStyle(color: Colors.grey),
+                                    style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.032),
                                   ),
                                 ],
                               ),
 
-                              const SizedBox(height: 12),
+                              SizedBox(height: screenHeight * 0.015),
 
                               // 💰 Price
                               Row(
                                 children: [
                                   Text(
                                     "₹${(product.priceCents / 100).toStringAsFixed(2)}",
-                                    style: const TextStyle(
-                                      fontSize: 24,
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.06,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: screenWidth * 0.025),
                                   Text(
                                     "₹${((product.priceCents / 100) * 1.2).toStringAsFixed(2)}",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       decoration: TextDecoration.lineThrough,
                                       color: Colors.grey,
+                                      fontSize: screenWidth * 0.04,
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  const Text(
+                                  SizedBox(width: screenWidth * 0.025),
+                                  Text(
                                     "20% OFF",
                                     style: TextStyle(
                                       color: Colors.green,
                                       fontWeight: FontWeight.w500,
+                                      fontSize: screenWidth * 0.04,
                                     ),
                                   ),
                                 ],
                               ),
 
-                              const SizedBox(height: 10),
+                              SizedBox(height: screenHeight * 0.012),
 
                               // 🚚 Delivery
-                              const Text(
-                                "Free Delivery",
-                                style: TextStyle(color: Colors.green),
+                              Row(
+                                children: [
+                                  Icon(Icons.delivery_dining_outlined, color: Colors.green, size: screenWidth * 0.05),
+                                  SizedBox(width: screenWidth * 0.02),
+                                  Text(
+                                    "Free Delivery",
+                                    style: TextStyle(color: Colors.green, fontWeight: FontWeight.w500, fontSize: screenWidth * 0.035),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: screenHeight * 0.005),
+                              Text(
+                                "Estimated delivery: 3-5 business days",
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: screenWidth * 0.032),
                               ),
 
-                              const SizedBox(height: 20),
+                              SizedBox(height: screenHeight * 0.025),
 
-                              // 📏 Size Selection (Visible for Clothing)
+                              // 📏 Size Selection (Visible for Clothing and Footwear)
                               if (_requiresSizeSelection) ...[
-                                const Text(
-                                  "Select Size",
+                                Text(
+                                  _isFootwear ? "Select Footwear Size (UK/India)" : "Select Size",
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: screenWidth * 0.045,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: screenHeight * 0.012),
                                 SizedBox(
-                                  height: 50,
+                                  height: screenHeight * 0.06,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: _sizes.length,
+                                    itemCount: _availableSizes.length,
                                     itemBuilder: (context, index) {
-                                      final size = _sizes[index];
+                                      final size = _availableSizes[index];
                                       final isSelected = _selectedSize == size;
                                       return GestureDetector(
                                         onTap: () {
@@ -361,8 +415,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                           });
                                         },
                                         child: Container(
-                                          width: 50,
-                                          margin: const EdgeInsets.only(right: 10),
+                                          width: screenWidth * 0.12,
+                                          margin: EdgeInsets.only(right: screenWidth * 0.025),
                                           decoration: BoxDecoration(
                                             color: isSelected ? Colors.orange : Colors.white,
                                             border: Border.all(
@@ -376,6 +430,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                               style: TextStyle(
                                                 color: isSelected ? Colors.white : Colors.black,
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: screenWidth * 0.035,
                                               ),
                                             ),
                                           ),
@@ -384,46 +439,46 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: screenHeight * 0.025),
                               ],
 
                               const Divider(),
 
                               // 🎁 Offers
-                              const Text(
+                              Text(
                                 "Available Offers",
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: screenWidth * 0.045,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              const SizedBox(height: 10),
+                              SizedBox(height: screenHeight * 0.012),
 
-                              _offerItem("10% Instant Discount on ICICI Cards"),
-                              _offerItem("Buy 2 Get Extra 5% Off"),
+                              _offerItem("10% Instant Discount on ICICI Cards", screenWidth),
+                              _offerItem("Buy 2 Get Extra 5% Off", screenWidth),
 
-                              const SizedBox(height: 20),
+                              SizedBox(height: screenHeight * 0.025),
 
                               const Divider(),
 
                               // 📄 Description
-                              const Text(
+                              Text(
                                 "Product Details",
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: screenWidth * 0.045,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              const SizedBox(height: 10),
+                              SizedBox(height: screenHeight * 0.012),
 
                               Text(
                                 product.description,
-                                style: const TextStyle(color: Colors.grey),
+                                style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.035),
                               ),
 
-                              const SizedBox(height: 80),
+                              SizedBox(height: screenHeight * 0.1),
                             ],
                           ),
                         ),
@@ -439,14 +494,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       child: InkWell(
                         onTap: _isAnimating ? null : _runAddToCartAnimation,
                         child: Container(
-                          height: 55,
+                          height: screenHeight * 0.07,
                           color: Colors.grey.shade200,
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               "Add to Cart",
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold,
+                                fontSize: screenWidth * 0.04,
                               ),
                             ),
                           ),
@@ -454,15 +510,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        height: 55,
-                        color: Colors.orange,
-                        child: const Center(
-                          child: Text(
-                            "Buy Now",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                      child: InkWell(
+                        onTap: _handleBuyNow,
+                        child: Container(
+                          height: screenHeight * 0.07,
+                          color: Colors.orange,
+                          child: Center(
+                            child: Text(
+                              "Buy Now",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: screenWidth * 0.04,
+                              ),
                             ),
                           ),
                         ),
@@ -517,29 +577,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   // 🔘 Circle Icon
-  Widget _circleIcon(IconData icon, VoidCallback onTap, {Color? color}) {
+  Widget _circleIcon(IconData icon, VoidCallback onTap, double screenWidth, {Color? color}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(screenWidth * 0.025),
         decoration: BoxDecoration(
           color: Colors.grey.shade100,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: color),
+        child: Icon(icon, color: color, size: screenWidth * 0.06),
       ),
     );
   }
 
   // 🎁 Offer Item
-  Widget _offerItem(String text) {
+  Widget _offerItem(String text, double screenWidth) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.symmetric(vertical: screenWidth * 0.015),
       child: Row(
         children: [
-          const Icon(Icons.local_offer, size: 18),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text)),
+          Icon(Icons.local_offer, size: screenWidth * 0.045),
+          SizedBox(width: screenWidth * 0.02),
+          Expanded(child: Text(text, style: TextStyle(fontSize: screenWidth * 0.035))),
         ],
       ),
     );

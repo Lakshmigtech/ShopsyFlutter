@@ -1,0 +1,33 @@
+moduledependenciestarget: \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/Google-Maps-iOS-Utils/GoogleMapsUtils.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/google_maps_flutter_ios-umbrella.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk/System/Library/Frameworks/UIKit.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMAssetProvider.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMCATransactionWrapper.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMCircleController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/XCFrameworkIntermediates/GoogleMaps/Maps/GoogleMaps.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMMapEventDelegate.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/google_maps_flutter_pigeon_messages.g.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMCircleController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMClusterManagersController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/Flutter.framework/Modules/module.modulemap \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/GoogleMapsUtilsTrampoline.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMConversionUtils.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMGoogleMapController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMMarkerController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMPolygonController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMPolylineController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMGoogleMapController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMGoogleMapsPlugin.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMGroundOverlayController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMGroundOverlayController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMHeatmapController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMHeatmapController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMImageUtils.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMMarkerController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMMarkerUserData.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMPolygonController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMPolylineController_Test.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMTileOverlayController.h \
+  /Users/techversant/StudioProjects/ShopsyFlutter/build/ios/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FGMTileOverlayController_Test.h
