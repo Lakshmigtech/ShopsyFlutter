@@ -3,6 +3,7 @@ import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/controller/address_controller.dart';
 import 'package:Shopsy/models/address_model.dart';
 import 'package:Shopsy/models/product_model.dart';
+import 'package:Shopsy/utils/currency_utils.dart';
 import 'package:Shopsy/views/account/add_address.dart';
 import 'package:Shopsy/views/account/payment.dart';
 import 'package:flutter/material.dart';
@@ -23,63 +24,70 @@ class OrderSummaryPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Order Summary",
-          style: TextStyle(color:AppColors.textBlack, fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(color: AppColors.textBlack, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
         elevation: 0.5,
-        backgroundColor:AppColors.textWhite,
+        backgroundColor: AppColors.textWhite,
         foregroundColor: AppColors.textBlack,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
         ),
       ),
-      body: Obx(() {
-        final List<Address> addresses = addressController.addresses;
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// 1. DELIVERY ADDRESS SECTION
+                  Obx(() => _buildAddressSection(addressController, orderController)),
 
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// 1. DELIVERY ADDRESS SECTION
-              _buildAddressSection(addresses, addressController, orderController),
+                  const SizedBox(height: 8),
 
-              const SizedBox(height: 8),
+                  /// 2. ORDER ITEMS LIST
+                  Obx(() => ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: cartController.cartItems.length,
+                        separatorBuilder: (context, index) => const SizedBox(height: 1),
+                        itemBuilder: (context, index) {
+                          final item = cartController.cartItems[index];
+                          return _buildOrderItem(item);
+                        },
+                      )),
 
-              /// 2. ORDER ITEMS LIST
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: cartController.cartItems.length,
-                itemBuilder: (context, index) {
-                  final item = cartController.cartItems[index];
-                  return _buildOrderItem(item);
-                },
+                  const SizedBox(height: 8),
+
+                  /// 3. PRICE DETAILS SECTION
+                  Obx(() => _buildPriceDetails(cartController)),
+
+                  const SizedBox(height: 20),
+                ],
               ),
-
-              const SizedBox(height: 8),
-
-              /// 3. PRICE DETAILS SECTION
-              _buildPriceDetails(cartController),
-
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
-        );
-      }),
-      bottomNavigationBar: _buildBottomBar(cartController, orderController),
+
+          /// 4. BOTTOM ACTION BAR
+          _buildBottomBar(cartController, orderController),
+        ],
+      ),
     );
   }
 
-  Widget _buildAddressSection(List<Address> addresses, AddressController addressController, OrderController orderController) {
+  Widget _buildAddressSection(AddressController addressController, OrderController orderController) {
+    final addresses = addressController.addresses;
+    
     if (addresses.isEmpty) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
-        color:AppColors.textWhite,
+        color: AppColors.textWhite,
         child: Column(
           children: [
-            const Text("No delivery address selected", style: TextStyle(color:AppColors.textGrey)),
+            const Text("No delivery address selected", style: TextStyle(color: AppColors.textGrey)),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => Get.to(() => const AddAddressScreen()),
@@ -94,28 +102,13 @@ class OrderSummaryPage extends StatelessWidget {
       );
     }
 
-    final selectedAddress = addresses.firstWhere(
-          (e) => e.isDefault,
-      orElse: () => addresses[0],
-    );
-
-    // Save for controller
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final fullAddressText = "${selectedAddress.name}, ${selectedAddress.address}, ${selectedAddress.phone}";
-      if (orderController.selectedAddress.value != fullAddressText) {
-        orderController.selectedAddress.value = fullAddressText;
-      }
-    });
-
-    String displayPhone = selectedAddress.phone;
-    if (displayPhone.length > 5) {
-      displayPhone = "${displayPhone.substring(0, 5)}...";
-    }
+    final Address? selectedAddress = orderController.selectedAddressObject.value;
+    if (selectedAddress == null) return const SizedBox.shrink();
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      color:AppColors.textWhite,
+      color: AppColors.textWhite,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -124,7 +117,7 @@ class OrderSummaryPage extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Deliver to: ${selectedAddress.name}, $displayPhone",
+                  "Deliver to: ${selectedAddress.name}, ${selectedAddress.phone}",
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -133,7 +126,7 @@ class OrderSummaryPage extends StatelessWidget {
               SizedBox(
                 height: 36,
                 child: OutlinedButton(
-                  onPressed: () => _showAddressPicker(addresses, addressController, orderController),
+                  onPressed: () => _showAddressPicker(addresses, orderController),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Color(0xff2874f0)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -156,7 +149,6 @@ class OrderSummaryPage extends StatelessWidget {
 
   Widget _buildOrderItem(CartItem item) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 1),
       padding: const EdgeInsets.all(16),
       color: AppColors.textWhite,
       child: Row(
@@ -172,7 +164,7 @@ class OrderSummaryPage extends StatelessWidget {
             child: Image.network(
               item.product.image,
               fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 40, color:AppColors.textGrey),
+              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 40, color: AppColors.textGrey),
             ),
           ),
           const SizedBox(width: 16),
@@ -197,9 +189,20 @@ class OrderSummaryPage extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (item.color != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    "Shade: ${item.color}",
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 Text(
-                  "₹${(item.product.priceCents / 100 * item.quantity).toStringAsFixed(0)}",
+                  "₹${CurrencyUtils.formatPrice(item.subtotal)}",
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
@@ -210,7 +213,7 @@ class OrderSummaryPage extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   "Qty: ${item.quantity}",
-                  style: const TextStyle(color:AppColors.textGrey, fontSize: 12),
+                  style: const TextStyle(color: AppColors.textGrey, fontSize: 12),
                 ),
               ],
             ),
@@ -221,8 +224,6 @@ class OrderSummaryPage extends StatelessWidget {
   }
 
   Widget _buildPriceDetails(CartController cartController) {
-    String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -235,7 +236,7 @@ class OrderSummaryPage extends StatelessWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textGrey),
           ),
           const Divider(height: 24),
-          _priceRow("Price (${cartController.itemCount} items)", "₹$formattedPrice"),
+          _priceRow("Price (${cartController.itemCount} items)", "₹${CurrencyUtils.formatPrice(cartController.totalPrice)}"),
           const SizedBox(height: 12),
           _priceRow("Delivery Charges", "FREE", isGreen: true),
           const Divider(height: 24),
@@ -247,7 +248,7 @@ class OrderSummaryPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Text(
-                "₹$formattedPrice",
+                "₹${CurrencyUtils.formatPrice(cartController.totalPrice)}",
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
@@ -276,8 +277,6 @@ class OrderSummaryPage extends StatelessWidget {
 
   Widget _buildBottomBar(CartController cartController, OrderController orderController) {
     return Obx(() {
-      String formattedPrice = cartController.totalPrice.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
-
       return Container(
         decoration: BoxDecoration(
           color: AppColors.textWhite,
@@ -292,32 +291,32 @@ class OrderSummaryPage extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "₹$formattedPrice",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text(
-                      "View price details",
-                      style: TextStyle(color: Color(0xff2874f0), fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "₹${CurrencyUtils.formatPrice(cartController.totalPrice)}",
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Text(
+                        "View price details",
+                        style: TextStyle(color: Color(0xff2874f0), fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-                const Spacer(),
                 SizedBox(
                   height: 48,
                   width: 160,
                   child: ElevatedButton(
                     onPressed: () {
                       if (orderController.selectedAddress.value.isEmpty) {
-                        Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: AppColors.redAccent, colorText: AppColors.textWhite);
+                        Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
                         return;
                       }
                       Get.to(() => PaymentMethodsPage(selectedAddress: orderController.selectedAddress.value));
@@ -341,7 +340,7 @@ class OrderSummaryPage extends StatelessWidget {
     });
   }
 
-  void _showAddressPicker(List<Address> addresses, AddressController addressController, OrderController orderController) {
+  void _showAddressPicker(List<Address> addresses, OrderController orderController) {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
@@ -363,18 +362,21 @@ class OrderSummaryPage extends StatelessWidget {
                   final addr = addresses[index];
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Radio<int>(
-                      value: index, groupValue: addresses.indexWhere((e) => e.isDefault),
+                    leading: Obx(() => Radio<Address?>(
+                      value: addr, 
+                      groupValue: orderController.selectedAddressObject.value,
                       onChanged: (val) {
-                        addressController.setDefaultAddress(index);
-                        Get.back();
+                        if (val != null) {
+                          orderController.setOrderAddress(val);
+                          Get.back();
+                        }
                       },
                       activeColor: const Color(0xff2874f0),
-                    ),
+                    )),
                     title: Text(addr.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(addr.address),
                     onTap: () {
-                      addressController.setDefaultAddress(index);
+                      orderController.setOrderAddress(addr);
                       Get.back();
                     },
                   );

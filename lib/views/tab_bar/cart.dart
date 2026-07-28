@@ -149,15 +149,31 @@ class CartScreen extends GetView<CartController> {
                         color: Colors.black87,
                       ),
                     ),
-                    if (item.size != null) ...[
+                    if (item.size != null || item.color != null) ...[
                       SizedBox(height: screenWidth * 0.01),
-                      Text(
-                        "Size: ${item.size}",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.035,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      Row(
+                        children: [
+                          if (item.size != null)
+                            Text(
+                              "Size: ${item.size}",
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.032,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          if (item.size != null && item.color != null)
+                            Text(" | ", style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.032)),
+                          if (item.color != null)
+                            Text(
+                              "Color: ${item.color}",
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.032,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                     SizedBox(height: screenWidth * 0.02),

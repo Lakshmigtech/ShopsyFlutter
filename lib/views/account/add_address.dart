@@ -23,43 +23,59 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   
   static const LatLng _kDefaultLocation = LatLng(10.0159, 76.3419); // Kochi
   
-  final Rx<LatLng> _currentLatLng = _kDefaultLocation.obs;
-  final RxSet<Marker> _markers = <Marker>{}.obs;
+  LatLng _cameraLatLng = _kDefaultLocation;
   bool _isMapReady = false;
+  bool _isFetchingAddress = false;
+  late bool _isEditing;
 
   @override
   void initState() {
     super.initState();
-    if (widget.editAddress != null) {
+    _isEditing = widget.editAddress != null;
+    
+    if (_isEditing) {
       controller.initForEditing(widget.editAddress!);
       _geocodeAddress(widget.editAddress!.address);
     } else {
       controller.clearFields();
-      _getCurrentLocation();
+      // Start fetching current location immediately when adding a new address
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _getCurrentLocation();
+      });
     }
   }
 
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      Get.snackbar("Location Error", "Location services are disabled.");
-      return;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
-
-    if (permission == LocationPermission.deniedForever) return;
-
     try {
-      Position position = await Geolocator.getCurrentPosition();
-      _updateLocation(LatLng(position.latitude, position.longitude));
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        Get.snackbar("Location Error", "Please enable location services in your settings.", 
+          backgroundColor: Colors.orange, colorText: Colors.white);
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng currentPos = LatLng(position.latitude, position.longitude);
+      
+      setState(() => _cameraLatLng = currentPos);
+      
+      if (_isMapReady) {
+        _mapController?.animateCamera(CameraUpdate.newLatLngZoom(currentPos, 16));
+      }
+      
+      _updateAddressFromCoordinates(currentPos);
     } catch (e) {
       debugPrint("Error getting current location: $e");
     }
@@ -69,49 +85,46 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     try {
       List<Location> locations = await locationFromAddress(address);
       if (locations.isNotEmpty) {
-        _updateLocation(LatLng(locations[0].latitude, locations[0].longitude));
+        LatLng pos = LatLng(locations[0].latitude, locations[0].longitude);
+        setState(() => _cameraLatLng = pos);
+        _mapController?.animateCamera(CameraUpdate.newLatLngZoom(pos, 16));
       }
     } catch (e) {
       debugPrint("Geocoding error: $e");
     }
   }
 
-  void _updateLocation(LatLng latLng) async {
-    _currentLatLng.value = latLng;
+  Future<void> _updateAddressFromCoordinates(LatLng latLng) async {
+    if (!mounted) return;
+    setState(() => _isFetchingAddress = true);
     
-    _markers.assign(
-      Marker(
-        markerId: const MarkerId("picked_location"),
-        position: latLng,
-        draggable: true,
-        onDragEnd: (newPosition) => _onMapTap(newPosition),
-      )
-    );
-    
-    if (_isMapReady) {
-      _mapController?.animateCamera(CameraUpdate.newLatLng(latLng));
-    }
-
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
-        String address = "${place.name ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.postalCode ?? ''}";
-        address = address.replaceAll(RegExp(r'^, +'), '').replaceAll(RegExp(r', ,'), ',');
+        
+        List<String> parts = [
+          if (place.name != null && place.name != place.street) place.name!,
+          if (place.street != null) place.street!,
+          if (place.subLocality != null) place.subLocality!,
+          if (place.locality != null) place.locality!,
+          if (place.subAdministrativeArea != null) place.subAdministrativeArea!,
+          if (place.administrativeArea != null) place.administrativeArea!,
+          if (place.postalCode != null) place.postalCode!,
+        ];
+        
+        String address = parts.where((p) => p.isNotEmpty).join(", ");
         controller.detailAddressController.text = address;
       }
     } catch (e) {
       debugPrint("Reverse geocoding error: $e");
+    } finally {
+      if (mounted) setState(() => _isFetchingAddress = false);
     }
-  }
-
-  void _onMapTap(LatLng latLng) {
-    _updateLocation(latLng);
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isEditing = widget.editAddress != null;
     final size = MediaQuery.sizeOf(context);
     final double screenWidth = size.width;
     final double screenHeight = size.height;
@@ -120,7 +133,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       backgroundColor: const Color(0xfff1f2f6),
       appBar: AppBar(
         title: Text(
-          isEditing ? "Edit Address" : "Add New Address",
+          _isEditing ? "Edit Address" : "Add New Address",
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -145,7 +158,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 children: [
                   _buildSectionTitle("Locate on Map", screenWidth),
                   _buildMapCard(screenWidth, screenHeight),
-                  SizedBox(height: screenHeight * 0.03),
+                  const SizedBox(height: 20),
                   _buildSectionTitle("Contact Details", screenWidth),
                   _buildFormCard(
                     [
@@ -155,7 +168,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                         hint: "Enter your name",
                         screenWidth: screenWidth,
                       ),
-                      SizedBox(height: screenHeight * 0.02),
+                      const SizedBox(height: 16),
                       _buildTextField(
                         controller: controller.phoneController,
                         label: "Phone Number",
@@ -166,21 +179,27 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                     ],
                     screenWidth,
                   ),
-                  SizedBox(height: screenHeight * 0.03),
+                  const SizedBox(height: 20),
                   _buildSectionTitle("Address Details", screenWidth),
                   _buildFormCard(
                     [
                       _buildTextField(
                         controller: controller.detailAddressController,
                         label: "Address Detail",
-                        hint: "House No, Building, Street, Area",
+                        hint: _isFetchingAddress ? "Locating..." : "House No, Building, Street, Area",
                         maxLines: 3,
                         screenWidth: screenWidth,
+                        readOnly: _isFetchingAddress,
                       ),
+                      if (_isFetchingAddress)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8.0),
+                          child: LinearProgressIndicator(minHeight: 2, color: Color(0xff2874f0)),
+                        ),
                     ],
                     screenWidth,
                   ),
-                  SizedBox(height: screenHeight * 0.03),
+                  const SizedBox(height: 20),
                   _buildSectionTitle("Address Type", screenWidth),
                   _buildFormCard(
                     [
@@ -194,7 +213,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                     ],
                     screenWidth,
                   ),
-                  SizedBox(height: screenHeight * 0.03),
+                  const SizedBox(height: 20),
                   _buildFormCard(
                     [
                       Obx(() => CheckboxListTile(
@@ -211,12 +230,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                     ],
                     screenWidth,
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
-          _buildBottomBar(isEditing, screenWidth, screenHeight),
+          _buildBottomBar(_isEditing, screenWidth, screenHeight),
         ],
       ),
     );
@@ -224,7 +243,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
 
   Widget _buildMapCard(double screenWidth, double screenHeight) {
     return Container(
-      height: screenHeight * 0.3,
+      height: screenHeight * 0.25,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -241,30 +260,42 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         borderRadius: BorderRadius.circular(screenWidth * 0.02),
         child: Stack(
           children: [
-            Obx(() => GoogleMap(
-              // REMOVED UniqueKey() - this was causing the blank screen/crash
+            GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: _currentLatLng.value,
+                target: _cameraLatLng,
                 zoom: 15,
               ),
               onMapCreated: (mapController) {
                 _mapController = mapController;
                 _isMapReady = true;
-                _mapController?.animateCamera(CameraUpdate.newLatLng(_currentLatLng.value));
               },
-              markers: _markers,
-              onTap: _onMapTap,
+              onCameraMove: (position) {
+                _cameraLatLng = position.target;
+              },
+              onCameraIdle: () {
+                // Fetch address only if map moved and we're not already fetching
+                if (_isMapReady) {
+                  _updateAddressFromCoordinates(_cameraLatLng);
+                }
+              },
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
               mapToolbarEnabled: false,
-            )),
+            ),
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 35),
+                child: Icon(Icons.location_on, color: Colors.red, size: 40),
+              ),
+            ),
             Positioned(
               right: 12,
               bottom: 12,
               child: FloatingActionButton.small(
                 onPressed: _getCurrentLocation,
                 backgroundColor: Colors.white,
+                elevation: 2,
                 child: const Icon(Icons.my_location, color: Color(0xff2874f0)),
               ),
             ),
@@ -276,7 +307,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
 
   Widget _buildSectionTitle(String title, double screenWidth) {
     return Padding(
-      padding: EdgeInsets.only(left: screenWidth * 0.01, bottom: screenWidth * 0.03),
+      padding: EdgeInsets.only(left: 4, bottom: 12),
       child: Text(
         title,
         style: TextStyle(
@@ -306,6 +337,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     required double screenWidth,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    bool readOnly = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,6 +350,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
           controller: controller,
           keyboardType: keyboardType,
           maxLines: maxLines,
+          readOnly: readOnly,
           style: TextStyle(
             fontSize: screenWidth * 0.038,
             fontWeight: FontWeight.w500,
@@ -331,7 +364,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xff2874f0)),
             ),
-            contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+            contentPadding: const EdgeInsets.symmetric(vertical: 8),
           ),
         ),
       ],
@@ -343,10 +376,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     return GestureDetector(
       onTap: () => controller.addressType.value = label,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.05,
-          vertical: screenWidth * 0.02,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xff2874f0).withOpacity(0.1) : AppColors.textWhite,
           borderRadius: BorderRadius.circular(screenWidth * 0.05),
@@ -374,24 +404,24 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.all(screenWidth * 0.04),
+          padding: const EdgeInsets.all(16),
           child: SizedBox(
             width: double.infinity,
-            height: screenHeight * 0.065,
+            height: 52,
             child: ElevatedButton(
-              onPressed: _saveAddress,
+              onPressed: _isFetchingAddress ? null : _saveAddress,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffff8c31),
+                backgroundColor: const Color(0xfffb641b), // Flipkart Orange
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(screenWidth * 0.01),
+                  borderRadius: BorderRadius.circular(2),
                 ),
                 elevation: 0,
               ),
               child: Text(
                 isEditing ? "UPDATE ADDRESS" : "SAVE ADDRESS",
-                style: TextStyle(
-                  color: AppColors.textWhite,
-                  fontSize: screenWidth * 0.04,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -405,7 +435,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   void _saveAddress() async {
     if (controller.nameController.text.isNotEmpty &&
         controller.phoneController.text.isNotEmpty &&
-        controller.detailAddressController.text.isNotEmpty) {
+        controller.detailAddressController.text.isNotEmpty &&
+        controller.detailAddressController.text != "Locating...") {
       final newAddress = Address(
         name: controller.nameController.text.trim(),
         phone: controller.phoneController.text.trim(),

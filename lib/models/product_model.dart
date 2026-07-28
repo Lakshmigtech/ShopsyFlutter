@@ -71,8 +71,9 @@ class CartItem {
   final Product product;
   int quantity;
   String? size;
+  String? color;
 
-  CartItem({required this.product, this.quantity = 1, this.size});
+  CartItem({required this.product, this.quantity = 1, this.size, this.color});
 
   double get subtotal => (product.priceCents * quantity) / 100.0;
 
@@ -81,6 +82,7 @@ class CartItem {
       product: Product.fromJson(json['product']),
       quantity: json['quantity'] ?? 1,
       size: json['size'],
+      color: json['color'],
     );
   }
 
@@ -89,6 +91,7 @@ class CartItem {
       'product': product.toJson(),
       'quantity': quantity,
       'size': size,
+      'color': color,
     };
   }
 }

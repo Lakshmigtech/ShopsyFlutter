@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:Shopsy/models/product_model.dart';
 import 'package:Shopsy/repositories/product_api.dart';
@@ -31,6 +32,18 @@ class ProductController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
+  // Search Placeholder Animation State
+  final currentHintIndex = 0.obs;
+  Timer? _hintTimer;
+  final List<String> searchHints = [
+    'Search for mobile...',
+    'Search for electronics...',
+    'Search for fashion...',
+    'Search for beauty...',
+    'Search for home decor...',
+    'Search for sneakers...',
+  ];
+
   List<String> get categories => const [
     'All',
     'Home',
@@ -43,6 +56,7 @@ class ProductController extends GetxController {
   void onInit() {
     super.onInit();
     fetchProducts();
+    _startHintTimer();
     
     // Sync text controller with observable
     searchController.addListener(() {
@@ -56,6 +70,12 @@ class ProductController extends GetxController {
       if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200) {
         loadMoreProducts();
       }
+    });
+  }
+
+  void _startHintTimer() {
+    _hintTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      currentHintIndex.value = (currentHintIndex.value + 1) % searchHints.length;
     });
   }
 
@@ -231,6 +251,7 @@ class ProductController extends GetxController {
   void onClose() {
     searchController.dispose();
     scrollController.dispose();
+    _hintTimer?.cancel();
     super.onClose();
   }
 }

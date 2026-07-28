@@ -49,6 +49,7 @@ class OrderItem {
   final int quantity;
   final double price;
   final String? size;
+  final String? color;
 
   OrderItem({
     required this.productId,
@@ -57,6 +58,7 @@ class OrderItem {
     required this.quantity,
     required this.price,
     this.size,
+    this.color,
   });
 
   Map<String, dynamic> toJson() {
@@ -67,6 +69,7 @@ class OrderItem {
       'quantity': quantity,
       'price': price,
       'size': size,
+      'color': color,
     };
   }
 
@@ -78,6 +81,7 @@ class OrderItem {
       quantity: json['quantity'],
       price: (json['price'] as num).toDouble(),
       size: json['size'],
+      color: json['color'],
     );
   }
 }

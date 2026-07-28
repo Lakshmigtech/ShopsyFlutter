@@ -307,11 +307,9 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if defined(__OBJC__)
 
 @class UIApplication;
-@protocol FlutterImplicitEngineBridge;
 SWIFT_CLASS("_TtC6Runner11AppDelegate")
-@interface AppDelegate : FlutterAppDelegate <FlutterImplicitEngineDelegate>
+@interface AppDelegate : FlutterAppDelegate
 - (BOOL)application:(UIApplication * _Nonnull)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> * _Nullable)launchOptions SWIFT_WARN_UNUSED_RESULT;
-- (void)didInitializeImplicitFlutterEngine:(id <FlutterImplicitEngineBridge> _Nonnull)engineBridge;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

@@ -117,12 +117,12 @@
   {
     "isFramework" : true,
     "moduleName" : "Razorpay",
-    "modulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/Razorpay-BSF326YNIUS0.swiftmodule"
+    "modulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/Razorpay-MBNW9UA2NIUB.swiftmodule"
   },
   {
     "isFramework" : true,
     "moduleName" : "RazorpayCore",
-    "modulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/RazorpayCore-2JEFGWK4A3HWX.swiftmodule"
+    "modulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/RazorpayCore-38HXEIPF4V6O1.swiftmodule"
   },
   {
     "isFramework" : false,
@@ -399,15 +399,15 @@
     "moduleName" : "QuartzCore"
   },
   {
-    "clangModuleMapPath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/build\/ios\/Debug-iphonesimulator\/XCFrameworkIntermediates\/razorpay-core-pod\/Razorpay.framework\/Modules\/module.modulemap",
-    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/Razorpay-D0QSPN1CWD5AD98B7SXULZUKT.pcm",
+    "clangModuleMapPath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/build\/ios\/Debug-iphonesimulator\/XCFrameworkIntermediates\/razorpay-pod\/Razorpay.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/Razorpay-1Y6T9A1IGVFGIVE0JUNOR6FLU.pcm",
     "isBridgingHeaderDependency" : false,
     "isFramework" : false,
     "moduleName" : "Razorpay"
   },
   {
-    "clangModuleMapPath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/build\/ios\/Debug-iphonesimulator\/XCFrameworkIntermediates\/razorpay-core-pod\/RazorpayCore.framework\/Modules\/module.modulemap",
-    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/RazorpayCore-7MM7SVV2XOTBHW3QQHTBXXSDV.pcm",
+    "clangModuleMapPath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/build\/ios\/Debug-iphonesimulator\/XCFrameworkIntermediates\/razorpay-pod\/RazorpayCore.framework\/Modules\/module.modulemap",
+    "clangModulePath" : "\/Users\/techversant\/StudioProjects\/ShopsyFlutter\/ios\/build\/SwiftExplicitPrecompiledModules\/RazorpayCore-3KB4SIXA2P3VNU4ZQKI5G2URL.pcm",
     "isBridgingHeaderDependency" : false,
     "isFramework" : false,
     "moduleName" : "RazorpayCore"

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/models/product_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,14 +30,17 @@ class CartController extends GetxController {
     await prefs.setString(_storageKey, encoded);
   }
 
-  void addToCart(Product product, {String? size}) async {
-    final index = cartItems.indexWhere((item) => item.product.id == product.id && item.size == size);
+  void addToCart(Product product, {String? size, String? color}) async {
+    final index = cartItems.indexWhere((item) => 
+        item.product.id == product.id && 
+        item.size == size && 
+        item.color == color);
 
     if (index != -1) {
       cartItems[index].quantity++;
       cartItems.refresh();
     } else {
-      cartItems.add(CartItem(product: product, size: size));
+      cartItems.add(CartItem(product: product, size: size, color: color));
     }
 
     await saveCart();
@@ -44,6 +49,8 @@ class CartController extends GetxController {
       'Success',
       '${product.name} added to cart',
       snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: AppColors.backgroundSuccess,
+      colorText: AppColors.textWhite,
       duration: const Duration(seconds: 1),
     );
   }

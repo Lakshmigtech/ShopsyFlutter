@@ -1,4 +1,5 @@
 import 'package:Shopsy/controller/order_controller.dart';
+import 'package:Shopsy/utils/currency_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +87,7 @@ class MyOrdersScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Amount: ₹${order.totalAmount.toStringAsFixed(2)}",
+                        "Amount: ₹${CurrencyUtils.formatPrice(order.totalAmount)}",
                         style: const TextStyle(
                           color: AppColors.loader,
                           fontWeight: FontWeight.bold,
@@ -147,19 +148,36 @@ class MyOrdersScreen extends StatelessWidget {
                                       "${item.productName} x ${item.quantity}",
                                       style: const TextStyle(fontSize: 13),
                                     ),
-                                    if (item.size != null && item.size!.isNotEmpty)
-                                      Text(
-                                        "Size: ${item.size}",
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey[600],
+                                    if ((item.size != null && item.size!.isNotEmpty) || (item.color != null && item.color!.isNotEmpty))
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 2.0),
+                                        child: Wrap(
+                                          spacing: 8,
+                                          children: [
+                                            if (item.size != null && item.size!.isNotEmpty)
+                                              Text(
+                                                "Size: ${item.size}",
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            if (item.color != null && item.color!.isNotEmpty)
+                                              Text(
+                                                "Shade: ${item.color}",
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                   ],
                                 ),
                               ),
                               Text(
-                                "₹${item.price.toStringAsFixed(2)}",
+                                "₹${CurrencyUtils.formatPrice(item.price)}",
                                 style: const TextStyle(fontSize: 13),
                               ),
                             ],

@@ -30,9 +30,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   Offset _endOffset = Offset.zero;
 
   String? _selectedSize;
+  String? _selectedColorName;
 
   final List<String> _clothingSizes = ['S', 'M', 'L', 'XL', 'XXL'];
   final List<String> _footwearSizes = ['6', '7', '8', '9', '10', '11'];
+
+  final List<Map<String, dynamic>> _nailPolishColors = [
+    {'name': 'Ruby Red', 'color': const Color(0xFF9B111E)},
+    {'name': 'Soft Pink', 'color': const Color(0xFFFFB6C1)},
+    {'name': 'Nude Beige', 'color': const Color(0xFFE3BC9A)},
+    {'name': 'Deep Purple', 'color': const Color(0xFF301934)},
+    {'name': 'Classic Black', 'color': Colors.black},
+    {'name': 'Royal Blue', 'color': const Color(0xFF002366)},
+    {'name': 'Mint Green', 'color': const Color(0xFF98FF98)},
+    {'name': 'Burgundy', 'color': const Color(0xFF800020)},
+    {'name': 'Lavender', 'color': const Color(0xFFE6E6FA)},
+    {'name': 'Teal', 'color': const Color(0xFF008080)},
+    {'name': 'Coral', 'color': const Color(0xFFFF7F50)},
+    {'name': 'Silver', 'color': const Color(0xFFC0C0C0)},
+  ];
+
+  final List<Map<String, dynamic>> _foundationColors = [
+    {'name': 'Fair', 'color': const Color(0xFFFCEBD1)},
+    {'name': 'Light', 'color': const Color(0xFFFAD4A9)},
+    {'name': 'Medium', 'color': const Color(0xFFE5A073)},
+    {'name': 'Tan', 'color': const Color(0xFFC1825B)},
+    {'name': 'Dark', 'color': const Color(0xFF79443B)},
+  ];
 
   // Identify if it is footwear
   bool get _isFootwear {
@@ -62,14 +86,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     bool isFashion = cat.contains('fashion') ||
         cat.contains('clothing') ||
         subCat.contains('fashion') ||
-        subCat.contains('clothing') ||
+        cat.contains('clothing') ||
         cat.contains('apparel') ||
         subCat.contains('apparel');
 
     if (!isFashion || _isFootwear) return false;
 
-    final menRegex = RegExp(r'\bmen\b|\bmale\b');
     final womenRegex = RegExp(r'\bwomen\b|\bfemale\b|\blady\b|\bladies\b');
+    final menRegex = RegExp(r'\bmen\b|\bmale\b');
 
     return womenRegex.hasMatch(name) ||
         womenRegex.hasMatch(subCat) ||
@@ -79,9 +103,36 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         keywords.any((k) => menRegex.hasMatch(k));
   }
 
+  // Identify if it is nail polish
+  bool get _isNailPolish {
+    final name = product.name.toLowerCase();
+    final cat = product.category.toLowerCase();
+    final subCat = product.subCategory.toLowerCase();
+    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
+
+    return name.contains('nail polish') ||
+        name.contains('nail lacquer') ||
+        (cat.contains('beauty') && (name.contains('nail') || subCat.contains('nail'))) ||
+        keywords.any((k) => k.contains('nail polish'));
+  }
+
+  // Identify if it is foundation
+  bool get _isFoundation {
+    final name = product.name.toLowerCase();
+    final cat = product.category.toLowerCase();
+    final subCat = product.subCategory.toLowerCase();
+    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
+
+    return name.contains('foundation') ||
+        (cat.contains('beauty') && (name.contains('foundation') || subCat.contains('foundation'))) ||
+        keywords.any((k) => k.contains('foundation'));
+  }
+
   bool get _requiresSizeSelection => _isClothing || _isFootwear;
+  bool get _requiresColorSelection => _isNailPolish || _isFoundation;
 
   List<String> get _availableSizes => _isFootwear ? _footwearSizes : _clothingSizes;
+  List<Map<String, dynamic>> get _availableColors => _isFoundation ? _foundationColors : _nailPolishColors;
 
   @override
   void initState() {
@@ -107,7 +158,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         setState(() {
           _isAnimating = false;
         });
-        cartController.addToCart(product, size: _selectedSize);
+        cartController.addToCart(product, size: _selectedSize, color: _selectedColorName);
         _animationController.reset();
       }
     });
@@ -118,6 +169,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       Get.snackbar(
         'Selection Required',
         'Please select a size before adding to cart',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (_requiresColorSelection && _selectedColorName == null) {
+      Get.snackbar(
+        'Selection Required',
+        'Please select a shade before adding to cart',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -156,7 +218,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
       _animationController.forward();
     } else {
-      cartController.addToCart(product, size: _selectedSize);
+      cartController.addToCart(product, size: _selectedSize, color: _selectedColorName);
     }
   }
 
@@ -172,7 +234,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       return;
     }
 
-    cartController.addToCart(product, size: _selectedSize);
+    if (_requiresColorSelection && _selectedColorName == null) {
+      Get.snackbar(
+        'Selection Required',
+        'Please select a shade before proceeding',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    cartController.addToCart(product, size: _selectedSize, color: _selectedColorName);
     Get.to(() => const CartScreen());
   }
 
@@ -208,7 +281,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         screenWidth,
                         color: wishlistController.isFavorite(product) ? Colors.red : Colors.black,
                       )),
-                      SizedBox(width: screenWidth * 0.025),
+                      const SizedBox(width: 10),
                       Obx(
                             () => Stack(
                           key: _cartKey,
@@ -389,6 +462,75 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               ),
 
                               SizedBox(height: screenHeight * 0.025),
+
+                              // 🎨 Color Selection (Visible for Nail Polish or Foundation)
+                              if (_requiresColorSelection) ...[
+                                Text(
+                                  "Select Shade",
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.045,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.012),
+                                SizedBox(
+                                  height: 80,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _availableColors.length,
+                                    itemBuilder: (context, index) {
+                                      final shade = _availableColors[index];
+                                      final isSelected = _selectedColorName == shade['name'];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedColorName = shade['name'];
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              width: 45,
+                                              height: 45,
+                                              margin: const EdgeInsets.only(right: 15),
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: shade['color'],
+                                                border: Border.all(
+                                                  color: isSelected ? Colors.orange : Colors.grey.shade300,
+                                                  width: isSelected ? 3 : 1,
+                                                ),
+                                                boxShadow: isSelected ? [
+                                                  BoxShadow(
+                                                    color: Colors.orange.withOpacity(0.3),
+                                                    blurRadius: 8,
+                                                    spreadRadius: 2,
+                                                  )
+                                                ] : null,
+                                              ),
+                                              child: isSelected ? const Center(
+                                                child: Icon(Icons.check, color: Colors.white, size: 20),
+                                              ) : null,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(right: 15, top: 4),
+                                              child: Text(
+                                                shade['name'],
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                                  color: isSelected ? Colors.orange.shade900 : Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.025),
+                              ],
 
                               // 📏 Size Selection (Visible for Clothing and Footwear)
                               if (_requiresSizeSelection) ...[

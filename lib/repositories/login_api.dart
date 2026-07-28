@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:Shopsy/models/login_model.dart';
 
@@ -18,7 +19,9 @@ class LoginApi {
       "password": password,
     });
 
-    log("🚀 Request URL: $url");
+    if (kDebugMode) {
+      log("🚀 Request URL: $url");
+    }
 
     try {
       final response = await http.post(
@@ -27,7 +30,9 @@ class LoginApi {
         body: body,
       ).timeout(const Duration(seconds: 15));
 
-      log("📥 Status Code: ${response.statusCode}");
+      if (kDebugMode) {
+        log("📥 Status Code: ${response.statusCode}");
+      }
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -43,7 +48,9 @@ class LoginApi {
     } on FormatException {
       throw "Invalid response format from server.";
     } catch (e) {
-      log("🚨 Exception during login: $e");
+      if (kDebugMode) {
+        log("🚨 Exception during login: $e");
+      }
       rethrow;
     }
   }
@@ -52,7 +59,9 @@ class LoginApi {
   static Future<void> logout(String? token) async {
     if (token == null || token.isEmpty) return;
 
-    log("🔌 Server-side token invalidation requested for: ${token.substring(0, 5)}...");
+    if (kDebugMode) {
+      log("🔌 Server-side token invalidation requested for: ${token.substring(0, 5)}...");
+    }
     
     // Note: DummyJSON is a static API and doesn't actually have a logout endpoint.
     // In a real application, you would uncomment the code below:
@@ -68,16 +77,22 @@ class LoginApi {
       ).timeout(const Duration(seconds: 10));
       
       if (response.statusCode != 200) {
-        log("⚠️ Server logout failed with status: ${response.statusCode}");
+        if (kDebugMode) {
+          log("⚠️ Server logout failed with status: ${response.statusCode}");
+        }
       }
     } catch (e) {
-      log("🚨 Error during server-side logout: $e");
+      if (kDebugMode) {
+        log("🚨 Error during server-side logout: $e");
+      }
     }
     */
     
     // For now, we simulate a successful server invalidation
     await Future.delayed(const Duration(milliseconds: 500));
-    log("✅ Token invalidated successfully");
+    if (kDebugMode) {
+      log("✅ Token invalidated successfully");
+    }
   }
 
   static String _handleError(int statusCode, String body) {

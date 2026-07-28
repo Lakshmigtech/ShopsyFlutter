@@ -31,82 +31,40 @@ class ProfilePage extends GetView<AuthController> {
   }
 
   void _showLogoutConfirmation() {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: AppColors.textWhite,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        title: const Text(
+          "Logout",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Logout",
+        content: const Text("Are you sure you want to logout from Shopsy?"),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              "CANCEL",
               style: TextStyle(
-                fontSize: 20,
+                color: Color(0xff2874f0),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
-            const Text(
-              "Are you sure you want to logout from this app?",
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              controller.logout();
+            },
+            child: const Text(
+              "LOGOUT",
               style: TextStyle(
-                fontSize: 16,
-                color: AppColors.textBlack,
+                color: Color(0xff2874f0),
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Get.back(),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      side: const BorderSide(color: Colors.grey),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      "CANCEL",
-                      style: TextStyle(color: AppColors.textBlack, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                      controller.logout();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffff8c00), // Flipkart Orange
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      "LOGOUT",
-                      style: TextStyle(color: AppColors.textWhite, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
     );
   }
 
