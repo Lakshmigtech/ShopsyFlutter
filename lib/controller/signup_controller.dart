@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/utils/validation_utils.dart';
 
 class SignupController extends GetxController {
+  final signupFormKey = GlobalKey<FormState>();
   var isPasswordHidden = true.obs;
   var isLoading = false.obs;
 
@@ -16,24 +19,15 @@ class SignupController extends GetxController {
   }
 
   Future<void> signup() async {
-    if (nameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Please fill all fields",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
+    if (!(signupFormKey.currentState?.validate() ?? false)) return;
 
     if (passwordController.text != confirmPasswordController.text) {
       Get.snackbar(
         "Error",
         "Passwords do not match",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.error,
+        colorText: AppColors.white,
       );
       return;
     }
@@ -46,10 +40,18 @@ class SignupController extends GetxController {
         "Success",
         "Account created successfully",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.success,
+        colorText: AppColors.white,
       );
       Get.back(); // Go back to login
     } catch (e) {
-      Get.snackbar("Error", e.toString(), snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error", 
+        e.toString(), 
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.error,
+        colorText: AppColors.white,
+      );
     } finally {
       isLoading(false);
     }

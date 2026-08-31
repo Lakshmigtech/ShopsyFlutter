@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AuthController extends GetxController {
+  final loginFormKey = GlobalKey<FormState>();
+  final editProfileFormKey = GlobalKey<FormState>();
   final isLoading = false.obs;
   final isHidden = true.obs;
   final username = 'Guest'.obs;
@@ -88,16 +90,10 @@ class AuthController extends GetxController {
   }
 
   Future<void> login() async {
+    if (!(loginFormKey.currentState?.validate() ?? false)) return;
+
     final enteredUsername = usernameController.text.trim();
     final enteredPassword = passwordController.text;
-
-    if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
-      Get.snackbar('Error', 'Please enter all fields',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.backgroundAlert,
-          colorText: AppColors.textWhite);
-      return;
-    }
 
     try {
       isLoading.value = true;
@@ -161,10 +157,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> updateProfile() async {
-    if (editFirstNameController.text.isEmpty || editLastNameController.text.isEmpty || editEmailController.text.isEmpty) {
-      Get.snackbar('Error', 'Fields cannot be empty', snackPosition: SnackPosition.BOTTOM);
-      return;
-    }
+    if (!(editProfileFormKey.currentState?.validate() ?? false)) return;
 
     isLoading.value = true;
     // Simulate API call or update locally
@@ -193,15 +186,8 @@ class AuthController extends GetxController {
     Get.snackbar('Success', 'Profile updated locally', snackPosition: SnackPosition.BOTTOM);
   }
 
-  Future<void> simplelogin() async {
-    Get.offAll(() => const MainNavigation());
-  }
-
   Future<void> logout() async {
-    // 1. Invalidate token on server first
     await LoginApi.logout(token.value);
-    
-    // 2. Clear local session data
     await LocalStorage.clear();
     
     if (Get.isRegistered<CartController>()) {
@@ -218,12 +204,10 @@ class AuthController extends GetxController {
 
     usernameController.clear();
     passwordController.clear();
-
     isHidden.value = true;
 
     Get.find<NavigationController>().reset();
-
-    Get.offAll(() => LoginScreen());
+    Get.offAll(() => const LoginScreen());
   }
 
   @override

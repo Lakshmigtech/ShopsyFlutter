@@ -3,7 +3,7 @@ import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/navigation_controller.dart';
 import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
-import 'package:Shopsy/utils/currency_utils.dart';
+import 'package:Shopsy/utils/product_ui_helper.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                           child: Text(
-                            productController.searchHints[productController.currentHintIndex.value],
+                            ProductUIHelper.searchHints[productController.currentHintIndex.value],
                             key: ValueKey<int>(productController.currentHintIndex.value),
                             style: TextStyle(
                               color: Colors.grey[600],
@@ -378,7 +378,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(top: 50),
           child: Column(
             children: [
-              Icon(Icons.search_off, size: 64, color: AppColors.textGrey),
+              const Icon(Icons.search_off, size: 64, color: AppColors.textGrey),
               const SizedBox(height: 16),
               const Text('No products found matching your search', textAlign: TextAlign.center),
             ],
@@ -455,58 +455,147 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  SizedBox(height: screenWidth * 0.015),
-                  // Rating
+                  SizedBox(height: screenWidth * 0.02),
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.green,
+                          color: AppColors.success,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
                           children: [
                             Text(
-                              product.rating.stars.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.03,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              '${product.rating.stars}',
+                              style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(width: 2),
-                            Icon(Icons.star, color: Colors.white, size: screenWidth * 0.03),
+                            const Icon(Icons.star, color: Colors.white, size: 10),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Text(
                         '(${product.rating.count})',
-                        style: TextStyle(
-                          color: AppColors.textGrey,
-                          fontSize: screenWidth * 0.03,
-                        ),
+                        style: TextStyle(color: AppColors.textGrey, fontSize: 12),
                       ),
                     ],
                   ),
                   SizedBox(height: screenWidth * 0.02),
-                  // Price
+                  Row(
+                    children: [
+                      Text(
+                        ProductUIHelper.getDisplayPrice(product),
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.045,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        ProductUIHelper.getOriginalPrice(product),
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.035,
+                          color: AppColors.textGrey,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        ProductUIHelper.getDiscountPercentage(product),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.success,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Text(
+                    'Free Delivery',
+                    style: TextStyle(color: AppColors.success, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _category(IconData icon, String title, double screenWidth) {
+    return GestureDetector(
+      onTap: () {
+        productController.selectCategory(title);
+        navigationController.changeIndex(1);
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: screenWidth * 0.05),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: screenWidth * 0.07,
+              backgroundColor: AppColors.grey100,
+              child: Icon(icon, color: AppColors.primary, size: screenWidth * 0.07),
+            ),
+            SizedBox(height: screenWidth * 0.015),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: screenWidth * 0.032,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dealItem(dynamic product, double screenWidth) {
+    return GestureDetector(
+      onTap: () => Get.to(
+        () => const ProductDetailScreen(),
+        arguments: product,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.textWhite,
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          border: Border.all(color: AppColors.grey200),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(
+                    product.image,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.broken_image, color: AppColors.textGrey, size: 40),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    '₹${CurrencyUtils.formatPrice(product.priceCents / 100)}',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    product.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.w500),
                   ),
                   SizedBox(height: screenWidth * 0.01),
-                  const Text(
-                    'Free delivery',
-                    style: TextStyle(
-                      color: AppColors.green,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
+                  Text(
+                    'Under ${ProductUIHelper.getDisplayPrice(product)}',
+                    style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -523,143 +612,62 @@ class _HomePageState extends State<HomePage> {
         () => const ProductDetailScreen(),
         arguments: product,
       ),
-      child: Card(
-        elevation: 2,
-        color: AppColors.textWhite,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.textWhite,
           borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          border: Border.all(color: AppColors.grey200),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(screenWidth * 0.02),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Image.network(
                     product.image,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.broken_image, color: AppColors.textGrey, size: screenWidth * 0.1),
+                        const Icon(Icons.broken_image, color: AppColors.textGrey, size: 40),
                   ),
-                ),
-              ),
-              SizedBox(height: screenWidth * 0.015),
-              Text(
-                product.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: screenWidth * 0.035,
-                ),
-              ),
-              SizedBox(height: screenWidth * 0.01),
-              Text(
-                '₹${CurrencyUtils.formatPrice(product.priceCents / 100)}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.green,
-                  fontSize: screenWidth * 0.04,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _category(IconData icon, String title, double screenWidth) {
-    return Obx(() {
-      final isSelected = productController.selectedCategory.value == title;
-      return GestureDetector(
-        onTap: () {
-          productController.selectCategory(title);
-          navigationController.changeIndex(1);
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-          child: Column(
-            children: [
-              CircleAvatar(
-                radius: screenWidth * 0.07,
-                backgroundColor: isSelected ? AppColors.primary : AppColors.blue100,
-                child: Icon(icon, color: isSelected ? AppColors.textWhite : AppColors.textBlack, size: screenWidth * 0.06),
-              ),
-              SizedBox(height: screenWidth * 0.015),
-              Text(
-                title,
-                style: TextStyle(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: screenWidth * 0.03,
-                  color: isSelected ? AppColors.primary : AppColors.textBlack,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _dealItem(dynamic product, double screenWidth) {
-    final discount = (10 + (product.name.length % 40));
-    
-    return GestureDetector(
-      onTap: () => Get.to(
-        () => const ProductDetailScreen(),
-        arguments: product,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.grey100,
-                borderRadius: BorderRadius.circular(screenWidth * 0.02),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(screenWidth * 0.03),
-                child: Image.network(
-                  product.image,
-                  fit: BoxFit.contain,
                 ),
               ),
             ),
-          ),
-          SizedBox(height: screenWidth * 0.02),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.015, vertical: screenWidth * 0.005),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade800,
-                  borderRadius: BorderRadius.circular(screenWidth * 0.005),
-                ),
-                child: Text(
-                  '$discount% off',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenWidth * 0.02,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.w500),
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Text(
+                          ProductUIHelper.getDisplayPrice(product),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          ProductUIHelper.getDiscountPercentage(product),
+                          style: const TextStyle(color: AppColors.success, fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(width: screenWidth * 0.015),
-              Text(
-                'Limited time deal',
-                style: TextStyle(
-                  color: Colors.red.shade800,
-                  fontWeight: FontWeight.bold,
-                  fontSize: screenWidth * 0.028,
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

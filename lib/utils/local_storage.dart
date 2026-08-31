@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/order_model.dart';
 
 class LocalStorage {
   static late SharedPreferences _prefs;
+  static const String _ordersKey = 'my_orders';
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -55,6 +58,21 @@ class LocalStorage {
 
   static String? getToken() {
     return _prefs.getString('token');
+  }
+
+  // --- Orders Logic ---
+  static Future<void> saveOrders(List<OrderModel> orders) async {
+    final String encoded = jsonEncode(orders.map((item) => item.toJson()).toList());
+    await _prefs.setString(_ordersKey, encoded);
+  }
+
+  static List<OrderModel> getOrders() {
+    final String? ordersJson = _prefs.getString(_ordersKey);
+    if (ordersJson != null) {
+      final List<dynamic> decoded = jsonDecode(ordersJson);
+      return decoded.map((item) => OrderModel.fromJson(item)).toList();
+    }
+    return [];
   }
 
   static Future<void> clear() async {

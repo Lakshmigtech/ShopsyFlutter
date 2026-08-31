@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:Shopsy/models/product_model.dart';
 
 class OrderModel {
@@ -17,6 +16,23 @@ class OrderModel {
     required this.dateTime,
     this.status = "Confirmed",
   });
+
+  /// Factory to create an Order from Cart data
+  factory OrderModel.fromCart({
+    required List<CartItem> cartItems,
+    required double totalPrice,
+    required String address,
+    String status = "Confirmed",
+  }) {
+    return OrderModel(
+      orderId: DateTime.now().millisecondsSinceEpoch.toString(),
+      items: cartItems.map((item) => OrderItem.fromCartItem(item)).toList(),
+      totalAmount: totalPrice,
+      address: address,
+      dateTime: DateTime.now(),
+      status: status,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -60,6 +76,18 @@ class OrderItem {
     this.size,
     this.color,
   });
+
+  factory OrderItem.fromCartItem(CartItem cartItem) {
+    return OrderItem(
+      productId: cartItem.product.id,
+      productName: cartItem.product.name,
+      productImage: cartItem.product.image,
+      quantity: cartItem.quantity,
+      price: cartItem.product.priceCents / 100.0,
+      size: cartItem.size,
+      color: cartItem.color,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

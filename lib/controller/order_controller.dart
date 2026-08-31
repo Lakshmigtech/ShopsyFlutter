@@ -1,4 +1,9 @@
 import 'dart:convert';
+import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/controller/cart_controller.dart';
+import 'package:Shopsy/controller/navigation_controller.dart';
+import 'package:Shopsy/views/Bottom_Navigation/bottom_navigation.dart';
+import 'package:Shopsy/views/account/payment.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/order_model.dart';
@@ -9,7 +14,6 @@ class OrderController extends GetxController {
   var orders = <OrderModel>[].obs;
   static const String _storageKey = 'my_orders';
 
-  // Observable for selected address
   final selectedAddress = "".obs;
   final selectedAddressObject = Rxn<Address>();
 
@@ -17,11 +21,7 @@ class OrderController extends GetxController {
   void onInit() {
     super.onInit();
     loadOrders();
-
-    // Initialize default address
     _updateDefaultAddress();
-
-    // Worker to update selected address when addresses change
     final addressController = Get.find<AddressController>();
     ever(addressController.addresses, (_) => _updateDefaultAddress());
   }
@@ -42,7 +42,57 @@ class OrderController extends GetxController {
 
   void setOrderAddress(Address addr) {
     selectedAddressObject.value = addr;
-    selectedAddress.value = "${addr.name}, ${addr.address}, ${addr.phone}";
+    selectedAddress.value = addr.fullAddressSummary;
+  }
+
+  void proceedToPayment() {
+    if (selectedAddress.value.isEmpty) {
+      Get.snackbar(
+        "Address Required",
+        "Please select a delivery address",
+        backgroundColor: AppColors.backgroundAlert,
+        colorText: AppColors.textWhite,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    Get.to(() => PaymentMethodsPage(selectedAddress: selectedAddress.value));
+  }
+
+  /// Refactored COD Order Logic
+  void confirmCODOrder(String deliveryAddress) {
+    final cartController = Get.find<CartController>();
+    final navigationController = Get.find<NavigationController>();
+
+    Get.defaultDialog(
+      title: "Confirm Order",
+      middleText: "Place order with Cash on Delivery?",
+      textConfirm: "Confirm",
+      confirmTextColor: AppColors.textWhite,
+      onConfirm: () async {
+        final newOrder = OrderModel(
+          orderId: DateTime.now().millisecondsSinceEpoch.toString(),
+          items: cartController.cartItems.map((item) => OrderItem.fromCartItem(item)).toList(),
+          totalAmount: cartController.totalPrice,
+          address: deliveryAddress,
+          dateTime: DateTime.now(),
+          status: "Confirmed (COD)",
+        );
+
+        await placeOrder(newOrder);
+        cartController.clearCart();
+        navigationController.changeIndex(0);
+        Get.offAll(() => const MainNavigation());
+
+        Get.snackbar(
+          "Success", 
+          "Order placed successfully with COD!",
+          backgroundColor: AppColors.textGreen, 
+          colorText: AppColors.textWhite,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      },
+    );
   }
 
   Future<void> loadOrders() async {
@@ -55,7 +105,7 @@ class OrderController extends GetxController {
   }
 
   Future<void> placeOrder(OrderModel newOrder) async {
-    orders.insert(0, newOrder); // Add new order to the top of the list
+    orders.insert(0, newOrder);
     await saveOrders();
   }
 

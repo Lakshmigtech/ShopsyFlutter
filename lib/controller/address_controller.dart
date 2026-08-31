@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shopsy/models/address_model.dart';
 
 class AddressController extends GetxController {
+  final addressFormKey = GlobalKey<FormState>();
   final addresses = <Address>[].obs;
   static const String _storageKey = 'saved_addresses';
 
@@ -82,16 +83,6 @@ class AddressController extends GetxController {
     }
     addresses.add(address);
     await saveAddresses();
-  }
-
-  Future<void> updateAddress(int index, Address updatedAddress) async {
-    if (index >= 0 && index < addresses.length) {
-      if (updatedAddress.isDefault) {
-        _makeAllNonDefault();
-      }
-      addresses[index] = updatedAddress;
-      await saveAddresses();
-    }
   }
 
   Future<void> removeAddress(int index) async {

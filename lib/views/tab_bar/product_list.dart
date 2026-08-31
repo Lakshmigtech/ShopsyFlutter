@@ -2,6 +2,7 @@ import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/utils/product_ui_helper.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:Shopsy/views/tab_bar/product_detail.dart';
 import 'package:flutter/material.dart';
@@ -192,7 +193,7 @@ class ProductScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       Text(
-                                        '₹${(product.priceCents / 100).toStringAsFixed(2)}',
+                                        ProductUIHelper.getDisplayPrice(product),
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -200,7 +201,7 @@ class ProductScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        '₹${((product.priceCents / 100) * 1.2).toStringAsFixed(2)}',
+                                        ProductUIHelper.getOriginalPrice(product),
                                         style: const TextStyle(
                                           decoration:
                                               TextDecoration.lineThrough,
@@ -209,9 +210,9 @@ class ProductScreen extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(width: 8),
-                                      const Text(
-                                        '20% off',
-                                        style: TextStyle(
+                                      Text(
+                                        ProductUIHelper.getDiscountPercentage(product),
+                                        style: const TextStyle(
                                           color: AppColors.success,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -322,7 +323,7 @@ class ProductScreen extends StatelessWidget {
             Obx(() => Wrap(
                   spacing: 10,
                   runSpacing: 10,
-                  children: controller.categories.map((category) {
+                  children: ProductUIHelper.categories.map((category) {
                     final isSelected = controller.selectedCategory.value == category;
                     return GestureDetector(
                       onTap: () => controller.selectCategory(category),

@@ -13,7 +13,6 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 class PaymentController extends GetxController {
   late Razorpay _razorpay;
   
-  // Use environment variable for security, trimmed to avoid "Invalid Token" issues
   String get razorpayKey => (dotenv.env['RAZORPAY_KEY'] ?? "").trim();
 
   @override
@@ -26,111 +25,66 @@ class PaymentController extends GetxController {
   }
 
   void openCheckout(double amount, String contact, String email) {
-    if (razorpayKey.isEmpty) {
-      Get.snackbar("Configuration Error", "Razorpay Key ID not found in .env file. Please add RAZORPAY_KEY=rzp_test_...");
-      return;
-    }
-
-    if (!razorpayKey.startsWith("rzp_")) {
-      Get.snackbar("Configuration Error", "The Razorpay Key ID in your .env file appears to be invalid. It should start with 'rzp_'.");
+    if (razorpayKey.isEmpty || !razorpayKey.startsWith("rzp_")) {
+      Get.snackbar("Error", "Invalid Razorpay Key configuration.");
       return;
     }
 
     var options = {
       'key': razorpayKey,
-      'amount': (amount * 100).toInt(), // amount in paise
+      'amount': (amount * 100).toInt(),
       'name': 'Shopsy Flutter',
       'description': 'Purchase Payment',
       'currency': 'INR',
-      'timeout': 300,
-      'prefill': {
-        'contact': contact,
-        'email': email
-      },
-      'external': {
-        'wallets': ['paytm']
-      },
+      'prefill': {'contact': contact, 'email': email},
       'send_sms_hash': true,
     };
 
     try {
-      if (kDebugMode) {
-        debugPrint('Opening Razorpay checkout...');
-      }
       _razorpay.open(options);
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error opening Razorpay: $e');
-      }
-      Get.snackbar("Error", "Could not open Razorpay checkout: $e");
+      Get.snackbar("Error", "Could not open checkout: $e");
     }
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    Get.snackbar("Success", "Payment Successful: ${response.paymentId}",
+    Get.snackbar("Success", "Payment Successful",
         backgroundColor: AppColors.backgroundSuccess, colorText: AppColors.textWhite);
     
-    // Add local notification
     Get.find<NotificationController>().addNotification(
       "Payment Successful", 
-      "Your payment was successful. Order is confirmed!"
+      "Your order is confirmed!"
     );
     
     _finalizeOrder(response.paymentId ?? DateTime.now().millisecondsSinceEpoch.toString());
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    // response.code: 0 = Cancelled, 1 = Error, 2 = SDK error
-    String message = response.message ?? "Payment Cancelled or Failed";
-    if (kDebugMode) {
-      debugPrint("Razorpay Error: ${response.code}");
-    }
-    
-    if (message.contains("Invalid Token") || message.contains("Unauthorized")) {
-      Get.snackbar("Payment Error", "Razorpay key is invalid. Please check your configuration.",
-          backgroundColor: AppColors.backgroundAlert, colorText:AppColors.textWhite, duration: const Duration(seconds: 5));
-    } else {
-      Get.snackbar("Payment Info", message,
-          backgroundColor: AppColors.backgroundAlert, colorText: AppColors.textWhite);
-    }
+    Get.snackbar("Payment Failed", response.message ?? "Transaction failed",
+        backgroundColor: AppColors.backgroundAlert, colorText: AppColors.textWhite);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    Get.snackbar("External Wallet", "Selected: ${response.walletName}",
-        backgroundColor: AppColors.primary, colorText: AppColors.textWhite);
+    Get.snackbar("Wallet", "Selected: ${response.walletName}");
   }
 
+  /// Consolidated Order Finalization
   void _finalizeOrder(String paymentId) async {
     final cartController = Get.find<CartController>();
     final orderController = Get.find<OrderController>();
     final navigationController = Get.find<NavigationController>();
 
     if (cartController.cartItems.isNotEmpty) {
-      // Create order items from cart
-      List<OrderItem> orderItems = cartController.cartItems.map((cartItem) {
-        return OrderItem(
-          productId: cartItem.product.id,
-          productName: cartItem.product.name,
-          productImage: cartItem.product.image,
-          quantity: cartItem.quantity,
-          price: cartItem.product.priceCents / 100.0,
-          size: cartItem.size,
-        );
-      }).toList();
-
-      // Create new order
-      OrderModel newOrder = OrderModel(
+      final newOrder = OrderModel(
         orderId: paymentId,
-        items: orderItems,
+        items: cartController.cartItems.map((item) => OrderItem.fromCartItem(item)).toList(),
         totalAmount: cartController.totalPrice,
         address: orderController.selectedAddress.value,
         dateTime: DateTime.now(),
+        status: "Paid",
       );
 
-      // Place order in history
       await orderController.placeOrder(newOrder);
-      
-      // Clear cart
       cartController.clearCart();
     }
 

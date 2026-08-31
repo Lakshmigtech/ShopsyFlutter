@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:Shopsy/models/product_model.dart';
 import 'package:Shopsy/repositories/product_api.dart';
+import 'package:Shopsy/utils/product_ui_helper.dart';
 import 'package:get/get.dart';
-
-enum SortOption { popularity, priceLowToHigh, priceHighToLow }
 
 class ProductController extends GetxController {
   final List<Product> _allFetchedProducts = [];
@@ -35,22 +34,8 @@ class ProductController extends GetxController {
   // Search Placeholder Animation State
   final currentHintIndex = 0.obs;
   Timer? _hintTimer;
-  final List<String> searchHints = [
-    'Search for mobile...',
-    'Search for electronics...',
-    'Search for fashion...',
-    'Search for beauty...',
-    'Search for home decor...',
-    'Search for sneakers...',
-  ];
 
-  List<String> get categories => const [
-    'All',
-    'Home',
-    'Fashion',
-    'Electronics',
-    'Beauty',
-  ];
+  List<String> get categories => ProductUIHelper.categories;
 
   @override
   void onInit() {
@@ -75,7 +60,7 @@ class ProductController extends GetxController {
 
   void _startHintTimer() {
     _hintTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      currentHintIndex.value = (currentHintIndex.value + 1) % searchHints.length;
+      currentHintIndex.value = (currentHintIndex.value + 1) % ProductUIHelper.searchHints.length;
     });
   }
 
@@ -133,52 +118,22 @@ class ProductController extends GetxController {
   }
 
   List<Product> _getFilteredAndSortedList() {
-    final category = selectedCategory.value.toLowerCase();
-    final query = searchQuery.value.trim().toLowerCase();
-
-    List<Product> filtered = _allFetchedProducts.where((product) {
-      final productPrice = product.priceCents / 100;
-      
-      final matchesCategory =
-          category == 'all' ||
-          product.category.toLowerCase().contains(category);
-      
-      final matchesSearch = query.isEmpty || [
-        product.name,
-        product.category,
-        product.subCategory,
-        product.description,
-        ...product.keywords,
-      ].join(' ').toLowerCase().contains(query);
-
-      final matchesPrice = productPrice >= minPrice.value && productPrice <= maxPrice.value;
-      
-      final matchesRating = selectedRating.value == 0 || product.rating.stars >= selectedRating.value;
-
-      return matchesCategory && matchesSearch && matchesPrice && matchesRating;
-    }).toList();
-
-    // Apply sorting
-    switch (selectedSortOption.value) {
-      case SortOption.popularity:
-        filtered.sort((a, b) => b.rating.count.compareTo(a.rating.count));
-        break;
-      case SortOption.priceLowToHigh:
-        filtered.sort((a, b) => a.priceCents.compareTo(b.priceCents));
-        break;
-      case SortOption.priceHighToLow:
-        filtered.sort((a, b) => b.priceCents.compareTo(a.priceCents));
-        break;
-    }
-
-    return filtered;
+    return ProductUIHelper.filterAndSortProducts(
+      products: _allFetchedProducts,
+      category: selectedCategory.value,
+      query: searchQuery.value,
+      minPrice: minPrice.value,
+      maxPrice: maxPrice.value,
+      selectedRating: selectedRating.value,
+      sortOption: selectedSortOption.value,
+    );
   }
 
   void _updatePriceLimits(List<Product> products) {
     if (products.isNotEmpty) {
       double maxFound = 0;
       for (var p in products) {
-        double price = p.priceCents / 100;
+        double price = p.price;
         if (price > maxFound) maxFound = price;
       }
       

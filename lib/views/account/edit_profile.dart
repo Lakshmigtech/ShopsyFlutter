@@ -1,5 +1,6 @@
 import 'package:Shopsy/controller/auth_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -37,96 +38,102 @@ class EditProfileScreen extends GetView<AuthController> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(screenWidth * 0.06),
-        child: Column(
-          children: [
-            Center(
-              child: Stack(
-                children: [
-                  Obx(() => CircleAvatar(
-                        radius: screenWidth * 0.15,
-                        backgroundColor: AppColors.primary,
-                        backgroundImage: controller.profileImage.value != null
-                            ? FileImage(controller.profileImage.value!)
-                            : null,
-                        child: controller.profileImage.value == null
-                            ? Icon(
-                                Icons.person,
-                                size: screenWidth * 0.15,
-                                color: AppColors.primary,
-                              )
-                            : null,
-                      )),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () => controller.pickImage(),
-                      child: Container(
-                        padding: EdgeInsets.all(screenWidth * 0.02),
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: AppColors.textWhite,
-                          size: screenWidth * 0.05,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.05),
-            _buildTextField(
-              controller: controller.editFirstNameController,
-              label: "First Name",
-              icon: Icons.person_outline,
-              screenWidth: screenWidth,
-            ),
-            SizedBox(height: screenHeight * 0.025),
-            _buildTextField(
-              controller: controller.editLastNameController,
-              label: "Last Name",
-              icon: Icons.person_outline,
-              screenWidth: screenWidth,
-            ),
-            SizedBox(height: screenHeight * 0.025),
-            _buildTextField(
-              controller: controller.editEmailController,
-              label: "Email Address",
-              icon: Icons.email_outlined,
-              keyboardType: TextInputType.emailAddress,
-              screenWidth: screenWidth,
-            ),
-            SizedBox(height: screenHeight * 0.05),
-            SizedBox(
-              width: double.infinity,
-              height: screenHeight * 0.07,
-              child: Obx(() => ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                      ),
-                    ),
-                    onPressed: controller.isLoading.value
-                        ? null
-                        : () => controller.updateProfile(),
-                    child: controller.isLoading.value
-                        ? const CircularProgressIndicator(color: AppColors.textWhite)
-                        : Text(
-                            "SAVE CHANGES",
-                            style: TextStyle(
-                              color: AppColors.textWhite,
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: FontWeight.bold,
-                            ),
+        child: Form(
+          key: controller.editProfileFormKey,
+          child: Column(
+            children: [
+              Center(
+                child: Stack(
+                  children: [
+                    Obx(() => CircleAvatar(
+                          radius: screenWidth * 0.15,
+                          backgroundColor: AppColors.primary,
+                          backgroundImage: controller.profileImage.value != null
+                              ? FileImage(controller.profileImage.value!)
+                              : null,
+                          child: controller.profileImage.value == null
+                              ? Icon(
+                                  Icons.person,
+                                  size: screenWidth * 0.15,
+                                  color: AppColors.textWhite,
+                                )
+                              : null,
+                        )),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () => controller.pickImage(),
+                        child: Container(
+                          padding: EdgeInsets.all(screenWidth * 0.02),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
                           ),
-                  )),
-            ),
-          ],
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: AppColors.textWhite,
+                            size: screenWidth * 0.05,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.05),
+              _buildTextField(
+                controller: controller.editFirstNameController,
+                label: "First Name",
+                icon: Icons.person_outline,
+                screenWidth: screenWidth,
+                validator: (value) => ValidationUtils.validateRequired(value, "First Name"),
+              ),
+              SizedBox(height: screenHeight * 0.025),
+              _buildTextField(
+                controller: controller.editLastNameController,
+                label: "Last Name",
+                icon: Icons.person_outline,
+                screenWidth: screenWidth,
+                validator: (value) => ValidationUtils.validateRequired(value, "Last Name"),
+              ),
+              SizedBox(height: screenHeight * 0.025),
+              _buildTextField(
+                controller: controller.editEmailController,
+                label: "Email Address",
+                icon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+                screenWidth: screenWidth,
+                validator: ValidationUtils.validateEmail,
+              ),
+              SizedBox(height: screenHeight * 0.05),
+              SizedBox(
+                width: double.infinity,
+                height: screenHeight * 0.07,
+                child: Obx(() => ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                        ),
+                      ),
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () => controller.updateProfile(),
+                      child: controller.isLoading.value
+                          ? const CircularProgressIndicator(color: AppColors.textWhite)
+                          : Text(
+                              "SAVE CHANGES",
+                              style: TextStyle(
+                                color: AppColors.textWhite,
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    )),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -137,11 +144,14 @@ class EditProfileScreen extends GetView<AuthController> {
     required String label,
     required IconData icon,
     required double screenWidth,
+    required String? Function(String?) validator,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       style: TextStyle(fontSize: screenWidth * 0.04),
       decoration: InputDecoration(
         labelText: label,

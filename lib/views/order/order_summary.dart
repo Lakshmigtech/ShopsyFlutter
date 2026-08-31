@@ -3,9 +3,9 @@ import 'package:Shopsy/controller/order_controller.dart';
 import 'package:Shopsy/controller/address_controller.dart';
 import 'package:Shopsy/models/address_model.dart';
 import 'package:Shopsy/models/product_model.dart';
-import 'package:Shopsy/utils/currency_utils.dart';
+import 'package:Shopsy/utils/address_ui_helper.dart';
+import 'package:Shopsy/utils/product_ui_helper.dart';
 import 'package:Shopsy/views/account/add_address.dart';
-import 'package:Shopsy/views/account/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:Shopsy/constants/app_colors.dart';
@@ -117,7 +117,7 @@ class OrderSummaryPage extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Deliver to: ${selectedAddress.name}, ${selectedAddress.phone}",
+                  "Deliver to: ${AddressUIHelper.getContactInfo(selectedAddress)}",
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -202,7 +202,7 @@ class OrderSummaryPage extends StatelessWidget {
                 ],
                 const SizedBox(height: 8),
                 Text(
-                  "₹${CurrencyUtils.formatPrice(item.subtotal)}",
+                  ProductUIHelper.getCartItemSubtotal(item),
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
@@ -236,7 +236,7 @@ class OrderSummaryPage extends StatelessWidget {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textGrey),
           ),
           const Divider(height: 24),
-          _priceRow("Price (${cartController.itemCount} items)", "₹${CurrencyUtils.formatPrice(cartController.totalPrice)}"),
+          _priceRow("Price (${cartController.itemCount} items)", ProductUIHelper.formatPrice(cartController.totalPrice)),
           const SizedBox(height: 12),
           _priceRow("Delivery Charges", "FREE", isGreen: true),
           const Divider(height: 24),
@@ -248,7 +248,7 @@ class OrderSummaryPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Text(
-                "₹${CurrencyUtils.formatPrice(cartController.totalPrice)}",
+                ProductUIHelper.formatPrice(cartController.totalPrice),
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
@@ -300,7 +300,7 @@ class OrderSummaryPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "₹${CurrencyUtils.formatPrice(cartController.totalPrice)}",
+                        ProductUIHelper.formatPrice(cartController.totalPrice),
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const Text(
@@ -314,13 +314,7 @@ class OrderSummaryPage extends StatelessWidget {
                   height: 48,
                   width: 160,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (orderController.selectedAddress.value.isEmpty) {
-                        Get.snackbar("Address Required", "Please select a delivery address", backgroundColor: Colors.red, colorText: Colors.white);
-                        return;
-                      }
-                      Get.to(() => PaymentMethodsPage(selectedAddress: orderController.selectedAddress.value));
-                    },
+                    onPressed: () => orderController.proceedToPayment(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffff8c31),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -383,16 +377,21 @@ class OrderSummaryPage extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: TextButton.icon(
+              child: ElevatedButton.icon(
                 onPressed: () {
                   Get.back();
                   Get.to(() => const AddAddressScreen());
                 },
                 icon: const Icon(Icons.add, color: Color(0xff2874f0)),
                 label: const Text("Add New Address", style: TextStyle(color: Color(0xff2874f0))),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: BorderSide(color: Colors.grey.shade300),
+                  elevation: 0,
+                ),
               ),
             ),
           ],

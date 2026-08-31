@@ -13,6 +13,9 @@ class Address {
     required this.isDefault,
   });
 
+  String get contactInfo => "$name, $phone";
+  String get fullAddressSummary => "$name, $address, $phone";
+
   Map<String, dynamic> toJson() {
     return {
       'name': name,

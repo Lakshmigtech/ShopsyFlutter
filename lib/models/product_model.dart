@@ -21,6 +21,8 @@ class Product {
     required this.description,
   });
 
+  double get price => priceCents / 100.0;
+
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'] ?? '',
@@ -75,7 +77,7 @@ class CartItem {
 
   CartItem({required this.product, this.quantity = 1, this.size, this.color});
 
-  double get subtotal => (product.priceCents * quantity) / 100.0;
+  double get subtotal => product.price * quantity;
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(

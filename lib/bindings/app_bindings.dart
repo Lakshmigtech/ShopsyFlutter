@@ -13,15 +13,18 @@ import 'package:get/get.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
+    // Global Controllers - Remain permanent
     Get.put(AuthController(), permanent: true);
-    Get.put(ProductController(), permanent: true);
-    Get.put(CartController(), permanent: true);
     Get.put(NavigationController(), permanent: true);
-    Get.put(WishlistController(), permanent: true);
-    Get.put(AddressController(), permanent: true);
-    Get.put(OrderController(), permanent: true);
-    Get.put(PaymentController(), permanent: true);
     Get.put(NotificationController(), permanent: true);
+
+    // Feature-specific Controllers - Use lazyPut for better memory management
+    Get.lazyPut(() => ProductController(), fenix: true);
+    Get.lazyPut(() => CartController(), fenix: true);
+    Get.lazyPut(() => WishlistController(), fenix: true);
+    Get.lazyPut(() => AddressController(), fenix: true);
+    Get.lazyPut(() => OrderController(), fenix: true);
+    Get.lazyPut(() => PaymentController(), fenix: true);
     Get.lazyPut(() => SplashController());
   }
 }
