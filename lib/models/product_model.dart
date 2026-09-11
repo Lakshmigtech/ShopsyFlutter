@@ -24,16 +24,31 @@ class Product {
   double get price => priceCents / 100.0;
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Handle price vs priceCents
+    int priceCents = 0;
+    if (json['priceCents'] != null) {
+      priceCents = (json['priceCents'] as num).toInt();
+    } else if (json['price'] != null) {
+      priceCents = ((json['price'] as num).toDouble() * 100).round();
+    }
+
+    // Handle relative image paths from the specific GitHub API
+    String imageUrl = json['image'] ?? json['imageUrl'] ?? '';
+    if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+      const String baseUrl = "https://raw.githubusercontent.com/kolzsticks/Free-Ecommerce-Products-Api/main/";
+      imageUrl = baseUrl + imageUrl;
+    }
+
     return Product(
-      id: json['id'] ?? '',
-      image: json['image'] ?? '',
-      name: json['name'] ?? '',
+      id: json['id']?.toString() ?? '',
+      image: imageUrl,
+      name: json['name'] ?? json['title'] ?? '',
       rating: Rating.fromJson(json['rating'] ?? {}),
-      priceCents: json['priceCents'] ?? 0,
-      category: json['category'] ?? '',
+      priceCents: priceCents,
+      category: json['category'] ?? json['type'] ?? 'General',
       subCategory: json['subCategory'] ?? '',
-      keywords: List<String>.from(json['keywords'] ?? []),
-      description: json['description'] ?? '',
+      keywords: json['keywords'] != null ? List<String>.from(json['keywords']) : [],
+      description: json['description'] ?? 'No description available for this product.',
     );
   }
 
@@ -63,8 +78,8 @@ class Rating {
 
   factory Rating.fromJson(Map<String, dynamic> json) {
     return Rating(
-      stars: (json['stars'] as num? ?? 0.0).toDouble(),
-      count: json['count'] ?? 0,
+      stars: (json['stars'] as num? ?? json['rate'] as num? ?? 0.0).toDouble(),
+      count: (json['count'] as num? ?? 0).toInt(),
     );
   }
 }

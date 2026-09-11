@@ -3,7 +3,8 @@ import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/navigation_controller.dart';
 import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
-import 'package:Shopsy/utils/product_ui_helper.dart';
+import 'package:Shopsy/utils/currency_utils.dart';
+import 'package:Shopsy/utils/screen_utils.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -82,8 +83,9 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Shopsy',
                     style: TextStyle(
-                      fontSize: screenWidth * 0.065,
+                      fontSize: 24.sp, // Increased from screenWidth * 0.065
                       fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
                     ),
                   ),
                   const Spacer(),
@@ -92,14 +94,14 @@ class _HomePageState extends State<HomePage> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Icon(Icons.shopping_cart_outlined, size: screenWidth * 0.07),
+                        Icon(Icons.shopping_cart_outlined, size: 28.sp),
                         Obx(() {
                           if (cartController.itemCount <= 0) return const SizedBox.shrink();
                           return Positioned(
-                            right: -screenWidth * 0.015,
-                            top: -screenWidth * 0.015,
+                            right: -5,
+                            top: -5,
                             child: Container(
-                              padding: EdgeInsets.all(screenWidth * 0.01),
+                              padding: const EdgeInsets.all(4),
                               decoration: const BoxDecoration(
                                 color: AppColors.redAccent,
                                 shape: BoxShape.circle,
@@ -108,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                                 '${cartController.itemCount}',
                                 style: TextStyle(
                                   color: AppColors.textWhite,
-                                  fontSize: screenWidth * 0.025,
+                                  fontSize: 10.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -120,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              SizedBox(height: screenWidth * 0.04),
+              SizedBox(height: 16.sp),
               
               // Animated Search Bar
               Stack(
@@ -129,12 +131,12 @@ class _HomePageState extends State<HomePage> {
                   TextField(
                     controller: productController.searchController,
                     onChanged: (value) => productController.updateSearchQuery(value),
-                    style: TextStyle(fontSize: screenWidth * 0.038),
+                    style: TextStyle(fontSize: 16.sp),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon: Icon(Icons.search, size: 22.sp),
                       suffixIcon: Obx(() => productController.searchQuery.value.isNotEmpty
                           ? IconButton(
-                              icon: const Icon(Icons.clear),
+                              icon: Icon(Icons.clear, size: 20.sp),
                               onPressed: () {
                                 productController.searchController.clear();
                                 productController.updateSearchQuery('');
@@ -143,9 +145,9 @@ class _HomePageState extends State<HomePage> {
                           : const SizedBox.shrink()),
                       filled: true,
                       fillColor: AppColors.grey200,
-                      contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
+                      contentPadding: EdgeInsets.symmetric(vertical: 12.sp),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(screenWidth * 0.075),
+                        borderRadius: BorderRadius.circular(30.sp),
                         borderSide: BorderSide.none,
                       ),
                     ),
@@ -153,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                   // Animated Placeholder Overlay
                   IgnorePointer(
                     child: Padding(
-                      padding: EdgeInsets.only(left: screenWidth * 0.12),
+                      padding: EdgeInsets.only(left: 45.sp),
                       child: Obx(() {
                         if (productController.searchQuery.value.isNotEmpty) {
                           return const SizedBox.shrink();
@@ -173,11 +175,11 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                           child: Text(
-                            ProductUIHelper.searchHints[productController.currentHintIndex.value],
+                            productController.searchHints[productController.currentHintIndex.value],
                             key: ValueKey<int>(productController.currentHintIndex.value),
                             style: TextStyle(
                               color: Colors.grey[600],
-                              fontSize: screenWidth * 0.038,
+                              fontSize: 16.sp,
                             ),
                           ),
                         );
@@ -186,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              SizedBox(height: screenWidth * 0.05),
+              SizedBox(height: 20.sp),
               
               Obx(() {
                 if (productController.searchQuery.value.isNotEmpty) {
@@ -218,13 +220,13 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(height: screenWidth * 0.05),
+        SizedBox(height: 20.sp),
         
         // MAIN BANNER SLIDER
         Column(
           children: [
             SizedBox(
-              height: screenWidth * 0.45,
+              height: 180.sp,
               width: double.infinity,
               child: PageView.builder(
                 controller: _pageController,
@@ -241,15 +243,15 @@ class _HomePageState extends State<HomePage> {
                       navigationController.changeIndex(1);
                     },
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+                      padding: EdgeInsets.symmetric(horizontal: 4.sp),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                        borderRadius: BorderRadius.circular(12.sp),
                         child: Image.asset(
                           _banners[index],
                           fit: BoxFit.fill,
                           errorBuilder: (context, error, stackTrace) => Container(
                             color: AppColors.blue100,
-                            child: const Icon(Icons.image, size: 50, color: AppColors.primary),
+                            child: Icon(Icons.image, size: 50.sp, color: AppColors.primary),
                           ),
                         ),
                       ),
@@ -258,17 +260,17 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            SizedBox(height: screenWidth * 0.03),
+            SizedBox(height: 12.sp),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _banners.asMap().entries.map((entry) {
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  width: _currentBannerIndex == entry.key ? screenWidth * 0.06 : screenWidth * 0.02,
-                  height: screenWidth * 0.02,
-                  margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+                  width: _currentBannerIndex == entry.key ? 24.sp : 8.sp,
+                  height: 8.sp,
+                  margin: EdgeInsets.symmetric(horizontal: 4.sp),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(screenWidth * 0.01),
+                    borderRadius: BorderRadius.circular(4.sp),
                     color: _currentBannerIndex == entry.key
                         ? AppColors.primary
                         : AppColors.grey300,
@@ -278,14 +280,14 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        SizedBox(height: screenWidth * 0.06),
+        SizedBox(height: 24.sp),
         
         // DEALS OF THE DAY SECTION
         Text(
           'Deals of the Day',
-          style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: screenWidth * 0.03),
+        SizedBox(height: 12.sp),
         Obx(() {
           final deals = productController.dealsOfDay;
           if (productController.isLoading.value) {
@@ -293,74 +295,74 @@ class _HomePageState extends State<HomePage> {
           }
           if (deals.isEmpty) return const SizedBox.shrink();
           
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: deals.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.8,
-                  crossAxisSpacing: screenWidth * 0.03,
-                  mainAxisSpacing: screenWidth * 0.03,
-                ),
-                itemBuilder: (context, index) {
-                  return _dealItem(deals[index], screenWidth);
-                },
-              ),
-              SizedBox(height: screenWidth * 0.03),
-              GestureDetector(
-                onTap: () {
-                  productController.resetFilters();
-                  navigationController.changeIndex(1);
-                },
-                child: Text(
-                  'See more deals',
-                  style: TextStyle(
-                    color: Colors.blue.shade700,
-                    fontSize: screenWidth * 0.035,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: deals.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.85,
+              crossAxisSpacing: 12.sp,
+              mainAxisSpacing: 12.sp,
+            ),
+            itemBuilder: (context, index) {
+              return _dealItem(deals[index], screenWidth);
+            },
           );
         }),
         
-        SizedBox(height: screenHeight * 0.04),
-        Text(
-          'Recommended for You',
-          style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold),
+        SizedBox(height: 24.sp),
+        
+        // ALL PRODUCTS SECTION
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'All Products',
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+            ),
+            GestureDetector(
+              onTap: () {
+                navigationController.changeIndex(1);
+              },
+              child: Text(
+                'View All',
+                style: TextStyle(
+                  color: Colors.blue.shade700,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: screenWidth * 0.03),
+        SizedBox(height: 12.sp),
         Obx(() {
           if (productController.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
-          final recommended = productController.recommendedProducts;
-          if (recommended.isEmpty) {
-            return const Center(child: Text('No recommended products'));
+          final allProducts = productController.allProducts;
+          if (allProducts.isEmpty) {
+            return const Center(child: Text('No products available'));
           }
 
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: recommended.length,
+            itemCount: allProducts.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: screenWidth * 0.025,
-              mainAxisSpacing: screenWidth * 0.025,
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 10.sp,
+              mainAxisSpacing: 10.sp,
             ),
             itemBuilder: (context, index) {
-              final product = recommended[index];
+              final product = allProducts[index];
               return _buildProductCard(product, screenWidth);
             },
           );
         }),
-        SizedBox(height: screenWidth * 0.08),
+        SizedBox(height: 32.sp),
       ],
     );
   }
@@ -375,12 +377,16 @@ class _HomePageState extends State<HomePage> {
     if (products.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.only(top: 50),
+          padding: EdgeInsets.only(top: 50.sp),
           child: Column(
             children: [
-              const Icon(Icons.search_off, size: 64, color: AppColors.textGrey),
-              const SizedBox(height: 16),
-              const Text('No products found matching your search', textAlign: TextAlign.center),
+              Icon(Icons.search_off, size: 64.sp, color: AppColors.textGrey),
+              SizedBox(height: 16.sp),
+              Text(
+                'No products found matching your search', 
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16.sp),
+              ),
             ],
           ),
         ),
@@ -391,10 +397,10 @@ class _HomePageState extends State<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: EdgeInsets.symmetric(vertical: 8.sp),
           child: Text(
             'Search Results for "${productController.searchQuery.value}"',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
           ),
         ),
         ListView.separated(
@@ -417,30 +423,30 @@ class _HomePageState extends State<HomePage> {
         arguments: product,
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(vertical: 12.sp),
         color: AppColors.textWhite,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
             Container(
-              width: screenWidth * 0.3,
-              height: screenWidth * 0.3,
+              width: 100.sp,
+              height: 100.sp,
               decoration: BoxDecoration(
                 color: AppColors.grey100,
-                borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                borderRadius: BorderRadius.circular(8.sp),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.sp),
                 child: Image.network(
                   product.image,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.broken_image, color: AppColors.textGrey, size: screenWidth * 0.1),
+                      Icon(Icons.broken_image, color: AppColors.textGrey, size: 40.sp),
                 ),
               ),
             ),
-            SizedBox(width: screenWidth * 0.04),
+            SizedBox(width: 16.sp),
             // Product Info
             Expanded(
               child: Column(
@@ -451,151 +457,62 @@ class _HomePageState extends State<HomePage> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: screenWidth * 0.038,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  SizedBox(height: screenWidth * 0.02),
+                  SizedBox(height: 6.sp),
+                  // Rating
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 2.sp),
                         decoration: BoxDecoration(
-                          color: AppColors.success,
-                          borderRadius: BorderRadius.circular(4),
+                          color: AppColors.green,
+                          borderRadius: BorderRadius.circular(4.sp),
                         ),
                         child: Row(
                           children: [
                             Text(
-                              '${product.rating.stars}',
-                              style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                              product.rating.stars.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            const Icon(Icons.star, color: Colors.white, size: 10),
+                            SizedBox(width: 2.sp),
+                            Icon(Icons.star, color: Colors.white, size: 12.sp),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 6.sp),
                       Text(
                         '(${product.rating.count})',
-                        style: TextStyle(color: AppColors.textGrey, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
-                  Row(
-                    children: [
-                      Text(
-                        ProductUIHelper.getDisplayPrice(product),
                         style: TextStyle(
-                          fontSize: screenWidth * 0.045,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        ProductUIHelper.getOriginalPrice(product),
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.035,
                           color: AppColors.textGrey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        ProductUIHelper.getDiscountPercentage(product),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.success,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
                         ),
                       ),
                     ],
                   ),
-                  const Text(
-                    'Free Delivery',
-                    style: TextStyle(color: AppColors.success, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _category(IconData icon, String title, double screenWidth) {
-    return GestureDetector(
-      onTap: () {
-        productController.selectCategory(title);
-        navigationController.changeIndex(1);
-      },
-      child: Container(
-        margin: EdgeInsets.only(right: screenWidth * 0.05),
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: screenWidth * 0.07,
-              backgroundColor: AppColors.grey100,
-              child: Icon(icon, color: AppColors.primary, size: screenWidth * 0.07),
-            ),
-            SizedBox(height: screenWidth * 0.015),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: screenWidth * 0.032,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _dealItem(dynamic product, double screenWidth) {
-    return GestureDetector(
-      onTap: () => Get.to(
-        () => const ProductDetailScreen(),
-        arguments: product,
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.textWhite,
-          borderRadius: BorderRadius.circular(screenWidth * 0.03),
-          border: Border.all(color: AppColors.grey200),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                    product.image,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.broken_image, color: AppColors.textGrey, size: 40),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                  SizedBox(height: 8.sp),
+                  // Price
                   Text(
-                    product.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.w500),
+                    '₹${CurrencyUtils.formatPrice(product.price)}',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(height: screenWidth * 0.01),
+                  SizedBox(height: 4.sp),
                   Text(
-                    'Under ${ProductUIHelper.getDisplayPrice(product)}',
-                    style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.bold),
+                    'Free delivery',
+                    style: TextStyle(
+                      color: AppColors.green,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ],
               ),
@@ -612,58 +529,154 @@ class _HomePageState extends State<HomePage> {
         () => const ProductDetailScreen(),
         arguments: product,
       ),
+      child: Card(
+        elevation: 2,
+        color: AppColors.textWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.sp),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Center(
+                  child: Image.network(
+                    product.image,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Icon(Icons.broken_image, color: AppColors.textGrey, size: 40.sp),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8.sp),
+              Text(
+                product.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 4.sp),
+              Text(
+                '₹${CurrencyUtils.formatPrice(product.price)}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.green,
+                  fontSize: 16.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _category(IconData icon, String title, double screenWidth) {
+    return Obx(() {
+      final isSelected = productController.selectedCategory.value == title;
+      return GestureDetector(
+        onTap: () {
+          productController.selectCategory(title);
+          navigationController.changeIndex(1);
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.sp),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 28.sp,
+                backgroundColor: isSelected ? AppColors.primary : AppColors.blue100,
+                child: Icon(icon, color: isSelected ? AppColors.textWhite : AppColors.textBlack, size: 24.sp),
+              ),
+              SizedBox(height: 6.sp),
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 13.sp,
+                  color: isSelected ? AppColors.primary : AppColors.textBlack,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _dealItem(dynamic product, double screenWidth) {
+    final discount = (10 + (product.name.length % 40));
+
+    return GestureDetector(
+      onTap: () => Get.to(
+        () => const ProductDetailScreen(),
+        arguments: product,
+      ),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.textWhite,
-          borderRadius: BorderRadius.circular(screenWidth * 0.03),
-          border: Border.all(color: AppColors.grey200),
+          color: AppColors.grey100,
+          borderRadius: BorderRadius.circular(8.sp),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 3,
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(12.sp),
                   child: Image.network(
                     product.image,
                     fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.broken_image, color: AppColors.textGrey, size: 40),
                   ),
                 ),
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: screenWidth * 0.035, fontWeight: FontWeight.w500),
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        Text(
-                          ProductUIHelper.getDisplayPrice(product),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+            Padding(
+              padding: EdgeInsets.all(8.sp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 4.sp),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 2.sp),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade800,
+                          borderRadius: BorderRadius.circular(2.sp),
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          ProductUIHelper.getDiscountPercentage(product),
-                          style: const TextStyle(color: AppColors.success, fontSize: 10, fontWeight: FontWeight.bold),
+                        child: Text(
+                          '$discount% off',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      SizedBox(width: 6.sp),
+                      Text(
+                        'Deal',
+                        style: TextStyle(
+                          color: Colors.red.shade800,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

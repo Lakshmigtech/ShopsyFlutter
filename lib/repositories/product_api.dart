@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 
 class ProductApi {
+  // Use raw.githubusercontent.com for more reliable direct JSON access
   static const String url =
-      "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/products.json";
+      "https://raw.githubusercontent.com/kolzsticks/Free-Ecommerce-Products-Api/main/products.json";
 
   static Future<List<Product>> fetchProducts() async {
     try {
@@ -15,8 +17,36 @@ class ProductApi {
           .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
-        List data = json.decode(response.body);
-        return data.map((e) => Product.fromJson(e)).toList();
+        final dynamic decodedData = json.decode(response.body);
+        
+        List<dynamic> productList = [];
+        
+        if (decodedData is List) {
+          productList = decodedData;
+        } else if (decodedData is Map && decodedData.containsKey('products')) {
+          productList = decodedData['products'];
+        } else if (decodedData is Map) {
+          // Fallback: if it's a map but doesn't have 'products', look for any list
+          productList = decodedData.values.firstWhere((v) => v is List, orElse: () => []) as List;
+        }
+
+        // Log the raw product list for debugging
+        log("Fetched Raw Product List: ${json.encode(productList)}");
+
+        if (productList.isEmpty) return [];
+
+        final products = productList.map((e) => Product.fromJson(e as Map<String, dynamic>)).toList();
+        
+        // Print individual product details for easy verification in logs
+        print("---------- PRODUCT LOG START ----------");
+        print("Total Products: ${products.length}");
+        for (var i = 0; i < products.length; i++) {
+          final p = products[i];
+          print("[$i] ID: ${p.id} | Name: ${p.name} | Price: ₹${p.price}");
+        }
+        print("---------- PRODUCT LOG END ----------");
+
+        return products;
       } else {
         throw _handleError(response.statusCode);
       }
@@ -27,7 +57,7 @@ class ProductApi {
     } on FormatException {
       throw "Invalid data format received from server.";
     } catch (e) {
-      throw "An unexpected error occurred: $e";
+      throw "Failed to load products: $e";
     }
   }
 

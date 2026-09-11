@@ -1,6 +1,8 @@
 import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
 import 'package:Shopsy/models/product_model.dart';
+import 'package:Shopsy/utils/product_ui_helper.dart';
+import 'package:Shopsy/utils/screen_utils.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,108 +33,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   String? _selectedSize;
   String? _selectedColorName;
-
-  final List<String> _clothingSizes = ['S', 'M', 'L', 'XL', 'XXL'];
-  final List<String> _footwearSizes = ['6', '7', '8', '9', '10', '11'];
-
-  final List<Map<String, dynamic>> _nailPolishColors = [
-    {'name': 'Ruby Red', 'color': const Color(0xFF9B111E)},
-    {'name': 'Soft Pink', 'color': const Color(0xFFFFB6C1)},
-    {'name': 'Nude Beige', 'color': const Color(0xFFE3BC9A)},
-    {'name': 'Deep Purple', 'color': const Color(0xFF301934)},
-    {'name': 'Classic Black', 'color': Colors.black},
-    {'name': 'Royal Blue', 'color': const Color(0xFF002366)},
-    {'name': 'Mint Green', 'color': const Color(0xFF98FF98)},
-    {'name': 'Burgundy', 'color': const Color(0xFF800020)},
-    {'name': 'Lavender', 'color': const Color(0xFFE6E6FA)},
-    {'name': 'Teal', 'color': const Color(0xFF008080)},
-    {'name': 'Coral', 'color': const Color(0xFFFF7F50)},
-    {'name': 'Silver', 'color': const Color(0xFFC0C0C0)},
-  ];
-
-  final List<Map<String, dynamic>> _foundationColors = [
-    {'name': 'Fair', 'color': const Color(0xFFFCEBD1)},
-    {'name': 'Light', 'color': const Color(0xFFFAD4A9)},
-    {'name': 'Medium', 'color': const Color(0xFFE5A073)},
-    {'name': 'Tan', 'color': const Color(0xFFC1825B)},
-    {'name': 'Dark', 'color': const Color(0xFF79443B)},
-  ];
-
-  // Identify if it is footwear
-  bool get _isFootwear {
-    final subCat = product.subCategory.toLowerCase();
-    final cat = product.category.toLowerCase();
-    final name = product.name.toLowerCase();
-    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
-
-    return cat.contains('footwear') ||
-        cat.contains('shoes') ||
-        subCat.contains('footwear') ||
-        subCat.contains('shoes') ||
-        name.contains('shoe') ||
-        name.contains('sneaker') ||
-        name.contains('sandal') ||
-        name.contains('boot') ||
-        keywords.any((k) => k.contains('shoe') || k.contains('footwear'));
-  }
-
-  // Identify if it is clothing
-  bool get _isClothing {
-    final subCat = product.subCategory.toLowerCase();
-    final cat = product.category.toLowerCase();
-    final name = product.name.toLowerCase();
-    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
-
-    bool isFashion = cat.contains('fashion') ||
-        cat.contains('clothing') ||
-        subCat.contains('fashion') ||
-        cat.contains('clothing') ||
-        cat.contains('apparel') ||
-        subCat.contains('apparel');
-
-    if (!isFashion || _isFootwear) return false;
-
-    final womenRegex = RegExp(r'\bwomen\b|\bfemale\b|\blady\b|\bladies\b');
-    final menRegex = RegExp(r'\bmen\b|\bmale\b');
-
-    return womenRegex.hasMatch(name) ||
-        womenRegex.hasMatch(subCat) ||
-        keywords.any((k) => womenRegex.hasMatch(k)) ||
-        menRegex.hasMatch(name) ||
-        menRegex.hasMatch(subCat) ||
-        keywords.any((k) => menRegex.hasMatch(k));
-  }
-
-  // Identify if it is nail polish
-  bool get _isNailPolish {
-    final name = product.name.toLowerCase();
-    final cat = product.category.toLowerCase();
-    final subCat = product.subCategory.toLowerCase();
-    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
-
-    return name.contains('nail polish') ||
-        name.contains('nail lacquer') ||
-        (cat.contains('beauty') && (name.contains('nail') || subCat.contains('nail'))) ||
-        keywords.any((k) => k.contains('nail polish'));
-  }
-
-  // Identify if it is foundation
-  bool get _isFoundation {
-    final name = product.name.toLowerCase();
-    final cat = product.category.toLowerCase();
-    final subCat = product.subCategory.toLowerCase();
-    final keywords = product.keywords.map((k) => k.toLowerCase()).toList();
-
-    return name.contains('foundation') ||
-        (cat.contains('beauty') && (name.contains('foundation') || subCat.contains('foundation'))) ||
-        keywords.any((k) => k.contains('foundation'));
-  }
-
-  bool get _requiresSizeSelection => _isClothing || _isFootwear;
-  bool get _requiresColorSelection => _isNailPolish || _isFoundation;
-
-  List<String> get _availableSizes => _isFootwear ? _footwearSizes : _clothingSizes;
-  List<Map<String, dynamic>> get _availableColors => _isFoundation ? _foundationColors : _nailPolishColors;
 
   @override
   void initState() {
@@ -165,7 +65,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   void _runAddToCartAnimation() {
-    if (_requiresSizeSelection && _selectedSize == null) {
+    if (ProductUIHelper.requiresSizeSelection(product) && _selectedSize == null) {
       Get.snackbar(
         'Selection Required',
         'Please select a size before adding to cart',
@@ -176,7 +76,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       return;
     }
 
-    if (_requiresColorSelection && _selectedColorName == null) {
+    if (ProductUIHelper.requiresColorSelection(product) && _selectedColorName == null) {
       Get.snackbar(
         'Selection Required',
         'Please select a shade before adding to cart',
@@ -223,7 +123,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   void _handleBuyNow() {
-    if (_requiresSizeSelection && _selectedSize == null) {
+    if (ProductUIHelper.requiresSizeSelection(product) && _selectedSize == null) {
       Get.snackbar(
         'Selection Required',
         'Please select a size before proceeding',
@@ -234,7 +134,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       return;
     }
 
-    if (_requiresColorSelection && _selectedColorName == null) {
+    if (ProductUIHelper.requiresColorSelection(product) && _selectedColorName == null) {
       Get.snackbar(
         'Selection Required',
         'Please select a shade before proceeding',
@@ -257,9 +157,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final double screenWidth = size.width;
-    final double screenHeight = size.height;
+    final bool requiresColorSelection = ProductUIHelper.requiresColorSelection(product);
+    final bool requiresSizeSelection = ProductUIHelper.requiresSizeSelection(product);
+    final List<Map<String, dynamic>> availableColors = ProductUIHelper.getAvailableColors(product);
+    final List<String> availableSizes = ProductUIHelper.getAvailableSizes(product);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -270,31 +171,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               children: [
                 // 🔝 Header
                 Padding(
-                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  padding: EdgeInsets.all(4.w),
                   child: Row(
                     children: [
-                      _circleIcon(Icons.arrow_back, () => Get.back(), screenWidth),
+                      _circleIcon(Icons.arrow_back, () => Get.back()),
                       const Spacer(),
                       Obx(() => _circleIcon(
                         wishlistController.isFavorite(product) ? Icons.favorite : Icons.favorite_border,
                             () => wishlistController.toggleFavorite(product),
-                        screenWidth,
                         color: wishlistController.isFavorite(product) ? Colors.red : Colors.black,
                       )),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 12),
                       Obx(
                             () => Stack(
                           key: _cartKey,
                           children: [
                             _circleIcon(Icons.shopping_cart_outlined, () {
                               Get.to(() => const CartScreen());
-                            }, screenWidth),
+                            }),
                             if (cartController.itemCount > 0)
                               Positioned(
                                 right: 6,
                                 top: 6,
                                 child: Container(
-                                  padding: const EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(5),
                                   decoration: const BoxDecoration(
                                     color: Colors.red,
                                     shape: BoxShape.circle,
@@ -303,7 +203,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     "${cartController.itemCount}",
                                     style: const TextStyle(
                                       color: Colors.white,
-                                      fontSize: 10,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -325,14 +226,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         Center(
                           child: Container(
                             key: _imageKey,
-                            child: Image.network(product.image, height: screenHeight * 0.35),
+                            child: Image.network(
+                              product.image, 
+                              height: 42.h,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
 
-                        SizedBox(height: screenHeight * 0.025),
+                        SizedBox(height: 3.h),
 
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                          padding: EdgeInsets.symmetric(horizontal: 5.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -342,43 +247,43 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                   Text(
                                     product.category,
                                     style: TextStyle(
-                                      fontSize: screenWidth * 0.032,
+                                      fontSize: 13.sp,
                                       color: Colors.blue.shade700,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   if (product.subCategory.isNotEmpty) ...[
-                                    Icon(Icons.chevron_right, size: screenWidth * 0.035, color: Colors.grey),
+                                    Icon(Icons.chevron_right, size: 14.sp, color: Colors.grey),
                                     Text(
                                       product.subCategory,
                                       style: TextStyle(
-                                        fontSize: screenWidth * 0.032,
+                                        fontSize: 13.sp,
                                         color: Colors.grey.shade600,
                                       ),
                                     ),
                                   ],
                                 ],
                               ),
-                              SizedBox(height: screenHeight * 0.01),
+                              SizedBox(height: 1.2.h),
 
                               // 📝 Title
                               Text(
                                 product.name,
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.05,
+                                  fontSize: 20.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              SizedBox(height: screenHeight * 0.012),
+                              SizedBox(height: 1.5.h),
 
                               // ⭐ Rating
                               Row(
                                 children: [
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: screenWidth * 0.02,
-                                      vertical: screenHeight * 0.005,
+                                      horizontal: 3.w,
+                                      vertical: 0.6.h,
                                     ),
                                     decoration: BoxDecoration(
                                       color: Colors.green,
@@ -388,98 +293,104 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                       children: [
                                         Icon(
                                           Icons.star,
-                                          size: screenWidth * 0.035,
+                                          size: 15.sp,
                                           color: Colors.white,
                                         ),
-                                        SizedBox(width: screenWidth * 0.01),
+                                        SizedBox(width: 1.w),
                                         Text(
                                           product.rating.stars.toString(),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             color: Colors.white,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: screenWidth * 0.02),
+                                  SizedBox(width: 3.w),
                                   Text(
                                     "(${product.rating.count} reviews)",
-                                    style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.032),
+                                    style: TextStyle(color: Colors.grey, fontSize: 13.sp),
                                   ),
                                 ],
                               ),
 
-                              SizedBox(height: screenHeight * 0.015),
+                              SizedBox(height: 2.h),
 
                               // 💰 Price
                               Row(
                                 children: [
                                   Text(
-                                    "₹${(product.priceCents / 100).toStringAsFixed(2)}",
+                                    ProductUIHelper.getDisplayPrice(product),
                                     style: TextStyle(
-                                      fontSize: screenWidth * 0.06,
+                                      fontSize: 24.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(width: screenWidth * 0.025),
+                                  SizedBox(width: 3.w),
                                   Text(
-                                    "₹${((product.priceCents / 100) * 1.2).toStringAsFixed(2)}",
+                                    ProductUIHelper.getOriginalPrice(product),
                                     style: TextStyle(
                                       decoration: TextDecoration.lineThrough,
                                       color: Colors.grey,
-                                      fontSize: screenWidth * 0.04,
+                                      fontSize: 16.sp,
                                     ),
                                   ),
-                                  SizedBox(width: screenWidth * 0.025),
+                                  SizedBox(width: 3.w),
                                   Text(
-                                    "20% OFF",
+                                    ProductUIHelper.getDiscountPercentage(product),
                                     style: TextStyle(
                                       color: Colors.green,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: screenWidth * 0.04,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.sp,
                                     ),
                                   ),
                                 ],
                               ),
 
-                              SizedBox(height: screenHeight * 0.012),
+                              SizedBox(height: 1.5.h),
 
                               // 🚚 Delivery
                               Row(
                                 children: [
-                                  Icon(Icons.delivery_dining_outlined, color: Colors.green, size: screenWidth * 0.05),
-                                  SizedBox(width: screenWidth * 0.02),
+                                  Icon(Icons.delivery_dining_outlined, color: Colors.green, size: 6.w),
+                                  SizedBox(width: 2.w),
                                   Text(
                                     "Free Delivery",
-                                    style: TextStyle(color: Colors.green, fontWeight: FontWeight.w500, fontSize: screenWidth * 0.035),
+                                    style: TextStyle(
+                                      color: Colors.green, 
+                                      fontWeight: FontWeight.bold, 
+                                      fontSize: 14.sp
+                                    ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: screenHeight * 0.005),
+                              SizedBox(height: 0.6.h),
                               Text(
                                 "Estimated delivery: 3-5 business days",
-                                style: TextStyle(color: Colors.grey.shade600, fontSize: screenWidth * 0.032),
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: 13.sp),
                               ),
 
-                              SizedBox(height: screenHeight * 0.025),
+                              SizedBox(height: 3.h),
 
-                              // 🎨 Color Selection (Visible for Nail Polish or Foundation)
-                              if (_requiresColorSelection) ...[
+                              // 🎨 Color Selection
+                              if (requiresColorSelection) ...[
                                 Text(
                                   "Select Shade",
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.045,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: screenHeight * 0.012),
+                                SizedBox(height: 1.5.h),
                                 SizedBox(
-                                  height: 80,
+                                  height: 90,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: _availableColors.length,
+                                    itemCount: availableColors.length,
                                     itemBuilder: (context, index) {
-                                      final shade = _availableColors[index];
+                                      final shade = availableColors[index];
                                       final isSelected = _selectedColorName == shade['name'];
                                       return GestureDetector(
                                         onTap: () {
@@ -490,9 +401,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                         child: Column(
                                           children: [
                                             Container(
-                                              width: 45,
-                                              height: 45,
-                                              margin: const EdgeInsets.only(right: 15),
+                                              width: 50,
+                                              height: 50,
+                                              margin: const EdgeInsets.only(right: 18),
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: shade['color'],
@@ -509,15 +420,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                                 ] : null,
                                               ),
                                               child: isSelected ? const Center(
-                                                child: Icon(Icons.check, color: Colors.white, size: 20),
+                                                child: Icon(Icons.check, color: Colors.white, size: 24),
                                               ) : null,
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.only(right: 15, top: 4),
+                                              padding: const EdgeInsets.only(right: 18, top: 6),
                                               child: Text(
                                                 shade['name'],
                                                 style: TextStyle(
-                                                  fontSize: 10,
+                                                  fontSize: 11,
                                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                                   color: isSelected ? Colors.orange.shade900 : Colors.black87,
                                                 ),
@@ -529,26 +440,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     },
                                   ),
                                 ),
-                                SizedBox(height: screenHeight * 0.025),
+                                SizedBox(height: 3.h),
                               ],
 
-                              // 📏 Size Selection (Visible for Clothing and Footwear)
-                              if (_requiresSizeSelection) ...[
+                              // 📏 Size Selection
+                              if (requiresSizeSelection) ...[
                                 Text(
-                                  _isFootwear ? "Select Footwear Size (UK/India)" : "Select Size",
+                                  ProductUIHelper.isFootwear(product) ? "Select Footwear Size (UK/India)" : "Select Size",
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.045,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: screenHeight * 0.012),
+                                SizedBox(height: 1.5.h),
                                 SizedBox(
-                                  height: screenHeight * 0.06,
+                                  height: 7.h,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: _availableSizes.length,
+                                    itemCount: availableSizes.length,
                                     itemBuilder: (context, index) {
-                                      final size = _availableSizes[index];
+                                      final size = availableSizes[index];
                                       final isSelected = _selectedSize == size;
                                       return GestureDetector(
                                         onTap: () {
@@ -557,8 +468,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                           });
                                         },
                                         child: Container(
-                                          width: screenWidth * 0.12,
-                                          margin: EdgeInsets.only(right: screenWidth * 0.025),
+                                          width: 14.w,
+                                          margin: EdgeInsets.only(right: 3.w),
                                           decoration: BoxDecoration(
                                             color: isSelected ? Colors.orange : Colors.white,
                                             border: Border.all(
@@ -572,7 +483,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                               style: TextStyle(
                                                 color: isSelected ? Colors.white : Colors.black,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth * 0.035,
+                                                fontSize: 14.sp,
                                               ),
                                             ),
                                           ),
@@ -581,7 +492,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     },
                                   ),
                                 ),
-                                SizedBox(height: screenHeight * 0.025),
+                                SizedBox(height: 3.h),
                               ],
 
                               const Divider(),
@@ -590,17 +501,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               Text(
                                 "Available Offers",
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.045,
+                                  fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              SizedBox(height: screenHeight * 0.012),
+                              SizedBox(height: 1.5.h),
 
-                              _offerItem("10% Instant Discount on ICICI Cards", screenWidth),
-                              _offerItem("Buy 2 Get Extra 5% Off", screenWidth),
+                              _offerItem("10% Instant Discount on ICICI Cards"),
+                              _offerItem("Buy 2 Get Extra 5% Off"),
 
-                              SizedBox(height: screenHeight * 0.025),
+                              SizedBox(height: 3.h),
 
                               const Divider(),
 
@@ -608,19 +519,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               Text(
                                 "Product Details",
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.045,
+                                  fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              SizedBox(height: screenHeight * 0.012),
+                              SizedBox(height: 1.5.h),
 
                               Text(
                                 product.description,
-                                style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.035),
+                                style: TextStyle(
+                                  color: Colors.grey.shade700, 
+                                  fontSize: 15.sp,
+                                  height: 1.5,
+                                ),
                               ),
 
-                              SizedBox(height: screenHeight * 0.1),
+                              SizedBox(height: 12.h),
                             ],
                           ),
                         ),
@@ -636,15 +551,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       child: InkWell(
                         onTap: _isAnimating ? null : _runAddToCartAnimation,
                         child: Container(
-                          height: screenHeight * 0.07,
+                          height: 8.h,
                           color: Colors.grey.shade200,
                           child: Center(
                             child: Text(
                               "Add to Cart",
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Colors.blue.shade800,
                                 fontWeight: FontWeight.bold,
-                                fontSize: screenWidth * 0.04,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ),
@@ -655,7 +570,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       child: InkWell(
                         onTap: _handleBuyNow,
                         child: Container(
-                          height: screenHeight * 0.07,
+                          height: 8.h,
                           color: Colors.orange,
                           child: Center(
                             child: Text(
@@ -663,7 +578,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: screenWidth * 0.04,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ),
@@ -686,8 +601,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       child: Transform.scale(
                         scale: _scaleAnimation.value,
                         child: Container(
-                          width: 80,
-                          height: 80,
+                          width: 100,
+                          height: 100,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
@@ -719,29 +634,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   // 🔘 Circle Icon
-  Widget _circleIcon(IconData icon, VoidCallback onTap, double screenWidth, {Color? color}) {
+  Widget _circleIcon(IconData icon, VoidCallback onTap, {Color? color}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(screenWidth * 0.025),
+        padding: EdgeInsets.all(3.w),
         decoration: BoxDecoration(
           color: Colors.grey.shade100,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: color, size: screenWidth * 0.06),
+        child: Icon(icon, color: color, size: 7.w),
       ),
     );
   }
 
   // 🎁 Offer Item
-  Widget _offerItem(String text, double screenWidth) {
+  Widget _offerItem(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenWidth * 0.015),
+      padding: EdgeInsets.symmetric(vertical: 2.w),
       child: Row(
         children: [
-          Icon(Icons.local_offer, size: screenWidth * 0.045),
-          SizedBox(width: screenWidth * 0.02),
-          Expanded(child: Text(text, style: TextStyle(fontSize: screenWidth * 0.035))),
+          Icon(Icons.local_offer, size: 5.w, color: Colors.orange.shade800),
+          SizedBox(width: 3.w),
+          Expanded(child: Text(text, style: TextStyle(fontSize: 14.sp))),
         ],
       ),
     );

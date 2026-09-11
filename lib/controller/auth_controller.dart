@@ -9,6 +9,8 @@ import 'package:Shopsy/views/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
 class AuthController extends GetxController {
   final loginFormKey = GlobalKey<FormState>();
@@ -43,9 +45,36 @@ class AuthController extends GetxController {
   }
 
   Future<void> _loadProfileImage() async {
-    final imagePath = await LocalStorage.getProfileImage();
+    final String? imagePath = LocalStorage.getProfileImage();
     if (imagePath != null && imagePath.isNotEmpty) {
-      profileImage.value = File(imagePath);
+      try {
+        final Directory appDir = await getApplicationDocumentsDirectory();
+        
+        // Reconstruct path from filename
+        final String fileName = p.basename(imagePath);
+        final File permanentFile = File(p.join(appDir.path, fileName));
+        
+        if (await permanentFile.exists()) {
+          profileImage.value = permanentFile;
+        } else {
+          // Migration/Fallback: If it was an absolute path (e.g., old version or Android)
+          final File absoluteFile = File(imagePath);
+          if (p.isAbsolute(imagePath) && await absoluteFile.exists()) {
+            // Copy it to permanent storage now so we don't lose it when tmp is cleared
+            final String newPermanentPath = p.join(appDir.path, fileName);
+            await absoluteFile.copy(newPermanentPath);
+            profileImage.value = File(newPermanentPath);
+            await LocalStorage.saveProfileImage(fileName);
+          } else {
+            // Path is invalid or file is gone
+            profileImage.value = null;
+            await LocalStorage.saveProfileImage('');
+          }
+        }
+      } catch (e) {
+        debugPrint("Error loading profile image: $e");
+        profileImage.value = null;
+      }
     }
     
     final imageUrl = await LocalStorage.getImageUrl();
@@ -55,10 +84,29 @@ class AuthController extends GetxController {
   }
 
   Future<void> pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      profileImage.value = File(pickedFile.path);
-      await LocalStorage.saveProfileImage(pickedFile.path);
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        imageQuality: 85,
+      );
+      
+      if (pickedFile != null) {
+        final Directory appDir = await getApplicationDocumentsDirectory();
+        final String fileName = "profile_${DateTime.now().millisecondsSinceEpoch}${p.extension(pickedFile.path)}";
+        final String permanentPath = p.join(appDir.path, fileName);
+        
+        // Copy to permanent storage
+        await File(pickedFile.path).copy(permanentPath);
+        
+        profileImage.value = File(permanentPath);
+        // Save just the filename to be container-agnostic (important for iOS)
+        await LocalStorage.saveProfileImage(fileName);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to pick image: $e', 
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 

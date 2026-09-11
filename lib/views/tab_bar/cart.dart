@@ -1,5 +1,6 @@
 import 'package:Shopsy/controller/cart_controller.dart';
-import 'package:Shopsy/utils/currency_utils.dart';
+import 'package:Shopsy/utils/screen_utils.dart';
+import 'package:Shopsy/utils/product_ui_helper.dart';
 import 'package:Shopsy/views/order/order_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,9 +11,6 @@ class CartScreen extends GetView<CartController> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final double screenWidth = size.width;
-
     return Scaffold(
       backgroundColor: const Color(0xfff1f2f6),
       appBar: AppBar(
@@ -21,7 +19,7 @@ class CartScreen extends GetView<CartController> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: screenWidth * 0.05,
+            fontSize: 20.sp,
           ),
         ),
         centerTitle: true,
@@ -29,13 +27,13 @@ class CartScreen extends GetView<CartController> {
         backgroundColor: AppColors.textWhite,
         foregroundColor: AppColors.textBlack,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: screenWidth * 0.06),
+          icon: Icon(Icons.arrow_back, size: 24.sp),
           onPressed: () => Get.back(),
         ),
       ),
       body: Obx(() {
         if (controller.cartItems.isEmpty) {
-          return _buildEmptyCart(screenWidth);
+          return _buildEmptyCart();
         }
 
         return Column(
@@ -51,40 +49,40 @@ class CartScreen extends GetView<CartController> {
                       itemCount: controller.cartItems.length,
                       itemBuilder: (context, index) {
                         final item = controller.cartItems[index];
-                        return _buildCartItem(context, item, index, screenWidth);
+                        return _buildCartItem(context, item, index);
                       },
                     ),
 
                     // Price Details Section
-                    _buildPriceDetails(screenWidth),
-                    SizedBox(height: screenWidth * 0.05),
+                    _buildPriceDetails(),
+                    SizedBox(height: 5.w),
                   ],
                 ),
               ),
             ),
             // Bottom Checkout Bar
-            _buildBottomBar(context, screenWidth),
+            _buildBottomBar(context),
           ],
         );
       }),
     );
   }
 
-  Widget _buildEmptyCart(double screenWidth) {
+  Widget _buildEmptyCart() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.shopping_cart_outlined,
-            size: screenWidth * 0.16,
+            size: 60.w,
             color: AppColors.textGrey,
           ),
-          SizedBox(height: screenWidth * 0.04),
+          SizedBox(height: 4.w),
           Text(
             "Your cart is empty",
             style: TextStyle(
-              fontSize: screenWidth * 0.045,
+              fontSize: 18.sp,
               color: AppColors.textGrey,
             ),
           ),
@@ -93,19 +91,17 @@ class CartScreen extends GetView<CartController> {
     );
   }
 
-  Widget _buildCartItem(BuildContext context, dynamic item, int index, double screenWidth) {
-    String formattedPrice = CurrencyUtils.formatPrice(item.product.priceCents / 100);
-
+  Widget _buildCartItem(BuildContext context, dynamic item, int index) {
     return Container(
       margin: EdgeInsets.only(
-        left: screenWidth * 0.03,
-        right: screenWidth * 0.03,
-        top: screenWidth * 0.03,
+        left: 3.w,
+        right: 3.w,
+        top: 3.w,
       ),
-      padding: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: AppColors.textWhite,
-        borderRadius: BorderRadius.circular(screenWidth * 0.02),
+        borderRadius: BorderRadius.circular(2.w),
       ),
       child: Column(
         children: [
@@ -114,11 +110,11 @@ class CartScreen extends GetView<CartController> {
             children: [
               // Product Image
               Container(
-                width: screenWidth * 0.2,
-                height: screenWidth * 0.2,
+                width: 25.w,
+                height: 25.w,
                 decoration: BoxDecoration(
                   color: AppColors.textWhite,
-                  borderRadius: BorderRadius.circular(screenWidth * 0.01),
+                  borderRadius: BorderRadius.circular(1.w),
                 ),
                 child: Image.network(
                   item.product.image,
@@ -130,10 +126,10 @@ class CartScreen extends GetView<CartController> {
                     );
                   },
                   errorBuilder: (context, error, stackTrace) =>
-                      Icon(Icons.broken_image, color: AppColors.textGrey, size: screenWidth * 0.1),
+                      Icon(Icons.broken_image, color: AppColors.textGrey, size: 10.w),
                 ),
               ),
-              SizedBox(width: screenWidth * 0.04),
+              SizedBox(width: 4.w),
               // Product Details
               Expanded(
                 child: Column(
@@ -144,31 +140,31 @@ class CartScreen extends GetView<CartController> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: screenWidth * 0.038,
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black87,
                       ),
                     ),
                     if (item.size != null || item.color != null) ...[
-                      SizedBox(height: screenWidth * 0.01),
+                      SizedBox(height: 1.w),
                       Row(
                         children: [
                           if (item.size != null)
                             Text(
                               "Size: ${item.size}",
                               style: TextStyle(
-                                fontSize: screenWidth * 0.032,
+                                fontSize: 13.sp,
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           if (item.size != null && item.color != null)
-                            Text(" | ", style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.032)),
+                            Text(" | ", style: TextStyle(color: Colors.grey, fontSize: 13.sp)),
                           if (item.color != null)
                             Text(
                               "Color: ${item.color}",
                               style: TextStyle(
-                                fontSize: screenWidth * 0.032,
+                                fontSize: 13.sp,
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -176,20 +172,20 @@ class CartScreen extends GetView<CartController> {
                         ],
                       ),
                     ],
-                    SizedBox(height: screenWidth * 0.02),
+                    SizedBox(height: 2.w),
                     Text(
-                      "₹$formattedPrice",
+                      ProductUIHelper.getDisplayPrice(item.product),
                       style: TextStyle(
-                        fontSize: screenWidth * 0.045,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: screenWidth * 0.01),
+                    SizedBox(height: 1.w),
                     Text(
                       "Free Delivery",
                       style: TextStyle(
                         color: const Color(0xff388e3c),
-                        fontSize: screenWidth * 0.032,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -198,7 +194,7 @@ class CartScreen extends GetView<CartController> {
               ),
             ],
           ),
-          SizedBox(height: screenWidth * 0.04),
+          SizedBox(height: 4.w),
           // Quantity and Remove
           Row(
             children: [
@@ -207,23 +203,21 @@ class CartScreen extends GetView<CartController> {
                   _quantityButton(
                     icon: Icons.remove,
                     onTap: () => controller.decreaseQuantity(index),
-                    screenWidth: screenWidth,
                   ),
                   Container(
-                    width: screenWidth * 0.1,
+                    width: 10.w,
                     alignment: Alignment.center,
                     child: Text(
                       "${item.quantity}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.035,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
                   _quantityButton(
                     icon: Icons.add,
                     onTap: () => controller.increaseQuantity(index),
-                    screenWidth: screenWidth,
                   ),
                 ],
               ),
@@ -232,15 +226,15 @@ class CartScreen extends GetView<CartController> {
                 onTap: () => controller.removeFromCart(index),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                    vertical: screenWidth * 0.02,
-                    horizontal: screenWidth * 0.04,
+                    vertical: 2.w,
+                    horizontal: 4.w,
                   ),
                   child: Text(
                     "Remove",
                     style: TextStyle(
                       color: AppColors.textGrey,
                       fontWeight: FontWeight.w500,
-                      fontSize: screenWidth * 0.035,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
@@ -255,34 +249,31 @@ class CartScreen extends GetView<CartController> {
   Widget _quantityButton({
     required IconData icon,
     required VoidCallback onTap,
-    required double screenWidth,
   }) {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: screenWidth * 0.08,
-        height: screenWidth * 0.08,
+        width: 8.w,
+        height: 8.w,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.borderGrey),
-          borderRadius: BorderRadius.circular(screenWidth * 0.01),
+          borderRadius: BorderRadius.circular(1.w),
         ),
-        child: Icon(icon, size: screenWidth * 0.045, color: const Color(0xff2874f0)),
+        child: Icon(icon, size: 5.w, color: const Color(0xff2874f0)),
       ),
     );
   }
 
-  Widget _buildPriceDetails(double screenWidth) {
-    String formattedPrice = CurrencyUtils.formatPrice(controller.totalPrice);
-
+  Widget _buildPriceDetails() {
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.03,
-        vertical: screenWidth * 0.03,
+        horizontal: 3.w,
+        vertical: 3.w,
       ),
-      padding: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: AppColors.textWhite,
-        borderRadius: BorderRadius.circular(screenWidth * 0.01),
+        borderRadius: BorderRadius.circular(1.w),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,30 +281,30 @@ class CartScreen extends GetView<CartController> {
           Text(
             "Price Details",
             style: TextStyle(
-              fontSize: screenWidth * 0.04,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: AppColors.textBlack,
             ),
           ),
-          Divider(height: screenWidth * 0.08),
-          _priceRow("Price", "₹$formattedPrice", screenWidth),
-          SizedBox(height: screenWidth * 0.04),
-          _priceRow("Delivery Charges", "FREE", screenWidth, isGreen: true),
-          Divider(height: screenWidth * 0.08),
+          Divider(height: 8.w),
+          _priceRow("Price", ProductUIHelper.formatPrice(controller.totalPrice)),
+          SizedBox(height: 4.w),
+          _priceRow("Delivery Charges", "FREE", isGreen: true),
+          Divider(height: 8.w),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Total Amount",
                 style: TextStyle(
-                  fontSize: screenWidth * 0.042,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                "₹$formattedPrice",
+                ProductUIHelper.formatPrice(controller.totalPrice),
                 style: TextStyle(
-                  fontSize: screenWidth * 0.042,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -324,18 +315,18 @@ class CartScreen extends GetView<CartController> {
     );
   }
 
-  Widget _priceRow(String label, String value, double screenWidth, {bool isGreen = false}) {
+  Widget _priceRow(String label, String value, {bool isGreen = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: screenWidth * 0.035, color: Colors.black87),
+          style: TextStyle(fontSize: 14.sp, color: Colors.black87),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: screenWidth * 0.035,
+            fontSize: 14.sp,
             color: isGreen ? const Color(0xff388e3c) : AppColors.textBlack,
             fontWeight: isGreen ? FontWeight.bold : FontWeight.w400,
           ),
@@ -344,13 +335,11 @@ class CartScreen extends GetView<CartController> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context, double screenWidth) {
-    String formattedPrice = CurrencyUtils.formatPrice(controller.totalPrice);
-
+  Widget _buildBottomBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.04,
-        vertical: screenWidth * 0.03,
+        horizontal: 4.w,
+        vertical: 3.w,
       ),
       decoration: BoxDecoration(
         color: AppColors.textWhite,
@@ -364,9 +353,9 @@ class CartScreen extends GetView<CartController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "₹$formattedPrice",
+                  ProductUIHelper.formatPrice(controller.totalPrice),
                   style: TextStyle(
-                    fontSize: screenWidth * 0.045,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -374,7 +363,7 @@ class CartScreen extends GetView<CartController> {
                   "View price details",
                   style: TextStyle(
                     color: const Color(0xff2874f0),
-                    fontSize: screenWidth * 0.03,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -382,14 +371,14 @@ class CartScreen extends GetView<CartController> {
             ),
             const Spacer(),
             SizedBox(
-              height: screenWidth * 0.12,
+              height: 12.w,
               child: ElevatedButton(
                 onPressed: () => Get.to(() => const OrderSummaryPage()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffff8c31),
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(screenWidth * 0.01),
+                    borderRadius: BorderRadius.circular(1.w),
                   ),
                   elevation: 0,
                 ),
@@ -397,7 +386,7 @@ class CartScreen extends GetView<CartController> {
                   "Place Order",
                   style: TextStyle(
                     color: AppColors.textWhite,
-                    fontSize: screenWidth * 0.04,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

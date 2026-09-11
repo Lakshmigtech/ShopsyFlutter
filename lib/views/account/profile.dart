@@ -1,5 +1,6 @@
 import 'package:Shopsy/controller/auth_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/utils/screen_utils.dart';
 import 'package:Shopsy/views/account/address.dart';
 import 'package:Shopsy/views/account/edit_profile.dart';
 import 'package:Shopsy/views/account/notification.dart';
@@ -16,15 +17,20 @@ class ProfilePage extends GetView<AuthController> {
   Widget menuItem(IconData icon, String title, [VoidCallback? onTap]) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppColors.blue50,
-          child: Icon(icon, color: AppColors.primary),
+          radius: 6.w,
+          child: Icon(icon, color: AppColors.primary, size: 6.w),
         ),
-        title: Text(title),
-        trailing: const Icon(Icons.chevron_right),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),
+        ),
+        trailing: Icon(Icons.chevron_right, size: 6.w),
+        contentPadding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.w),
         onTap: onTap ?? () {},
       ),
     );
@@ -33,20 +39,24 @@ class ProfilePage extends GetView<AuthController> {
   void _showLogoutConfirmation() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        title: const Text(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(
           "Logout",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
         ),
-        content: const Text("Are you sure you want to logout from Shopsy?"),
+        content: Text(
+          "Are you sure you want to logout from Shopsy?",
+          style: TextStyle(fontSize: 16.sp),
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text(
+            child: Text(
               "CANCEL",
               style: TextStyle(
-                color: Color(0xff2874f0),
+                color: const Color(0xff2874f0),
                 fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
               ),
             ),
           ),
@@ -55,11 +65,12 @@ class ProfilePage extends GetView<AuthController> {
               Get.back();
               controller.logout();
             },
-            child: const Text(
+            child: Text(
               "LOGOUT",
               style: TextStyle(
-                color: Color(0xff2874f0),
+                color: const Color(0xff2874f0),
                 fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
               ),
             ),
           ),
@@ -73,7 +84,10 @@ class ProfilePage extends GetView<AuthController> {
     return Scaffold(
       backgroundColor: AppColors.borderGrey,
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: Text(
+          "Profile",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22.sp),
+        ),
         centerTitle: true,
         elevation: 0,
       ),
@@ -87,61 +101,71 @@ class ProfilePage extends GetView<AuthController> {
 
         return ListView(
           children: [
-            const SizedBox(height: 20),
+            SizedBox(height: 4.w),
             Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: EdgeInsets.symmetric(horizontal: 4.w),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(5.w),
                 child: Column(
                   children: [
                     CircleAvatar(
-                      radius: 45,
+                      radius: 12.w,
                       backgroundColor: AppColors.blue100,
                       backgroundImage: controller.profileImage.value != null
                           ? FileImage(controller.profileImage.value!)
                           : null,
                       child: controller.profileImage.value == null
-                          ? const Icon(Icons.person, size: 45, color: AppColors.primary)
+                          ? Icon(Icons.person, size: 12.w, color: AppColors.primary)
                           : null,
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 3.w),
                     Text(
                       displayName.isEmpty ? username : displayName,
-                      style: const TextStyle(
-                        fontSize: 18,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    SizedBox(height: 1.w),
                     Text(
                       email.isEmpty ? "@$username" : email,
-                      style: TextStyle(color: AppColors.textBlack),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.textGrey, fontSize: 16.sp),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 4.w),
                     OutlinedButton(
                       onPressed: () => Get.to(() => const EditProfileScreen()),
-                      child: const Text("Edit Profile"),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.w),
+                        side: BorderSide(color: AppColors.primary),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                      child: Text(
+                        "Edit Profile",
+                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            SizedBox(height: 6.w),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: Text(
                 "My Account",
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textGrey,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 2.w),
             menuItem(
               Icons.shopping_bag,
               "My Orders",
@@ -162,19 +186,19 @@ class ProfilePage extends GetView<AuthController> {
               "Payment Methods",
               () => Get.to(() => const PaymentMethodsPage()),
             ),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            SizedBox(height: 6.w),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: Text(
                 "Settings",
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textGrey,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 2.w),
             menuItem(
               Icons.notifications,
               "Notifications",
@@ -186,22 +210,29 @@ class ProfilePage extends GetView<AuthController> {
                   () => Get.to(() => const PrivacyPolicyScreen()),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 6.w),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.lightBlue,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.symmetric(vertical: 4.w),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: _showLogoutConfirmation,
-                child: const Text("Logout"),
+                child: Text(
+                  "Logout",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textWhite,
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 10.w),
           ],
         );
       }),

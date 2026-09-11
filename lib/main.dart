@@ -1,6 +1,7 @@
 import 'package:Shopsy/bindings/app_bindings.dart';
 import 'package:Shopsy/constants/app_colors.dart';
 import 'package:Shopsy/utils/local_storage.dart';
+import 'package:Shopsy/utils/screen_utils.dart';
 import 'package:Shopsy/views/Authentication/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -30,6 +31,10 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
+      builder: (context, child) {
+        ScreenUtils.init(context);
+        return child!;
+      },
       home: const SplashScreen(),
     );
   }

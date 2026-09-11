@@ -1,5 +1,6 @@
 import 'package:Shopsy/controller/auth_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/utils/screen_utils.dart';
 import 'package:Shopsy/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,10 +10,6 @@ class EditProfileScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
-    final screenHeight = size.height;
-
     return Scaffold(
       backgroundColor: AppColors.textWhite,
       appBar: AppBar(
@@ -20,7 +17,7 @@ class EditProfileScreen extends GetView<AuthController> {
           "Edit Profile",
           style: TextStyle(
             color: AppColors.textBlack,
-            fontSize: screenWidth * 0.05,
+            fontSize: 5.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -31,13 +28,13 @@ class EditProfileScreen extends GetView<AuthController> {
           icon: Icon(
             Icons.arrow_back,
             color: AppColors.textBlack,
-            size: screenWidth * 0.06,
+            size: 6.w,
           ),
           onPressed: () => Get.back(),
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(screenWidth * 0.06),
+        padding: EdgeInsets.all(6.w),
         child: Form(
           key: controller.editProfileFormKey,
           child: Column(
@@ -46,7 +43,7 @@ class EditProfileScreen extends GetView<AuthController> {
                 child: Stack(
                   children: [
                     Obx(() => CircleAvatar(
-                          radius: screenWidth * 0.15,
+                          radius: 15.w,
                           backgroundColor: AppColors.primary,
                           backgroundImage: controller.profileImage.value != null
                               ? FileImage(controller.profileImage.value!)
@@ -54,7 +51,7 @@ class EditProfileScreen extends GetView<AuthController> {
                           child: controller.profileImage.value == null
                               ? Icon(
                                   Icons.person,
-                                  size: screenWidth * 0.15,
+                                  size: 15.w,
                                   color: AppColors.textWhite,
                                 )
                               : null,
@@ -65,7 +62,7 @@ class EditProfileScreen extends GetView<AuthController> {
                       child: GestureDetector(
                         onTap: () => controller.pickImage(),
                         child: Container(
-                          padding: EdgeInsets.all(screenWidth * 0.02),
+                          padding: EdgeInsets.all(2.w),
                           decoration: const BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,
@@ -73,7 +70,7 @@ class EditProfileScreen extends GetView<AuthController> {
                           child: Icon(
                             Icons.camera_alt,
                             color: AppColors.textWhite,
-                            size: screenWidth * 0.05,
+                            size: 5.w,
                           ),
                         ),
                       ),
@@ -81,40 +78,37 @@ class EditProfileScreen extends GetView<AuthController> {
                   ],
                 ),
               ),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: 5.h),
               _buildTextField(
                 controller: controller.editFirstNameController,
                 label: "First Name",
                 icon: Icons.person_outline,
-                screenWidth: screenWidth,
                 validator: (value) => ValidationUtils.validateRequired(value, "First Name"),
               ),
-              SizedBox(height: screenHeight * 0.025),
+              SizedBox(height: 2.5.h),
               _buildTextField(
                 controller: controller.editLastNameController,
                 label: "Last Name",
                 icon: Icons.person_outline,
-                screenWidth: screenWidth,
                 validator: (value) => ValidationUtils.validateRequired(value, "Last Name"),
               ),
-              SizedBox(height: screenHeight * 0.025),
+              SizedBox(height: 2.5.h),
               _buildTextField(
                 controller: controller.editEmailController,
                 label: "Email Address",
                 icon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
-                screenWidth: screenWidth,
                 validator: ValidationUtils.validateEmail,
               ),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: 5.h),
               SizedBox(
                 width: double.infinity,
-                height: screenHeight * 0.07,
+                height: 7.h,
                 child: Obx(() => ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                          borderRadius: BorderRadius.circular(3.w),
                         ),
                       ),
                       onPressed: controller.isLoading.value
@@ -126,7 +120,7 @@ class EditProfileScreen extends GetView<AuthController> {
                               "SAVE CHANGES",
                               style: TextStyle(
                                 color: AppColors.textWhite,
-                                fontSize: screenWidth * 0.04,
+                                fontSize: 4.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -143,7 +137,6 @@ class EditProfileScreen extends GetView<AuthController> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
-    required double screenWidth,
     required String? Function(String?) validator,
     TextInputType keyboardType = TextInputType.text,
   }) {
@@ -152,20 +145,20 @@ class EditProfileScreen extends GetView<AuthController> {
       keyboardType: keyboardType,
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: TextStyle(fontSize: screenWidth * 0.04),
+      style: TextStyle(fontSize: 4.sp),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(fontSize: screenWidth * 0.035),
-        prefixIcon: Icon(icon, size: screenWidth * 0.06),
+        labelStyle: TextStyle(fontSize: 3.5.sp),
+        prefixIcon: Icon(icon, size: 6.w),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          borderRadius: BorderRadius.circular(3.w),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          borderRadius: BorderRadius.circular(3.w),
           borderSide: BorderSide(color: AppColors.borderGrey),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          borderRadius: BorderRadius.circular(3.w),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
       ),

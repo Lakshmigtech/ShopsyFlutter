@@ -2,6 +2,7 @@ import 'package:Shopsy/controller/cart_controller.dart';
 import 'package:Shopsy/controller/product_controller.dart';
 import 'package:Shopsy/controller/wishlist_controller.dart';
 import 'package:Shopsy/constants/app_colors.dart';
+import 'package:Shopsy/models/sort_option.dart';
 import 'package:Shopsy/utils/product_ui_helper.dart';
 import 'package:Shopsy/views/tab_bar/cart.dart';
 import 'package:Shopsy/views/tab_bar/product_detail.dart';
@@ -18,80 +19,53 @@ class ProductScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        title: const Text('Products'),
+        actions: [
+          IconButton(
+            onPressed: () => Get.to(() => const CartScreen()),
+            icon: const Icon(Icons.shopping_cart_outlined),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  const Text(
-                    'Products',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () => _showSortBottomSheet(context),
-                    child: _iconBtn(Icons.swap_vert),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () => _showFilterBottomSheet(context),
-                    child: _iconBtn(Icons.tune),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () => Get.to(() => const CartScreen()),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        _iconBtn(Icons.shopping_cart_outlined),
-                        Obx(() => cartController.itemCount > 0
-                          ? Positioned(
-                              right: -4,
-                              top: -4,
-                              child: CircleAvatar(
-                                radius: 9,
-                                backgroundColor: AppColors.error,
-                                child: Text(
-                                  '${cartController.itemCount}',
-                                  style: const TextStyle(
-                                    color: AppColors.white,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink()),
-                      ],
+                  Expanded(
+                    child: TextField(
+                      controller: controller.searchController,
+                      onChanged: (value) => controller.updateSearchQuery(value),
+                      decoration: InputDecoration(
+                        hintText: 'Search products...',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      ),
                     ),
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () => _showSortBottomSheet(context),
+                    icon: const Icon(Icons.sort),
+                  ),
+                  IconButton(
+                    onPressed: () => _showFilterBottomSheet(context),
+                    icon: const Icon(Icons.filter_list),
                   ),
                 ],
               ),
             ),
-            const Divider(),
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
-                }
-
-                if (controller.errorMessage.value != null) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(controller.errorMessage.value!, textAlign: TextAlign.center),
-                        const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: () =>
-                              controller.fetchProducts(force: true),
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  );
                 }
 
                 final products = controller.filteredAndSortedProducts;
@@ -100,36 +74,46 @@ class ProductScreen extends StatelessWidget {
                   return const Center(child: Text('No products found'));
                 }
 
-                return ListView.separated(
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: products.length,
-                  separatorBuilder: (_, index) => const Divider(),
                   itemBuilder: (context, index) {
                     final product = products[index];
-
-                    return InkWell(
+                    return GestureDetector(
                       onTap: () => Get.to(
                         () => const ProductDetailScreen(),
                         arguments: product,
                       ),
-                      child: Padding(
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.grey.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              height: 100,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.grey100,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  product.image,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.broken_image, color: AppColors.grey),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                product.image,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: AppColors.grey100,
+                                  child: const Icon(Icons.image),
                                 ),
                               ),
                             ),
@@ -140,14 +124,14 @@ class ProductScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     product.name,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.bold,
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: 4),
                                   Row(
                                     children: [
                                       Container(
@@ -281,6 +265,28 @@ class ProductScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _sortOptionTile(String title, SortOption option) {
+    return Obx(() {
+      final isSelected = controller.selectedSortOption.value == option;
+      return ListTile(
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? AppColors.primary : AppColors.black,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        trailing: isSelected
+            ? const Icon(Icons.check, color: AppColors.primary)
+            : null,
+        onTap: () {
+          controller.updateSortOption(option);
+          Get.back();
+        },
+      );
+    });
   }
 
   void _showFilterBottomSheet(BuildContext context) {
@@ -430,59 +436,24 @@ class ProductScreen extends StatelessWidget {
             const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
-              height: 50,
               child: ElevatedButton(
+                onPressed: () => Get.back(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () => Get.back(),
                 child: const Text(
                   'Apply Filters',
                   style: TextStyle(color: AppColors.white, fontSize: 16),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _sortOptionTile(String title, SortOption option) {
-    return Obx(() {
-      final isSelected = controller.selectedSortOption.value == option;
-      return ListTile(
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? AppColors.primary : AppColors.black,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        trailing: isSelected
-            ? const Icon(Icons.check, color: AppColors.primary)
-            : null,
-        onTap: () {
-          controller.updateSortOption(option);
-          Get.back();
-        },
-      );
-    });
-  }
-
-  // 🔘 Icon Button
-  Widget _iconBtn(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: AppColors.grey100,
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icon),
     );
   }
 }
